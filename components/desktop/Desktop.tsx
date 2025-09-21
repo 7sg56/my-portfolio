@@ -1,30 +1,65 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { motion } from "motion/react";
+import { BACKGROUND_IMAGE } from "@/config/site";
+import AppDrawer from "@/components/desktop/AppDrawer";
 
 type DesktopProps = {
   onAction: (command: string) => void;
   onOpenTerminal?: () => void;
 };
 
-type DesktopItem = { key: "terminal" | "spotify" | "upcoming" | "projects" | "gallery"; label: string; icon?: string };
+type DesktopItem = { 
+  key: "terminal" | "about" | "upcoming" | "projects" | "gallery"; 
+  label: string; 
+  icon?: string;
+  description?: string;
+};
 
 const items: DesktopItem[] = [
-  { key: "terminal", label: "Terminal", icon: "/window.svg" },
-  { key: "spotify", label: "Spotify", icon: "/globe.svg" },
-  { key: "upcoming", label: "Upcoming", icon: "/file.svg" },
-  { key: "projects", label: "Projects", icon: "/globe.svg" },
-  { key: "gallery", label: "Gallery", icon: "/file.svg" },
+  { 
+    key: "terminal", 
+    label: "Terminal", 
+    icon: "/window.svg",
+    description: "Command Line Interface"
+  },
+  { 
+    key: "about", 
+    label: "About Me", 
+    icon: "/globe.svg",
+    description: "Personal Information"
+  },
+  { 
+    key: "projects", 
+    label: "Projects", 
+    icon: "/globe.svg",
+    description: "Portfolio & Work"
+  },
+  { 
+    key: "gallery", 
+    label: "Gallery", 
+    icon: "/file.svg",
+    description: "Photos & Artwork"
+  },
+  { 
+    key: "upcoming", 
+    label: "Upcoming", 
+    icon: "/file.svg",
+    description: "Future Plans"
+  },
 ];
 
 export default function Desktop({ onAction, onOpenTerminal }: DesktopProps) {
+  const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
+
   const handleDoubleClick = (key: DesktopItem["key"]) => {
     switch (key) {
       case "terminal":
         onOpenTerminal?.();
         break;
-      case "spotify":
-        onAction("__open_window__spotify");
+      case "about":
+        onAction("__open_window__about");
         break;
       case "upcoming":
         onAction("__open_window__upcoming");
@@ -37,13 +72,14 @@ export default function Desktop({ onAction, onOpenTerminal }: DesktopProps) {
         break;
     }
   };
+
   return (
     <div className="absolute inset-0 select-none pointer-events-none" aria-label="Desktop background">
       {/* background image */}
       <div
         className="absolute inset-0 bg-black"
         style={{
-          backgroundImage: "url(/wallpaper.jpg)",
+          backgroundImage: `url(${BACKGROUND_IMAGE})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
@@ -52,27 +88,30 @@ export default function Desktop({ onAction, onOpenTerminal }: DesktopProps) {
       {/* subtle gradient overlay for readability */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,#0b1220,transparent_40%),radial-gradient(circle_at_80%_30%,#1a1f35,transparent_40%),radial-gradient(circle_at_50%_80%,#111827,transparent_40%)] opacity-70" />
 
-      {/* icons grid */}
-      <div className="relative z-10 p-6 grid grid-cols-3 gap-6 sm:grid-cols-5 pointer-events-auto font-mono text-sm">
-        {items.map((it) => (
-          <button
-            key={it.label}
-            className="group flex flex-col items-center gap-2 focus:outline-none pointer-events-auto"
-            onDoubleClick={() => handleDoubleClick(it.key)}
-            onClick={() => {
-              // single click can just focus/open terminal without running
+      {/* Desktop layout - empty canvas (widgets are managed in page), plus AppDrawer */}
+      <div className="relative z-10 h-full" />
+      <AppDrawer
+        onOpen={(key) => {
+          switch (key) {
+            case "terminal":
               onOpenTerminal?.();
-            }}
-            aria-label={`Open ${it.label}`}
-          >
-            <div className="h-14 w-14 rounded-lg bg-zinc-900/50 border border-zinc-800 flex items-center justify-center group-hover:bg-zinc-800/60">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={it.icon || "/window.svg"} alt="" className="h-7 w-7 opacity-90" />
-            </div>
-            <div className="text-xs text-zinc-300 group-hover:text-zinc-100">{it.label}</div>
-          </button>
-        ))}
-      </div>
+              break;
+            case "about":
+              onAction("__open_window__about");
+              break;
+            case "upcoming":
+              onAction("__open_window__upcoming");
+              break;
+            case "projects":
+              onAction("__open_window__projects");
+              break;
+            case "gallery":
+              onAction("__open_window__gallery");
+              break;
+          }
+        }}
+        active={{}}
+      />
     </div>
   );
 }

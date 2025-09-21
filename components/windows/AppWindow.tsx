@@ -3,6 +3,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion, useDragControls } from "motion/react";
 
+// Set NEXT_PUBLIC_DEBUG_UI=1 to outline windows for debugging
+const DEBUG_UI = process.env.NEXT_PUBLIC_DEBUG_UI === "1" || process.env.NEXT_PUBLIC_DEBUG_UI === "true";
+
 export type WindowProps = {
   id?: string;
   title: string;
@@ -102,6 +105,7 @@ export default function AppWindow({
   return (
     <div ref={containerRef} className="fixed inset-0 p-4 pointer-events-none" style={{ zIndex }}>
       <motion.div
+        data-testid={id ? `window-${id}` : undefined}
         layout={fsAnim ? true : "position"}
         layoutId={id}
         initial={{ opacity: 0, y: 16, scale: 0.98 }}
@@ -112,18 +116,19 @@ export default function AppWindow({
           (fullscreen
             ? "pointer-events-auto h-full"
             : "pointer-events-auto") +
-          " relative rounded-lg border backdrop-blur p-3 flex flex-col font-mono text-sm"
+          " relative rounded-lg border backdrop-blur p-3 flex flex-col font-mono text-sm shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
         }
         style={{
-          borderColor: "#45475a",
+          borderColor: DEBUG_UI ? "#89b4fa" : "#45475a",
           backgroundColor: "rgba(30,30,46,0.85)",
           width: fullscreen ? "100%" : size.w,
           height: fullscreen ? "100%" : size.h,
+          outline: DEBUG_UI ? "1px dashed #89b4fa" : undefined,
         }}
         {...dragProps}
       >
         <div
-          className="flex items-center gap-2 pb-2 cursor-default select-none"
+          className="flex items-center gap-2 pb-2 cursor-move select-none"
           onDoubleClick={onToggleFullscreen}
           onPointerDown={(e) => dragControls.start(e)}
         >

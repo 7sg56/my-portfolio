@@ -1,24 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Terminal from "@/components/terminal/Terminal";
 import Desktop from "@/components/desktop/Desktop";
-import SpotifyWindow from "@/components/windows/SpotifyWindow";
+import AboutWindow from "@/components/windows/AboutWindow";
 import ProjectsWindow from "@/components/windows/ProjectsWindow";
 import UpcomingWindow from "@/components/windows/UpcomingWindow";
 import GalleryWindow from "@/components/windows/GalleryWindow";
 import AppWindow from "@/components/windows/AppWindow";
-
+import NowListeningWidget from "@/components/widgets/NowListeningWidget";
+import ClockWidget from "@/components/widgets/ClockWidget";
+import WeatherWidget from "@/components/widgets/WeatherWidget";
+import TodoWidget from "@/components/widgets/TodoWidget";
+import TetrisWidget from "@/components/widgets/TetrisWidget";
+import ThreeDWidget from "@/components/widgets/ThreeDWidget";
+import Splash from "@/components/desktop/Splash";
+import Hero from "@/components/hero/Hero";
 export default function Home() {
   const [showTerminal, setShowTerminal] = useState(true);
   const [minimized, setMinimized] = useState(false);
   const [fullscreen, setFullscreen] = useState(true);
   const [externalCmd, setExternalCmd] = useState<string | null>(null);
 
-  const [showSpotify, setShowSpotify] = useState(false);
-  const [minSpotify, setMinSpotify] = useState(false);
-  const [fsSpotify, setFsSpotify] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
+  const [minAbout, setMinAbout] = useState(false);
+  const [fsAbout, setFsAbout] = useState(false);
 
   const [showUpcoming, setShowUpcoming] = useState(false);
   const [minUpcoming, setMinUpcoming] = useState(false);
@@ -37,9 +44,29 @@ export default function Home() {
     setMinimized(false);
   };
 
+  const openApp = (key: "terminal" | "about" | "upcoming" | "projects" | "gallery") => {
+    switch (key) {
+      case "terminal":
+        openTerminal();
+        return;
+      case "about":
+        setShowAbout(true); setMinAbout(false);
+        return;
+      case "upcoming":
+        setShowUpcoming(true); setMinUpcoming(false);
+        return;
+      case "projects":
+        setShowProjects(true); setMinProjects(false);
+        return;
+      case "gallery":
+        setShowGallery(true); setMinGallery(false);
+        return;
+    }
+  };
+
   const runFromDesktop = (cmd: string) => {
-    if (cmd === "__open_window__spotify") {
-      setShowSpotify(true); setMinSpotify(false);
+    if (cmd === "__open_window__about") {
+      setShowAbout(true); setMinAbout(false);
       return;
     }
     if (cmd === "__open_window__upcoming") {
@@ -59,130 +86,132 @@ export default function Home() {
   };
 
 
+  const [showSplash, setShowSplash] = useState(true);
+  const [progress, setProgress] = useState(0);
+  // Simulate loading progress between 3-5s with slight randomness per tick
+  useEffect(() => {
+    const total = Math.floor(3000 + Math.random() * 2000); // 3000-5000ms
+    const interval = 80; // ms per tick
+    const steps = Math.max(1, Math.floor(total / interval));
+    let current = 0;
+    const id = setInterval(() => {
+      // base step with jitter
+      const base = 100 / steps;
+      const jitter = base * (Math.random() * 0.3 + 0.85); // 0.85x - 1.15x
+      current = Math.min(100, current + jitter);
+      setProgress(current);
+      if (current >= 100) {
+        clearInterval(id);
+        // small delay to fully fill bar before revealing
+        setTimeout(() => setShowSplash(false), 150);
+      }
+    }, interval);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <main className="relative bg-black min-h-screen overflow-hidden">
-      {/* Desktop background + icons */}
-      <Desktop onAction={runFromDesktop} onOpenTerminal={openTerminal} />
+      {/* Main content - always visible */}
+      <motion.div
+        initial={{ y: 30, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 22 }}
+      >
+          {/* Hero Section */}
+          <Hero />
 
-      {/* Terminal window using AppWindow for unified behavior */}
-      <AnimatePresence>
-        {showTerminal && !minimized && (
-          <AppWindow
-            id="terminal"
-            title="sourish@portfolio — zsh"
-            fullscreen={fullscreen}
-            zIndex={40}
-            onClose={() => setShowTerminal(false)}
-            onMinimize={() => setMinimized(true)}
-            onToggleFullscreen={() => setFullscreen((f) => !f)}
-          >
-            <Terminal
-              externalCommand={externalCmd}
-              onExternalConsumed={() => setExternalCmd(null)}
-              embedded
-              chrome={false}
-            />
-          </AppWindow>
-        )}
-      </AnimatePresence>
+          {/* Desktop background + AppDrawer */}
+          <Desktop onAction={runFromDesktop} onOpenTerminal={openTerminal} />
 
-      {/* App windows */}
-      <AnimatePresence>
-        {showSpotify && !minSpotify && (
-          <SpotifyWindow
-            open
-            fullscreen={fsSpotify}
-            zIndex={35}
-            onClose={() => setShowSpotify(false)}
-            onMinimize={() => setMinSpotify(true)}
-            onToggleFullscreen={() => setFsSpotify((x) => !x)}
-          />
-        )}
-        {showProjects && !minProjects && (
-          <ProjectsWindow
-            open
-            fullscreen={fsProjects}
-            zIndex={34}
-            onClose={() => setShowProjects(false)}
-            onMinimize={() => setMinProjects(true)}
-            onToggleFullscreen={() => setFsProjects((x) => !x)}
-          />
-        )}
-        {showUpcoming && !minUpcoming && (
-          <UpcomingWindow
-            open
-            fullscreen={fsUpcoming}
-            zIndex={33}
-            onClose={() => setShowUpcoming(false)}
-            onMinimize={() => setMinUpcoming(true)}
-            onToggleFullscreen={() => setFsUpcoming((x) => !x)}
-          />
-        )}
-        {showGallery && !minGallery && (
-          <GalleryWindow
-            open
-            fullscreen={fsGallery}
-            zIndex={32}
-            onClose={() => setShowGallery(false)}
-            onMinimize={() => setMinGallery(true)}
-            onToggleFullscreen={() => setFsGallery((x) => !x)}
-          />
-        )}
-      </AnimatePresence>
+          {/* Bento Grid Widgets - Right Side */}
+          <div className="absolute right-0 top-0 w-1/2 h-full p-6">
+            <div className="h-full grid grid-cols-3 grid-rows-4 gap-4">
 
-      {/* Dock */}
-      <div className="fixed inset-x-0 bottom-3 flex items-center justify-center z-50">
-        <div className="backdrop-blur bg-zinc-900/50 border border-zinc-800 rounded-2xl px-3 py-2 flex items-center gap-3 font-mono text-sm">
-          <button
-            className="flex items-center gap-2 px-3 py-1 rounded hover:bg-zinc-800/60"
-            onClick={() => {
-              if (!showTerminal) setShowTerminal(true);
-              setMinimized(false);
-            }}
-            aria-label="Open Terminal"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/window.svg" alt="" className="h-5 w-5" />
-            <span className="text-sm text-zinc-200">Terminal</span>
-          </button>
+              <ClockWidget span={{ cols: 1, rows: 1 }} />
+              
+              <WeatherWidget span={{ cols: 1, rows: 1 }} />
+              
+              <TetrisWidget span={{ cols: 1, rows: 2 }} />
+              
+              <TodoWidget span={{ cols: 2, rows: 1 }} />
+              
+              <NowListeningWidget span={{ cols: 1, rows: 1 }} />
+              
+              <ThreeDWidget span={{ cols: 2, rows: 2 }} />
+            </div>
+          </div>
 
-          <button
-            className="flex items-center gap-2 px-3 py-1 rounded hover:bg-zinc-800/60"
-            onClick={() => { if (!showSpotify) setShowSpotify(true); setMinSpotify(false); }}
-            aria-label="Open Spotify"
-          >
-            <img src="/globe.svg" alt="" className="h-5 w-5" />
-            <span className="text-sm text-zinc-200">Spotify</span>
-          </button>
+          {/* Terminal window using AppWindow for unified behavior */}
+          <AnimatePresence>
+            {showTerminal && !minimized && (
+              <AppWindow
+                id="terminal"
+                title="sourish@portfolio — zsh"
+                fullscreen={fullscreen}
+                zIndex={40}
+                onClose={() => setShowTerminal(false)}
+                onMinimize={() => setMinimized(true)}
+                onToggleFullscreen={() => setFullscreen((f) => !f)}
+              >
+                <Terminal
+                  externalCommand={externalCmd}
+                  onExternalConsumed={() => setExternalCmd(null)}
+                  embedded
+                  chrome={false}
+                />
+              </AppWindow>
+            )}
+          </AnimatePresence>
 
-          <button
-            className="flex items-center gap-2 px-3 py-1 rounded hover:bg-zinc-800/60"
-            onClick={() => { if (!showProjects) setShowProjects(true); setMinProjects(false); }}
-            aria-label="Open Projects"
-          >
-            <img src="/globe.svg" alt="" className="h-5 w-5" />
-            <span className="text-sm text-zinc-200">Projects</span>
-          </button>
+          {/* App windows */}
+          <AnimatePresence>
+            {showAbout && !minAbout && (
+              <AboutWindow
+                open
+                fullscreen={fsAbout}
+                zIndex={35}
+                onClose={() => setShowAbout(false)}
+                onMinimize={() => setMinAbout(true)}
+                onToggleFullscreen={() => setFsAbout((x) => !x)}
+              />
+            )}
+            {showProjects && !minProjects && (
+              <ProjectsWindow
+                open
+                fullscreen={fsProjects}
+                zIndex={34}
+                onClose={() => setShowProjects(false)}
+                onMinimize={() => setMinProjects(true)}
+                onToggleFullscreen={() => setFsProjects((x) => !x)}
+              />
+            )}
+            {showUpcoming && !minUpcoming && (
+              <UpcomingWindow
+                open
+                fullscreen={fsUpcoming}
+                zIndex={33}
+                onClose={() => setShowUpcoming(false)}
+                onMinimize={() => setMinUpcoming(true)}
+                onToggleFullscreen={() => setFsUpcoming((x) => !x)}
+              />
+            )}
+            {showGallery && !minGallery && (
+              <GalleryWindow
+                open
+                fullscreen={fsGallery}
+                zIndex={32}
+                onClose={() => setShowGallery(false)}
+                onMinimize={() => setMinGallery(true)}
+                onToggleFullscreen={() => setFsGallery((x) => !x)}
+              />
+            )}
+          </AnimatePresence>
 
-          <button
-            className="flex items-center gap-2 px-3 py-1 rounded hover:bg-zinc-800/60"
-            onClick={() => { if (!showGallery) setShowGallery(true); setMinGallery(false); }}
-            aria-label="Open Gallery"
-          >
-            <img src="/file.svg" alt="" className="h-5 w-5" />
-            <span className="text-sm text-zinc-200">Gallery</span>
-          </button>
+          {/* AppDrawer replaces previous dock */}
+      </motion.div>
 
-          <button
-            className="flex items-center gap-2 px-3 py-1 rounded hover:bg-zinc-800/60"
-            onClick={() => { if (!showUpcoming) setShowUpcoming(true); setMinUpcoming(false); }}
-            aria-label="Open Upcoming"
-          >
-            <img src="/file.svg" alt="" className="h-5 w-5" />
-            <span className="text-sm text-zinc-200">Upcoming</span>
-          </button>
-        </div>
-      </div>
+      {/* Splash overlay - on top with high z-index */}
+      <Splash show={showSplash} progress={progress} />
     </main>
   );
 }
