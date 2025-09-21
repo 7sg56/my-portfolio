@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import WidgetCard from "@/components/widgets/WidgetCard";
 
 type Span = { cols?: 1 | 2 | 3; rows?: 1 | 2 | 3 | 4 };
 function spanToClasses(span?: Span): string {

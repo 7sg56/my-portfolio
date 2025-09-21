@@ -35,7 +35,7 @@ export default function AboutWindow(props: {
             <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
               <span className="text-6xl">👨‍💻</span>
             </div>
-            <h1 className="text-4xl font-bold text-white mb-4">Hey, I'm a Developer</h1>
+            <h1 className="text-4xl font-bold text-white mb-4">Hey, I&apos;m a Developer</h1>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
               Full-stack developer passionate about creating beautiful, functional web experiences
             </p>
@@ -179,7 +179,7 @@ export default function AboutWindow(props: {
             className="text-center mt-12 pt-8 border-t border-zinc-700"
           >
             <h2 className="text-2xl font-semibold text-white mb-6">
-              <span className="mr-3">📫</span>Let's Connect
+              <span className="mr-3">📫</span>Let&apos;s Connect
             </h2>
             <div className="flex justify-center gap-6 flex-wrap">
               <a

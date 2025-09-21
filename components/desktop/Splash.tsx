@@ -33,7 +33,7 @@ export default function Splash({ show, progress }: { show: boolean; progress: nu
               transition={{ delay: 0.3, duration: 0.5 }}
               className="text-2xl font-bold text-white mb-8"
             >
-              Sourish's Desktop
+                    Sourish&apos;s Desktop
             </motion.h1>
 
             {/* Progress bar */}

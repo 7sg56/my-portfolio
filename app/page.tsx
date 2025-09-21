@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Terminal from "@/components/terminal/Terminal";
-import Desktop from "@/components/desktop/Desktop";
 import AboutWindow from "@/components/windows/AboutWindow";
 import ProjectsWindow from "@/components/windows/ProjectsWindow";
 import UpcomingWindow from "@/components/windows/UpcomingWindow";
@@ -17,6 +16,8 @@ import TetrisWidget from "@/components/widgets/TetrisWidget";
 import ThreeDWidget from "@/components/widgets/ThreeDWidget";
 import Splash from "@/components/desktop/Splash";
 import Hero from "@/components/hero/Hero";
+import AppSection from "@/components/sections/AppSection";
+import { BACKGROUND_IMAGE } from "@/config/site";
 export default function Home() {
   const [showTerminal, setShowTerminal] = useState(true);
   const [minimized, setMinimized] = useState(false);
@@ -64,26 +65,6 @@ export default function Home() {
     }
   };
 
-  const runFromDesktop = (cmd: string) => {
-    if (cmd === "__open_window__about") {
-      setShowAbout(true); setMinAbout(false);
-      return;
-    }
-    if (cmd === "__open_window__upcoming") {
-      setShowUpcoming(true); setMinUpcoming(false);
-      return;
-    }
-    if (cmd === "__open_window__projects") {
-      setShowProjects(true); setMinProjects(false);
-      return;
-    }
-    if (cmd === "__open_window__gallery") {
-      setShowGallery(true); setMinGallery(false);
-      return;
-    }
-    openTerminal();
-    setExternalCmd(cmd);
-  };
 
 
   const [showSplash, setShowSplash] = useState(true);
@@ -110,7 +91,12 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative bg-black min-h-screen overflow-hidden">
+    <main className="relative min-h-screen overflow-hidden" style={{ 
+      backgroundImage: `url(${BACKGROUND_IMAGE})`, 
+      backgroundSize: 'cover', 
+      backgroundPosition: 'center', 
+      backgroundRepeat: 'no-repeat' 
+    }}>
       {/* Main content - always visible */}
       <motion.div
         initial={{ y: 30, opacity: 0 }}
@@ -120,8 +106,17 @@ export default function Home() {
           {/* Hero Section */}
           <Hero />
 
-          {/* Desktop background + AppDrawer */}
-          <Desktop onAction={runFromDesktop} onOpenTerminal={openTerminal} />
+          {/* App Section - Bottom Left */}
+          <AppSection 
+            onOpen={openApp} 
+            active={{
+              terminal: showTerminal,
+              about: showAbout,
+              projects: showProjects,
+              gallery: showGallery,
+              upcoming: showUpcoming
+            }}
+          />
 
           {/* Bento Grid Widgets - Right Side */}
           <div className="absolute right-0 top-0 w-1/2 h-full p-6">
