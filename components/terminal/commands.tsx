@@ -17,7 +17,7 @@ export type Env = {
 
 export type CommandHandler = (args: string[], env: Env) => React.ReactNode;
 
-type Project = {
+export type Project = {
   name: string;
   desc: string;
   tech: string[];
@@ -48,7 +48,7 @@ const PROFILE = {
   },
 };
 
-const PROJECTS: Project[] = [
+export const PROJECTS: Project[] = [
   {
     name: "Stamped — Event management & Attendance system",
     slug: "stamped",

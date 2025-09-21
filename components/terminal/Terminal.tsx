@@ -51,15 +51,13 @@ function Prompt({ text }: { text: string }) {
 }
 
 type TerminalProps = {
-  onMinimize?: () => void;
-  onClose?: () => void;
-  onToggleFullscreen?: () => void;
-  fullscreen?: boolean;
+  embedded?: boolean;
+  chrome?: boolean;
   externalCommand?: string | null;
   onExternalConsumed?: () => void;
 };
 
-export default function Terminal({ onMinimize, onClose, onToggleFullscreen, fullscreen = true, externalCommand = null, onExternalConsumed }: TerminalProps) {
+export default function Terminal({ embedded = false, chrome = true, externalCommand = null, onExternalConsumed }: TerminalProps) {
   const [history, setHistory] = useState<HistoryItem[]>(() => []);
   const [input, setInput] = useState("");
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
@@ -76,7 +74,10 @@ export default function Terminal({ onMinimize, onClose, onToggleFullscreen, full
   }, []);
 
   useEffect(() => {
-    containerRef.current?.scrollTo({ top: containerRef.current.scrollHeight, behavior: "smooth" });
+    const el = containerRef.current;
+    if (!el) return;
+    // Instant scroll to bottom to avoid perceived delay
+    el.scrollTop = el.scrollHeight;
   }, [history.length]);
 
   const historyCommands = useMemo(() => history.map(h => h.command).filter(Boolean), [history]);
@@ -171,19 +172,59 @@ export default function Terminal({ onMinimize, onClose, onToggleFullscreen, full
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [externalCommand]);
 
-  return (
-    <div className={fullscreen ? "fixed inset-0 p-4 pointer-events-none z-40" : "relative z-40 w-full max-w-4xl mx-auto"}>
-      <div className={fullscreen ? "pointer-events-auto h-full rounded-lg border backdrop-blur p-3 flex flex-col" : "pointer-events-auto rounded-lg border backdrop-blur p-3"} style={frameStyle}>
-        {/* window bar */}
-        <div className="flex items-center gap-2 pb-2">
-          <button type="button" title="Close" aria-label="Close" onClick={onClose} className="h-3 w-3 rounded-full" style={{ backgroundColor: "#f38ba8" }} />
-          <button type="button" title="Minimize" aria-label="Minimize" onClick={onMinimize} className="h-3 w-3 rounded-full" style={{ backgroundColor: "#f9e2af" }} />
-          <button type="button" title="Toggle fullscreen" aria-label="Toggle fullscreen" onClick={onToggleFullscreen} className="h-3 w-3 rounded-full" style={{ backgroundColor: "#a6e3a1" }} />
-          <span className="ml-3 text-xs" style={{ color: "#a6adc8" }}>sourish@portfolio — zsh</span>
+  // Embedded: render body only (no outer overlay/chrome)
+  if (embedded) {
+    return (
+      <div className="w-full">
+        {chrome && (
+          <div className="flex items-center gap-2 pb-2">
+            <span className="ml-3 text-xs" style={{ color: "#a6adc8" }}>sourish@portfolio — zsh</span>
+          </div>
+        )}
+        <div ref={containerRef} className="flex-1 overflow-y-auto pr-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>
+          <Banner visible={bannerVisible} onQuick={(cmd) => run(cmd)} />
+          <div className="my-3 border-t" style={{ borderColor: "#313244" }} />
+          {history.map(item => (
+            <div key={item.id} className="mb-2">
+              <div className="flex items-start gap-2">
+                <Prompt text={prompt} />
+                <span className="whitespace-pre-wrap break-words">{item.command}</span>
+              </div>
+              {item.output && <div className="mt-1 pl-6">{item.output}</div>}
+            </div>
+          ))}
         </div>
+        <div className="mt-2 flex items-center gap-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>
+          <Prompt text={prompt} />
+          <input
+            ref={inputRef}
+            className="flex-1 bg-transparent outline-none placeholder-zinc-600"
+            placeholder="type a command… (try: help)"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={onKeyDown}
+            aria-label="Terminal command input"
+            autoComplete="off"
+            spellCheck={false}
+            style={{ caretColor: "#a6e3a1" }}
+          />
+        </div>
+        <div className="mt-2 text-[10px]" style={{ color: "#a6adc8" }}>Type &apos;clear&apos; to clear the screen. Theme: Catppuccin Mocha</div>
+      </div>
+    );
+  }
 
-        {/* terminal content */}
-        <div ref={containerRef} className={fullscreen ? "flex-1 overflow-y-auto pr-2 font-mono text-sm" : "h-[70vh] overflow-y-auto pr-2 font-mono text-sm"} style={{ color: "#cdd6f4" }}>
+  // Standalone fallback
+  return (
+    <div className="relative z-40 w-full max-w-4xl mx-auto">
+      <div className="pointer-events-auto rounded-lg border backdrop-blur p-3" style={frameStyle}>
+        {chrome && (
+          <div className="flex items-center gap-2 pb-2">
+            <span className="ml-3 text-xs" style={{ color: "#a6adc8" }}>sourish@portfolio — zsh</span>
+          </div>
+        )}
+
+        <div ref={containerRef} className="h-[70vh] overflow-y-auto pr-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>
           <Banner visible={bannerVisible} onQuick={(cmd) => run(cmd)} />
           <div className="my-3 border-t" style={{ borderColor: "#313244" }} />
           {history.map(item => (
@@ -197,7 +238,6 @@ export default function Terminal({ onMinimize, onClose, onToggleFullscreen, full
           ))}
         </div>
 
-        {/* prompt input */}
         <div className="mt-2 flex items-center gap-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>
           <Prompt text={prompt} />
           <input
@@ -214,7 +254,7 @@ export default function Terminal({ onMinimize, onClose, onToggleFullscreen, full
           />
         </div>
 
-        <div className="mt-2 text-[10px]" style={{ color: "#a6adc8" }}>Type 'clear' to clear the screen. Theme: Catppuccin Mocha</div>
+        <div className="mt-2 text-[10px]" style={{ color: "#a6adc8" }}>Type &apos;clear&apos; to clear the screen. Theme: Catppuccin Mocha</div>
       </div>
     </div>
   );

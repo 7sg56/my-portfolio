@@ -7,30 +7,58 @@ type DesktopProps = {
   onOpenTerminal?: () => void;
 };
 
-const items: { label: string; command: string; icon?: string }[] = [
-  { label: "About", command: "about details", icon: "/window.svg" },
-  { label: "Projects", command: "projects list", icon: "/globe.svg" },
-  { label: "Skills", command: "skills", icon: "/file.svg" },
-  { label: "Socials", command: "socials", icon: "/globe.svg" },
-  { label: "Resume", command: "resume", icon: "/file.svg" },
+type DesktopItem = { key: "terminal" | "spotify" | "upcoming" | "projects" | "gallery"; label: string; icon?: string };
+
+const items: DesktopItem[] = [
+  { key: "terminal", label: "Terminal", icon: "/window.svg" },
+  { key: "spotify", label: "Spotify", icon: "/globe.svg" },
+  { key: "upcoming", label: "Upcoming", icon: "/file.svg" },
+  { key: "projects", label: "Projects", icon: "/globe.svg" },
+  { key: "gallery", label: "Gallery", icon: "/file.svg" },
 ];
 
 export default function Desktop({ onAction, onOpenTerminal }: DesktopProps) {
+  const handleDoubleClick = (key: DesktopItem["key"]) => {
+    switch (key) {
+      case "terminal":
+        onOpenTerminal?.();
+        break;
+      case "spotify":
+        onAction("__open_window__spotify");
+        break;
+      case "upcoming":
+        onAction("__open_window__upcoming");
+        break;
+      case "projects":
+        onAction("__open_window__projects");
+        break;
+      case "gallery":
+        onAction("__open_window__gallery");
+        break;
+    }
+  };
   return (
     <div className="absolute inset-0 select-none pointer-events-none" aria-label="Desktop background">
-      {/* wallpaper-like gradient */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,#0b1220,transparent_40%),radial-gradient(circle_at_80%_30%,#1a1f35,transparent_40%),radial-gradient(circle_at_50%_80%,#111827,transparent_40%)] bg-black" />
+      {/* background image */}
+      <div
+        className="absolute inset-0 bg-black"
+        style={{
+          backgroundImage: "url(/wallpaper.jpg)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
+      {/* subtle gradient overlay for readability */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,#0b1220,transparent_40%),radial-gradient(circle_at_80%_30%,#1a1f35,transparent_40%),radial-gradient(circle_at_50%_80%,#111827,transparent_40%)] opacity-70" />
 
       {/* icons grid */}
-      <div className="relative z-10 p-6 grid grid-cols-3 gap-6 sm:grid-cols-5 pointer-events-auto">
+      <div className="relative z-10 p-6 grid grid-cols-3 gap-6 sm:grid-cols-5 pointer-events-auto font-mono text-sm">
         {items.map((it) => (
           <button
             key={it.label}
             className="group flex flex-col items-center gap-2 focus:outline-none pointer-events-auto"
-            onDoubleClick={() => {
-              onOpenTerminal?.();
-              onAction(it.command);
-            }}
+            onDoubleClick={() => handleDoubleClick(it.key)}
             onClick={() => {
               // single click can just focus/open terminal without running
               onOpenTerminal?.();
