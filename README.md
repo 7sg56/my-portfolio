@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sourish Ghosh — Terminal Portfolio
+
+A single-page, terminal-style portfolio. Type `help` to explore.
 
 ## Getting Started
 
-First, run the development server:
+- Dev server: `npm run dev` (http://localhost:3000)
+- Build: `npm run build`
+- Start: `npm run start`
+- Lint: `npm run lint`
+- Type check: `npx tsc --noEmit`
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Usage (in the terminal UI)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- `about [summary|details]`
+- `projects [list|view <slug|#>]` — e.g., `projects view stamped` or `projects view 1`
+- `skills`
+- `socials`
+- `resume`
+- `clear`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Content & Customization
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Commands and content live in `components/terminal/commands.tsx`.
+  - Update your bio, socials, skills, and projects there.
+- Terminal UI in `components/terminal/Terminal.tsx`.
+  - Prompt is `s0urishg@7sg56:~`.
+  - Theme: Catppuccin Mocha.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+No tests configured in this repo yet.
