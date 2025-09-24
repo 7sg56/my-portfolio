@@ -40,7 +40,7 @@ export default function AboutWindow(props: {
                     <span style={{ color: "#a6e3a1" }}>Name:</span> s0urishg - just a dude who codes
                   </div>
                   <div>
-                    <span style={{ color: "#a6e3a1" }}>Role:</span> Full-stack developer who's always running high on NextJS
+                    <span style={{ color: "#a6e3a1" }}>Role:</span> Full-stack developer who&apos;s always running high on NextJS
                   </div>
                   <div>
                     <span style={{ color: "#a6e3a1" }}>Description:</span> Building cool stuff and petting the kitty when not coding
@@ -87,7 +87,7 @@ export default function AboutWindow(props: {
                   <div>
                     <span style={{ color: "#a6e3a1" }}>What I do:</span>
                     <div className="ml-4 mt-1 space-y-1">
-                      <div>• Building websites that don't break (mostly)</div>
+                      <div>• Building websites that don&apos;t break (mostly)</div>
                       <div>• Running high on NextJS</div>
                       <div>• Making things pretty with code</div>
                       <div>• Always learning new stuff</div>
@@ -107,7 +107,7 @@ export default function AboutWindow(props: {
                     <div className="ml-4 mt-1 space-y-1">
                       <div>• Keep building cool stuff</div>
                       <div>• Maybe find that perfect code partner</div>
-                      <div>• Make websites that don't break</div>
+                      <div>• Make websites that don&apos;t break</div>
                       <div>• Always keep learning</div>
                     </div>
                   </div>
@@ -127,7 +127,7 @@ export default function AboutWindow(props: {
                 </div>
                 <div className="p-4 space-y-4">
                   <div>
-                    <span style={{ color: "#a6e3a1" }}>When I'm not coding:</span>
+                    <span style={{ color: "#a6e3a1" }}>When I&apos;m not coding:</span>
                     <div className="ml-4 mt-1 space-y-1">
                       <div>• Petting the kitty</div>
                       <div>• Watching The Punisher</div>
@@ -222,7 +222,7 @@ export default function AboutWindow(props: {
                     </div>
                   </div>
                   <div>
-                    <span style={{ color: "#a6e3a1" }}>Let's connect:</span>
+                    <span style={{ color: "#a6e3a1" }}>Let&apos;s connect:</span>
                     <div className="ml-4 mt-1 space-y-1">
                       <div>• Always up for a Shawarma</div>
                       <div>• Searching for a code partner</div>
@@ -235,7 +235,7 @@ export default function AboutWindow(props: {
                     <div className="ml-4 mt-1 space-y-1">
                       <div>• Hey! Always up for a Shawarma</div>
                       <div>• Looking for a code partner</div>
-                      <div>• Let's build something together</div>
+                      <div>• Let&apos;s build something together</div>
                       <div>• Just want to hang out</div>
                     </div>
                   </div>
