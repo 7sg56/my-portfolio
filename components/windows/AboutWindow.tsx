@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
-import { motion } from "motion/react";
+import React, { useState } from "react";
 import AppWindow from "@/components/windows/AppWindow";
+
+type TabType = "intro" | "work" | "offwork" | "hobbies" | "contact";
 
 export default function AboutWindow(props: {
   open?: boolean;
@@ -12,7 +13,242 @@ export default function AboutWindow(props: {
   onMinimize?: () => void;
   onToggleFullscreen?: () => void;
 }) {
+  const [activeTab, setActiveTab] = useState<TabType>("intro");
+  
   if (!props.open) return null;
+
+  const tabs: { id: TabType; label: string }[] = [
+    { id: "intro", label: "Intro" },
+    { id: "work", label: "Work" },
+    { id: "offwork", label: "Off Work" },
+    { id: "hobbies", label: "Hobbies" },
+    { id: "contact", label: "Contact" }
+  ];
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "intro":
+        return (
+          <div className="space-y-4">
+            <div className="text-sm" style={{ color: "#cdd6f4" }}>
+              <div className="border" style={{ borderColor: "#45475a" }}>
+                <div className="bg-zinc-800 px-3 py-1 text-xs" style={{ color: "#a6adc8" }}>
+                  intro.txt
+                </div>
+                <div className="p-4 space-y-3">
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Name:</span> s0urishg - just a dude who codes
+                  </div>
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Role:</span> Full-stack developer who's always running high on NextJS
+                  </div>
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Description:</span> Building cool stuff and petting the kitty when not coding
+                  </div>
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Status:</span> Always up for a Shawarma and searching for a code partner
+                  </div>
+                  <div className="pt-2">
+                    <span style={{ color: "#a6e3a1" }}>Current Activities:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Running high on NextJS</div>
+                      <div>• Petting the kitty</div>
+                      <div>• Watching The Punisher</div>
+                      <div>• Romancing a Marlboro Red</div>
+                      <div>• Cooking Chicken Changezi</div>
+                      <div>• Always up for a Shawarma</div>
+                      <div>• Searching for a code partner</div>
+                    </div>
+                  </div>
+                  <div className="pt-2">
+                    <span style={{ color: "#a6e3a1" }}>Personality:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Coffee-driven development</div>
+                      <div>• Night owl coder</div>
+                      <div>• Music while coding</div>
+                      <div>• Always learning, always building</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case "work":
+        return (
+          <div className="space-y-4">
+            <div className="text-sm" style={{ color: "#cdd6f4" }}>
+              <div className="border" style={{ borderColor: "#45475a" }}>
+                <div className="bg-zinc-800 px-3 py-1 text-xs" style={{ color: "#a6adc8" }}>
+                  work.txt
+                </div>
+                <div className="p-4 space-y-4">
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>What I do:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Building websites that don't break (mostly)</div>
+                      <div>• Running high on NextJS</div>
+                      <div>• Making things pretty with code</div>
+                      <div>• Always learning new stuff</div>
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Current Focus:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Building this portfolio</div>
+                      <div>• Petting the kitty between commits</div>
+                      <div>• Searching for a code partner</div>
+                      <div>• Making websites that actually work</div>
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Goals:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Keep building cool stuff</div>
+                      <div>• Maybe find that perfect code partner</div>
+                      <div>• Make websites that don't break</div>
+                      <div>• Always keep learning</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case "offwork":
+        return (
+          <div className="space-y-4">
+            <div className="text-sm" style={{ color: "#cdd6f4" }}>
+              <div className="border" style={{ borderColor: "#45475a" }}>
+                <div className="bg-zinc-800 px-3 py-1 text-xs" style={{ color: "#a6adc8" }}>
+                  offwork.txt
+                </div>
+                <div className="p-4 space-y-4">
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>When I'm not coding:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Petting the kitty</div>
+                      <div>• Watching The Punisher</div>
+                      <div>• Romancing a Marlboro Red</div>
+                      <div>• Cooking Chicken Changezi</div>
+                      <div>• Always up for a Shawarma</div>
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Relaxation:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Coffee and coding</div>
+                      <div>• Music while working</div>
+                      <div>• Night owl sessions</div>
+                      <div>• Just chilling with the kitty</div>
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Social:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Always up for a Shawarma</div>
+                      <div>• Searching for a code partner</div>
+                      <div>• Just hanging out</div>
+                      <div>• Meeting new people</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case "hobbies":
+        return (
+          <div className="space-y-4">
+            <div className="text-sm" style={{ color: "#cdd6f4" }}>
+              <div className="border" style={{ borderColor: "#45475a" }}>
+                <div className="bg-zinc-800 px-3 py-1 text-xs" style={{ color: "#a6adc8" }}>
+                  hobbies.txt
+                </div>
+                <div className="p-4 space-y-4">
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Things I enjoy:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Petting the kitty</div>
+                      <div>• Watching The Punisher</div>
+                      <div>• Cooking Chicken Changezi</div>
+                      <div>• Always up for a Shawarma</div>
+                      <div>• Romancing a Marlboro Red</div>
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Entertainment:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Binge-watching shows</div>
+                      <div>• Music while coding</div>
+                      <div>• Coffee and chill</div>
+                      <div>• Just hanging out</div>
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Social:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Always up for a Shawarma</div>
+                      <div>• Searching for a code partner</div>
+                      <div>• Meeting new people</div>
+                      <div>• Just chilling with friends</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      case "contact":
+        return (
+          <div className="space-y-4">
+            <div className="text-sm" style={{ color: "#cdd6f4" }}>
+              <div className="border" style={{ borderColor: "#45475a" }}>
+                <div className="bg-zinc-800 px-3 py-1 text-xs" style={{ color: "#a6adc8" }}>
+                  contact.txt
+                </div>
+                <div className="p-4 space-y-4">
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Get in touch:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Email: s0urishg@example.com</div>
+                      <div>• GitHub: github.com/s0urishg</div>
+                      <div>• LinkedIn: linkedin.com/in/s0urishg</div>
+                      <div>• Twitter: @s0urishg</div>
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Let's connect:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Always up for a Shawarma</div>
+                      <div>• Searching for a code partner</div>
+                      <div>• Hit me up if you want to build something cool</div>
+                      <div>• Just want to chat about NextJS</div>
+                    </div>
+                  </div>
+                  <div>
+                    <span style={{ color: "#a6e3a1" }}>Message me:</span>
+                    <div className="ml-4 mt-1 space-y-1">
+                      <div>• Hey! Always up for a Shawarma</div>
+                      <div>• Looking for a code partner</div>
+                      <div>• Let's build something together</div>
+                      <div>• Just want to hang out</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
   
   return (
     <AppWindow
@@ -23,189 +259,41 @@ export default function AboutWindow(props: {
       onMinimize={props.onMinimize}
       onToggleFullscreen={props.onToggleFullscreen}
     >
-      <div className="w-full h-full bg-zinc-900 text-zinc-200 overflow-y-auto">
-        <div className="p-8 max-w-4xl mx-auto">
-          {/* Header Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-center mb-12"
-          >
-            <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <span className="text-6xl">👨‍💻</span>
-            </div>
-            <h1 className="text-4xl font-bold text-white mb-4">Hey, I&apos;m a Developer</h1>
-            <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-              Full-stack developer passionate about creating beautiful, functional web experiences
-            </p>
-          </motion.div>
+      <div className="w-full h-full" style={{ backgroundColor: "rgba(30,30,46,0.95)", color: "#cdd6f4" }}>
+        {/* Terminal Header */}
+        <div className="flex items-center gap-2 p-3 border-b" style={{ borderColor: "#45475a" }}>
+          <span className="text-xs" style={{ color: "#a6adc8" }}>about@portfolio — zsh</span>
+        </div>
 
-          {/* About Sections */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700"
+        {/* Tab Navigation */}
+        <div className="flex border-b" style={{ borderColor: "#45475a" }}>
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-2 text-sm font-mono border-r transition-colors ${
+                activeTab === tab.id
+                  ? "bg-zinc-800 text-white"
+                  : "hover:bg-zinc-800/50 text-zinc-400"
+              }`}
+              style={{ 
+                borderColor: "#45475a",
+                backgroundColor: activeTab === tab.id ? "rgba(49,50,68,0.8)" : "transparent"
+              }}
             >
-              <h2 className="text-2xl font-semibold text-white mb-4 flex items-center gap-2">
-                <span>🚀</span> What I Do
-              </h2>
-              <ul className="space-y-3 text-zinc-300">
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-400">▸</span>
-                  Frontend development with React, Next.js, TypeScript
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-400">▸</span>
-                  Backend APIs with Node.js, Python, and modern frameworks
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-400">▸</span>
-                  UI/UX design with Tailwind CSS and Framer Motion
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-blue-400">▸</span>
-                  Database design and optimization
-                </li>
-              </ul>
-            </motion.div>
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-zinc-800/50 rounded-lg p-6 border border-zinc-700"
-            >
-              <h2 className="text-2xl font-semibold text-white mb-4 flex items-center gap-2">
-                <span>💡</span> Interests
-              </h2>
-              <ul className="space-y-3 text-zinc-300">
-                <li className="flex items-start gap-2">
-                  <span className="text-green-400">▸</span>
-                  Open source contributions and community building
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-400">▸</span>
-                  Modern web technologies and performance optimization
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-400">▸</span>
-                  AI/ML integration in web applications
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-400">▸</span>
-                  Mentoring and knowledge sharing
-                </li>
-              </ul>
-            </motion.div>
-          </div>
+        {/* Content Area */}
+        <div className="p-6 h-full overflow-y-auto font-mono text-sm">
+          {renderTabContent()}
+        </div>
 
-          {/* Experience Timeline */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="mb-12"
-          >
-            <h2 className="text-3xl font-semibold text-white mb-8 text-center">
-              <span className="mr-3">📈</span>Journey
-            </h2>
-            <div className="space-y-6">
-              <div className="flex gap-6 items-start">
-                <div className="w-4 h-4 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                <div className="bg-zinc-800/30 rounded-lg p-6 flex-1 border border-zinc-700/50">
-                  <h3 className="text-xl font-semibold text-white mb-2">Current Focus</h3>
-                  <p className="text-zinc-400 mb-3">Building modern web applications</p>
-                  <div className="flex flex-wrap gap-2">
-                    {["React", "Next.js", "TypeScript", "Tailwind CSS"].map(tech => (
-                      <span key={tech} className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-6 items-start">
-                <div className="w-4 h-4 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
-                <div className="bg-zinc-800/30 rounded-lg p-6 flex-1 border border-zinc-700/50">
-                  <h3 className="text-xl font-semibold text-white mb-2">Learning & Growing</h3>
-                  <p className="text-zinc-400 mb-3">Exploring new technologies and best practices</p>
-                  <div className="flex flex-wrap gap-2">
-                    {["Python", "AI/ML", "Cloud", "DevOps"].map(tech => (
-                      <span key={tech} className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Fun Facts */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="bg-gradient-to-r from-zinc-800/50 to-zinc-700/50 rounded-lg p-6 border border-zinc-600"
-          >
-            <h2 className="text-2xl font-semibold text-white mb-6 flex items-center gap-2">
-              <span>⚡</span> Quick Facts
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-zinc-800/50 rounded-lg">
-                <div className="text-2xl mb-2">☕</div>
-                <div className="text-sm text-zinc-300">Coffee-driven development</div>
-              </div>
-              <div className="text-center p-4 bg-zinc-800/50 rounded-lg">
-                <div className="text-2xl mb-2">🌙</div>
-                <div className="text-sm text-zinc-300">Night owl coder</div>
-              </div>
-              <div className="text-center p-4 bg-zinc-800/50 rounded-lg">
-                <div className="text-2xl mb-2">🎵</div>
-                <div className="text-sm text-zinc-300">Music while coding</div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Contact Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="text-center mt-12 pt-8 border-t border-zinc-700"
-          >
-            <h2 className="text-2xl font-semibold text-white mb-6">
-              <span className="mr-3">📫</span>Let&apos;s Connect
-            </h2>
-            <div className="flex justify-center gap-6 flex-wrap">
-              <a
-                href="mailto:hello@example.com"
-                className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-              >
-                <span>📧</span> Email
-              </a>
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
-              >
-                <span>🐙</span> GitHub
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 px-6 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-lg transition-colors"
-              >
-                <span>💼</span> LinkedIn
-              </a>
-            </div>
-          </motion.div>
+        {/* Terminal Footer */}
+        <div className="p-2 text-xs border-t" style={{ borderColor: "#45475a", color: "#a6adc8" }}>
+          Type &apos;help&apos; for available commands. Theme: Catppuccin Mocha
         </div>
       </div>
     </AppWindow>

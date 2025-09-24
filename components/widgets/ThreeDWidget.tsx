@@ -338,6 +338,7 @@ export default function ThreeDWidget({ span }: { span?: Span }) {
   const [isHovered, setIsHovered] = useState(false);
   const [useAdamModel, setUseAdamModel] = useState(true);
   const [modelError, setModelError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleMouseMove = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
     // Always track mouse position for look-towards behavior
@@ -361,6 +362,19 @@ export default function ThreeDWidget({ span }: { span?: Span }) {
     setModelError(true);
     setUseAdamModel(false);
   }, []);
+
+  // Simulate loading time for Adam model
+  useEffect(() => {
+    if (useAdamModel && !modelError) {
+      const loadingTimer = setTimeout(() => {
+        setIsLoading(false);
+      }, 3000); // 3 seconds loading time
+      
+      return () => clearTimeout(loadingTimer);
+    } else {
+      setIsLoading(false);
+    }
+  }, [useAdamModel, modelError]);
 
   // Global mouse listener for look-towards behavior when Adam model is active
   useEffect(() => {
@@ -391,10 +405,10 @@ export default function ThreeDWidget({ span }: { span?: Span }) {
             {useAdamModel ? 'Adam' : 'Robot'}
           </button>
           <span className="text-xs text-zinc-400">
-            {isHovered ? 'Looking at mouse!' : 'Move mouse to look'}
+            {isLoading ? 'Loading...' : isHovered ? 'Looking at mouse!' : 'Move mouse to look'}
           </span>
           <div className={`w-2 h-2 rounded-full transition-colors ${
-            isHovered ? 'bg-pink-400 animate-pulse' : 'bg-zinc-600'
+            isLoading ? 'bg-yellow-400 animate-pulse' : isHovered ? 'bg-pink-400 animate-pulse' : 'bg-zinc-600'
           }`} />
         </div>
       }
@@ -406,10 +420,19 @@ export default function ThreeDWidget({ span }: { span?: Span }) {
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-        <Canvas
-          camera={{ position: [0, 0, 5.5], fov: 50 }}
-          style={{ background: 'transparent' }}
-        >
+        {isLoading ? (
+          <div className="h-full w-full flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <div className="text-white text-sm">Loading Adam...</div>
+              <div className="text-zinc-400 text-xs mt-2">Preparing 3D model</div>
+            </div>
+          </div>
+        ) : (
+          <Canvas
+            camera={{ position: [0, 0, 5.5], fov: 50 }}
+            style={{ background: 'transparent' }}
+          >
           {/* Dynamic Lighting */}
           <ambientLight intensity={0.3} />
           <directionalLight 
@@ -456,6 +479,7 @@ export default function ThreeDWidget({ span }: { span?: Span }) {
             enabled={false}
           />
         </Canvas>
+        )}
       </div>
     </WidgetCard>
   );
