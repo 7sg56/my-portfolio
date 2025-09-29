@@ -60,17 +60,25 @@ export default function WeatherWidget({ span }: { span?: Span }) {
   }, [data?.code]);
 
   return (
-    <WidgetCard title="Weather" headerExtra={<span> Chennai, India</span>} className={spanToClasses(span)}>
-      <div className="font-mono text-zinc-200 flex flex-col justify-center h-full">
-        {error && <div className="text-red-300 text-center text-xs">{error}</div>}
+    <WidgetCard title="Weather" headerExtra={<span>Chennai</span>} className={spanToClasses(span)}>
+      <div className="font-mono text-gray-100 flex flex-col justify-center h-full">
+        {error && <div className="text-red-400 text-center text-sm bg-red-500/20 px-3 py-2 rounded-lg">{error}</div>}
         {data ? (
-          <div className="space-y-2 text-center">
-            <div className="text-2xl font-bold text-white">{Math.round(data.temp ?? 0)}°C</div>
-            <div className="text-zinc-200 text-xs">{desc}</div>
-            <div className="text-zinc-400 text-xs">Wind: {Math.round(data.wind ?? 0)} km/h</div>
+          <div className="space-y-4 text-center">
+            <div className="text-5xl font-bold text-gray-100">{Math.round(data.temp ?? 0)}°C</div>
+            <div className="text-gray-300 text-sm font-medium">{desc}</div>
+            <div className="flex items-center justify-center space-x-4 text-xs text-gray-400">
+              <div className="flex items-center space-x-1">
+                <span>💨</span>
+                <span>{Math.round(data.wind ?? 0)} km/h</span>
+              </div>
+            </div>
+            <div className="w-full h-1 bg-gradient-to-r from-cyan-500/30 to-blue-500/30 rounded-full"></div>
           </div>
         ) : (
-          <div className="text-zinc-400 text-center text-xs">Loading…</div>
+          <div className="text-gray-400 text-center text-sm flex items-center justify-center h-full">
+            <div className="animate-pulse">Loading weather...</div>
+          </div>
         )}
       </div>
     </WidgetCard>

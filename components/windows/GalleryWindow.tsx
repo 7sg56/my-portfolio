@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import Image from "next/image";
 import AppWindow from "@/components/windows/AppWindow";
 
 // Sample gallery data - in a real app, this would be fetched from a directory
@@ -130,19 +131,12 @@ export default function GalleryWindow(props: {
               >
                 <div className="relative overflow-hidden rounded-lg bg-zinc-800 border border-zinc-700 group-hover:border-purple-500/50 transition-all duration-300">
                   <div className="aspect-square bg-zinc-800 flex items-center justify-center">
-                    <img
+                    <Image
                       src={image.src}
                       alt={image.title}
+                      width={300}
+                      height={300}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        // Fallback for SVG or broken images
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        const parent = target.parentElement;
-                        if (parent) {
-                          parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-4xl">🖼️</div>`;
-                        }
-                      }}
                     />
                   </div>
                   
@@ -207,22 +201,12 @@ export default function GalleryWindow(props: {
                 
                 {/* Image */}
                 <div className="relative">
-                  <img
+                  <Image
                     src={selectedImage.src}
                     alt={selectedImage.title}
+                    width={800}
+                    height={600}
                     className="w-full h-auto max-h-[70vh] object-contain"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const parent = target.parentElement;
-                      if (parent) {
-                        parent.innerHTML = `
-                          <div class="w-full h-96 flex items-center justify-center text-6xl bg-zinc-800">
-                            🖼️
-                          </div>
-                        `;
-                      }
-                    }}
                   />
                 </div>
                 

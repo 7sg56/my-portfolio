@@ -113,7 +113,7 @@ export default function AppDrawer({
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        {items.map((appKey, index) => {
+        {items.map((appKey) => {
           const app = APP_ICONS[appKey];
           const isActive = !!active?.[appKey];
           const isHovered = hoveredApp === appKey;

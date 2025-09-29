@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} antialiased font-mono`}
+        className={`${inter.variable} antialiased font-mono bg-black`}
       >
         {/* Mobile Notice */}
         <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-red-900 text-white p-2 text-center text-sm">

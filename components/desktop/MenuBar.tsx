@@ -3,9 +3,11 @@
 import React, { useEffect, useState } from "react";
 
 export default function MenuBar({ hidden = false }: { hidden?: boolean }) {
-  const [now, setNow] = useState<string>(new Date().toLocaleString());
+  const [now, setNow] = useState<string>("");
   useEffect(() => {
-    const t = setInterval(() => setNow(new Date().toLocaleString()), 1000 * 30);
+    const update = () => setNow(new Date().toLocaleString());
+    update();
+    const t = setInterval(update, 1000 * 30);
     return () => clearInterval(t);
   }, []);
 
@@ -25,7 +27,7 @@ export default function MenuBar({ hidden = false }: { hidden?: boolean }) {
         <span className="text-zinc-400 hidden sm:inline">Window</span>
         <span className="text-zinc-400 hidden sm:inline">Help</span>
       </div>
-      <div className="text-zinc-400">{now}</div>
+      <div className="text-zinc-400" suppressHydrationWarning>{now}</div>
     </div>
   );
 }

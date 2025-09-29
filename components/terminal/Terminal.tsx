@@ -9,28 +9,25 @@ type HistoryItem = {
   output?: React.ReactNode;
 };
 
-function Banner({ visible, onQuick }: { visible: boolean; onQuick: (cmd: string) => void }) {
+function Banner({ visible }: { visible: boolean }) {
   if (!visible) return null;
+
+  const art = `
+  ██████  ▒█████   █    ██  ██▀███   ██▓  ██████  ██░ ██      ▄████  ██░ ██  ▒█████    ██████  ██░ ██ 
+▒██    ▒ ▒██▒  ██▒ ██  ▓██▒▓██ ▒ ██▒▓██▒▒██    ▒ ▓██░ ██▒    ██▒ ▀█▒▓██░ ██▒▒██▒  ██▒▒██    ▒ ▓██░ ██▒
+░ ▓██▄   ▒██░  ██▒▓██  ▒██░▓██ ░▄█ ▒▒██▒░ ▓██▄   ▒██▀▀██░   ▒██░▄▄▄░▒██▀▀██░▒██░  ██▒░ ▓██▄   ▒██▀▀██░
+  ▒   ██▒▒██   ██░▓▓█  ░██░▒██▀▀█▄  ░██░  ▒   ██▒░▓█ ░██    ░▓█  ██▓░▓█ ░██ ▒██   ██░  ▒   ██▒░▓█ ░██ 
+▒██████▒▒░ ████▓▒░▒▒█████▓ ░██▓ ▒██▒░██░▒██████▒▒░▓█▒░██▓   ░▒▓███▀▒░▓█▒░██▓░ ████▓▒░▒██████▒▒░▓█▒░██▓
+▒ ▒▓▒ ▒ ░░ ▒░▒░▒░ ░▒▓▒ ▒ ▒ ░ ▒▓ ░▒▓░░▓  ▒ ▒▓▒ ▒ ░ ▒ ░░▒░▒    ░▒   ▒  ▒ ░░▒░▒░ ▒░▒░▒░ ▒ ▒▓▒ ▒ ░ ▒ ░░▒░▒
+░ ░▒  ░ ░  ░ ▒ ▒░ ░░▒░ ░ ░   ░▒ ░ ▒░ ▒ ░░ ░▒  ░ ░ ▒ ░▒░ ░     ░   ░  ▒ ░▒░ ░  ░ ▒ ▒░ ░ ░▒  ░ ░ ▒ ░▒░ ░
+░  ░  ░  ░ ░ ░ ▒   ░░░ ░ ░   ░░   ░  ▒ ░░  ░  ░   ░  ░░ ░   ░ ░   ░  ░  ░░ ░░ ░ ░ ▒  ░  ░  ░   ░  ░░ ░
+      ░      ░ ░     ░        ░      ░        ░   ░  ░  ░         ░  ░  ░  ░    ░ ░        ░   ░  ░  ░
+`;
+
   return (
     <div className="text-zinc-300">
-      <pre className="whitespace-pre leading-5" style={{ color: "#cdd6f4" }}>
-{`  _____                           _     _     _     _       
- / ____|                         | |   | |   | |   | |      
-| (___   ___  _   _ _ __ ___  ___| |_  | |__ | |__ | | ___  
- \\___ \\ / _ \\| | | | '__/ _ \\/ __| __| | '_ \\| '_ \\| |/ _ \\ 
- ____) | (_) | |_| | | |  __/\\__ \\ |_  | | | | | | | |  __/ 
-|_____/ \\___/ \\__,_|_|  \\___||___/\\__| |_| |_|_| |_|_|\\___| 
-         
-`}
-      </pre>
-      <div className="mt-1" style={{ color: "#a6adc8" }}>Click a quick link or type <span className="text-zinc-200">help</span>:</div>
-      <div className="mt-2 flex flex-wrap gap-2">
-        <button className="px-2 py-1 rounded border border-zinc-700 hover:bg-zinc-800" onClick={() => onQuick("about details")}>About</button>
-        <button className="px-2 py-1 rounded border border-zinc-700 hover:bg-zinc-800" onClick={() => onQuick("projects list")}>Projects</button>
-        <button className="px-2 py-1 rounded border border-zinc-700 hover:bg-zinc-800" onClick={() => onQuick("skills")}>Skills</button>
-        <button className="px-2 py-1 rounded border border-zinc-700 hover:bg-zinc-800" onClick={() => onQuick("socials")}>Socials</button>
-        <button className="px-2 py-1 rounded border border-zinc-700 hover:bg-zinc-800" onClick={() => onQuick("resume")}>Resume</button>
-      </div>
+      <pre className="whitespace-pre leading-5 text-green-300 crt-glow" style={{ color: "#86efac" }}>{art}</pre>
+      <div className="mt-1" style={{ color: "#a6adc8" }}>Type <span className="text-zinc-200">help</span> to see available commands.</div>
     </div>
   );
 }
@@ -55,30 +52,101 @@ type TerminalProps = {
   chrome?: boolean;
   externalCommand?: string | null;
   onExternalConsumed?: () => void;
+  showBanner?: boolean;
+  scrollHeightClass?: string; // applies to the scroll area height when embedded
+  showFooter?: boolean; // controls bottom hint/footer
+  sessionKey?: string; // when this changes, the terminal clears history (new session)
+  scrollMode?: 'internal' | 'page'; // 'internal' uses an inner scroll container; 'page' lets the whole page scroll
 };
 
-export default function Terminal({ embedded = false, chrome = true, externalCommand = null, onExternalConsumed }: TerminalProps) {
+export default function Terminal({ embedded = false, chrome = true, externalCommand = null, onExternalConsumed, showBanner = true, scrollHeightClass, showFooter = true, sessionKey, scrollMode = 'internal' }: TerminalProps) {
   const [history, setHistory] = useState<HistoryItem[]>(() => []);
   const [input, setInput] = useState("");
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
   const [theme, setTheme] = useState<ThemeName>("mocha");
-  const [bannerVisible, setBannerVisible] = useState(true);
+  const [bannerVisible, setBannerVisible] = useState(showBanner);
   const [prompt, setPrompt] = useState<string>("s0urishg@7sg56:~");
+  const [autoScroll, setAutoScroll] = useState<boolean>(true);
+  const [atBottom, setAtBottom] = useState<boolean>(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const envRef = useRef<Env | null>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
   useEffect(() => {
+    setBannerVisible(showBanner);
+  }, [showBanner]);
+
+  const scrollToBottom = useCallback(() => {
+    // In page scroll mode, ensure the input (cursor) is brought into view
+    if (scrollMode === 'page') {
+      const target = inputRef.current ?? bottomRef.current;
+      try {
+        target?.scrollIntoView({ block: 'end' });
+        return;
+      } catch {}
+      try {
+        const doc = document.documentElement;
+        window.scrollTo({ top: doc.scrollHeight });
+        return;
+      } catch {}
+    }
+    // Internal scroll mode: use the sentinel within the scroll container
+    if (bottomRef.current) {
+      try {
+        bottomRef.current.scrollIntoView({ block: "end" });
+        return;
+      } catch {}
+    }
+    const el = containerRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [scrollMode]);
+
+  const onScroll = useCallback(() => {
+    if (scrollMode === 'page') {
+      const doc = document.documentElement;
+      const nearBottom = (window.scrollY + window.innerHeight) >= (doc.scrollHeight - 10);
+      setAtBottom(nearBottom);
+      setAutoScroll(nearBottom);
+      return;
+    }
     const el = containerRef.current;
     if (!el) return;
-    // Instant scroll to bottom to avoid perceived delay
-    el.scrollTop = el.scrollHeight;
-  }, [history.length]);
+    const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
+    setAtBottom(nearBottom);
+    setAutoScroll(nearBottom);
+  }, [scrollMode]);
+
+  useEffect(() => {
+    if (autoScroll) scrollToBottom();
+  }, [history.length, bannerVisible, autoScroll, scrollToBottom]);
+
+  useEffect(() => {
+    const onResize = () => scrollToBottom();
+    window.addEventListener("resize", onResize);
+    if (scrollMode === 'page') {
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+    return () => {
+      window.removeEventListener("resize", onResize);
+      if (scrollMode === 'page') {
+        window.removeEventListener('scroll', onScroll);
+      }
+    };
+  }, [scrollToBottom, scrollMode, onScroll]);
+
+  // Reset session when sessionKey changes
+  useEffect(() => {
+    if (sessionKey === undefined) return;
+    setHistory([]);
+    setInput("");
+    setHistoryIndex(null);
+  }, [sessionKey]);
 
   const historyCommands = useMemo(() => history.map(h => h.command).filter(Boolean), [history]);
 
@@ -175,14 +243,19 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
   // Embedded: render body only (no outer overlay/chrome)
   if (embedded) {
     return (
-      <div className="w-full">
+      <div className="w-full h-full flex flex-col min-h-0">
         {chrome && (
           <div className="flex items-center gap-2 pb-2">
             <span className="ml-3 text-xs" style={{ color: "#a6adc8" }}>sourish@portfolio — zsh</span>
           </div>
         )}
-        <div ref={containerRef} className="flex-1 overflow-y-auto pr-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>
-          <Banner visible={bannerVisible} onQuick={(cmd) => run(cmd)} />
+        <div
+          ref={containerRef}
+          className={`${scrollMode === 'internal' ? 'overscroll-contain overflow-y-auto' : 'overflow-visible'} pr-2 font-mono text-sm flex-1 min-h-0 ${scrollHeightClass ?? ""}`}
+          style={{ color: "#cdd6f4" }}
+          onScroll={scrollMode === 'internal' ? onScroll : undefined}
+        >
+          <Banner visible={bannerVisible} />
           <div className="my-3 border-t" style={{ borderColor: "#313244" }} />
           {history.map(item => (
             <div key={item.id} className="mb-2">
@@ -193,8 +266,9 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
               {item.output && <div className="mt-1 pl-6">{item.output}</div>}
             </div>
           ))}
+          <div ref={bottomRef} />
         </div>
-        <div className="mt-2 flex items-center gap-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>
+        <div className="mt-2 mb-4 flex items-center gap-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>
           <Prompt text={prompt} />
           <input
             ref={inputRef}
@@ -209,7 +283,9 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
             style={{ caretColor: "#a6e3a1" }}
           />
         </div>
-        <div className="mt-2 text-[10px]" style={{ color: "#a6adc8" }}>Type &apos;clear&apos; to clear the screen. Theme: Catppuccin Mocha</div>
+{showFooter && (
+          <div className="mt-2 text-[10px]" style={{ color: "#a6adc8" }}>Type &apos;clear&apos; to clear the screen.</div>
+        )}
       </div>
     );
   }
@@ -224,8 +300,8 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
           </div>
         )}
 
-        <div ref={containerRef} className="h-[70vh] overflow-y-auto pr-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>
-          <Banner visible={bannerVisible} onQuick={(cmd) => run(cmd)} />
+        <div ref={containerRef} className="h-[70vh] overscroll-contain overflow-y-auto pr-2 font-mono text-sm" style={{ color: "#cdd6f4" }} onScroll={onScroll}>
+          <Banner visible={bannerVisible} />
           <div className="my-3 border-t" style={{ borderColor: "#313244" }} />
           {history.map(item => (
             <div key={item.id} className="mb-2">
@@ -236,9 +312,10 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
               {item.output && <div className="mt-1 pl-6">{item.output}</div>}
             </div>
           ))}
+          <div ref={bottomRef} />
         </div>
 
-        <div className="mt-2 flex items-center gap-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>
+        <div className="mt-2 mb-4 flex items-center gap-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>
           <Prompt text={prompt} />
           <input
             ref={inputRef}
@@ -254,8 +331,11 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
           />
         </div>
 
-        <div className="mt-2 text-[10px]" style={{ color: "#a6adc8" }}>Type &apos;clear&apos; to clear the screen. Theme: Catppuccin Mocha</div>
+        {showFooter && (
+          <div className="mt-2 text-[10px]" style={{ color: "#a6adc8" }}>Type &apos;clear&apos; to clear the screen.</div>
+        )}
       </div>
     </div>
   );
 }
+

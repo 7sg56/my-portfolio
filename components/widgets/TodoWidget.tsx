@@ -32,16 +32,17 @@ const tasks: SimpleTask[] = [
 export default function TodoWidget({ span }: { span?: Span }) {
   return (
     <WidgetCard title="Things I be doing" className={spanToClasses(span)}>
-      <div className="font-mono text-zinc-200 h-full flex flex-col gap-2 min-h-0">
-        <div className="flex-1 overflow-y-auto pr-1 space-y-2">
+      <div className="font-mono text-gray-100 h-full flex flex-col gap-3 min-h-0">
+        <div className="flex-1 overflow-y-auto pr-2 space-y-3">
           {tasks.map((t) => (
-            <div key={t.id} className="rounded border border-zinc-800 bg-zinc-900/60 px-3 py-2">
-              <div className={`text-xs ${t.completed ? "line-through text-zinc-400" : "text-zinc-200"}`}>
+            <div key={t.id} className="rounded-lg border border-gray-600/30 bg-gray-700/40 px-4 py-3 hover:bg-gray-700/60 transition-colors duration-200">
+              <div className={`text-sm ${t.completed ? "line-through text-gray-400" : "text-gray-100"}`}>
                 {t.title}
               </div>
             </div>
           ))}
         </div>
+        <div className="w-full h-1 bg-gradient-to-r from-green-500/30 to-emerald-500/30 rounded-full"></div>
       </div>
     </WidgetCard>
   );

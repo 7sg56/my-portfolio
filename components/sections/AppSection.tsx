@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { motion } from "motion/react";
 
 type AppKey = "terminal" | "about" | "upcoming" | "projects" | "gallery";

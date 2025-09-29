@@ -14,15 +14,23 @@ import WeatherWidget from "@/components/widgets/WeatherWidget";
 import TodoWidget from "@/components/widgets/TodoWidget";
 import TetrisWidget from "@/components/widgets/TetrisWidget";
 import ThreeDWidget from "@/components/widgets/ThreeDWidget";
-import Splash from "@/components/desktop/Splash";
+import BootLog from "@/components/boot/BootLog";
+import HeroSelector from "@/components/boot/HeroSelector";
 import Hero from "@/components/hero/Hero";
 import AppSection from "@/components/sections/AppSection";
+import SpaceShooterBG from "@/components/boot/SpaceShooterBG";
 import { BACKGROUND_IMAGE } from "@/config/site";
+import { useRouter } from "next/navigation";
 export default function Home() {
+  const router = useRouter();
   const [showTerminal, setShowTerminal] = useState(true);
   const [minimized, setMinimized] = useState(false);
   const [fullscreen, setFullscreen] = useState(true);
   const [externalCmd, setExternalCmd] = useState<string | null>(null);
+
+  // Boot flow state machine: boot -> grub -> running
+  const [phase, setPhase] = useState<"boot" | "grub" | "running">("boot");
+  const [mode] = useState<"gui" | "cli">("gui");
 
   const [showAbout, setShowAbout] = useState(false);
   const [minAbout, setMinAbout] = useState(false);
@@ -67,35 +75,33 @@ export default function Home() {
 
 
 
-  const [showSplash, setShowSplash] = useState(true);
   const [progress, setProgress] = useState(0);
-  // Simulate loading progress between 3-5s with slight randomness per tick
+  // Simulate loading progress in ~3s, then show GRUB
   useEffect(() => {
-    const total = Math.floor(3000 + Math.random() * 2000); // 3000-5000ms
+    const total = 3000; // fixed 3 seconds
     const interval = 80; // ms per tick
     const steps = Math.max(1, Math.floor(total / interval));
     let current = 0;
     const id = setInterval(() => {
-      // base step with jitter
       const base = 100 / steps;
-      const jitter = base * (Math.random() * 0.3 + 0.85); // 0.85x - 1.15x
+      const jitter = base * 1.0; // steady
       current = Math.min(100, current + jitter);
       setProgress(current);
       if (current >= 100) {
         clearInterval(id);
-        // small delay to fully fill bar before revealing
-        setTimeout(() => setShowSplash(false), 150);
+        setTimeout(() => setPhase("grub"), 100);
       }
     }, interval);
     return () => clearInterval(id);
   }, []);
 
   return (
-    <main className="relative min-h-screen overflow-hidden" style={{ 
-      backgroundImage: `url(${BACKGROUND_IMAGE})`, 
-      backgroundSize: 'cover', 
-      backgroundPosition: 'center', 
-      backgroundRepeat: 'no-repeat' 
+    <main className="relative min-h-screen overflow-hidden" style={{
+      backgroundImage: mode === 'gui' ? `url(${BACKGROUND_IMAGE})` : 'none',
+      backgroundColor: mode === 'cli' ? '#000000' : undefined,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
     }}>
       {/* Main content - always visible */}
       <motion.div
@@ -103,38 +109,42 @@ export default function Home() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 260, damping: 22 }}
       >
-          {/* Hero Section */}
-          <Hero />
+          {mode === 'gui' && (
+            <>
+              {/* Hero Section */}
+              <Hero />
 
-          {/* App Section - Bottom Left */}
-          <AppSection 
-            onOpen={openApp} 
-            active={{
-              terminal: showTerminal,
-              about: showAbout,
-              projects: showProjects,
-              gallery: showGallery,
-              upcoming: showUpcoming
-            }}
-          />
+              {/* App Section - Bottom Left */}
+              <AppSection
+                onOpen={openApp}
+                active={{
+                  terminal: showTerminal,
+                  about: showAbout,
+                  projects: showProjects,
+                  gallery: showGallery,
+                  upcoming: showUpcoming
+                }}
+              />
 
-          {/* Bento Grid Widgets - Right Side */}
-          <div className="absolute right-0 top-0 w-1/2 h-full p-6">
-            <div className="h-full grid grid-cols-3 grid-rows-4 gap-4">
+              {/* Bento Grid Widgets - Right Side */}
+              <div className="absolute right-0 top-0 w-1/2 h-full p-6">
+                <div className="h-full grid grid-cols-3 grid-rows-4 gap-4">
 
-              <ClockWidget span={{ cols: 1, rows: 1 }} />
-              
-              <WeatherWidget span={{ cols: 1, rows: 1 }} />
-              
-              <TetrisWidget span={{ cols: 1, rows: 2 }} />
-              
-              <TodoWidget span={{ cols: 2, rows: 1 }} />
-              
-              <NowListeningWidget span={{ cols: 1, rows: 1 }} />
-              
-              <ThreeDWidget span={{ cols: 2, rows: 2 }} />
-            </div>
-          </div>
+                  <ClockWidget span={{ cols: 1, rows: 1 }} />
+                  
+                  <WeatherWidget span={{ cols: 1, rows: 1 }} />
+                  
+                  <TetrisWidget span={{ cols: 1, rows: 2 }} />
+                  
+                  <TodoWidget span={{ cols: 2, rows: 1 }} />
+                  
+                  <NowListeningWidget span={{ cols: 1, rows: 1 }} />
+                  
+                  <ThreeDWidget span={{ cols: 2, rows: 2 }} />
+                </div>
+              </div>
+            </>
+          )}
 
           {/* Terminal window using AppWindow for unified behavior */}
           <AnimatePresence>
@@ -205,8 +215,46 @@ export default function Home() {
           {/* AppDrawer replaces previous dock */}
       </motion.div>
 
-      {/* Splash overlay - on top with high z-index */}
-      <Splash show={showSplash} progress={progress} />
+      {/* Boot/GRUB overlay (no routing) */}
+      <AnimatePresence>
+        {phase !== 'running' && (
+          <motion.div
+            key="boot-overlay"
+            className="fixed inset-0 z-[70]"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="absolute inset-0 bg-black" />
+            <div className="relative w-full h-full grid place-items-center p-4">
+{phase === 'boot' ? (
+                <div className="absolute inset-0">
+                  <BootLog progress={progress} />
+                </div>
+              ) : (
+                <>
+                  <SpaceShooterBG opacity={0.9} />
+                  <div className="relative w-full max-w-3xl">
+                  <HeroSelector
+                    defaultSeconds={10}
+                    onSelect={(m) => {
+                      if (m === 'desktop') {
+                        router.push('/os/desktop');
+                      } else if (m === 'terminal') {
+                        router.push('/os/terminal');
+                      } else if (m === 'sourish') {
+                        router.push('/os/sourish');
+                      }
+                    }}
+                  />
+                  </div>
+                </>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </main>
   );
 }

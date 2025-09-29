@@ -14,3 +14,31 @@
     transform: translate(-50%, -40%) scale(1);
   }
 }
+
+/* CRT retro effects */
+@keyframes crt-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.96; }
+}
+@keyframes crt-scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+/* Softer glow */
+.crt-glow { text-shadow: 0 0 1px rgba(16,255,106,0.45), 0 0 3px rgba(16,255,106,0.25); }
+.crt-flicker { animation: crt-flicker 2.8s infinite; }
+.crt-scanline {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(16,255,106,0.22), transparent);
+  animation: crt-scan 5s linear infinite;
+  opacity: 0.5;
+}
+
+/* Terminal-portfolio base layout mimic */
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+}

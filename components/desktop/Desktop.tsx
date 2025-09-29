@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "motion/react";
 import { BACKGROUND_IMAGE } from "@/config/site";
 import AppDrawer from "@/components/desktop/AppDrawer";
 
@@ -17,7 +16,7 @@ type DesktopItem = {
   description?: string;
 };
 
-const items: DesktopItem[] = [
+const desktopItems: DesktopItem[] = [
   { 
     key: "terminal", 
     label: "Terminal", 
@@ -51,8 +50,6 @@ const items: DesktopItem[] = [
 ];
 
 export default function Desktop({ onAction, onOpenTerminal }: DesktopProps) {
-  const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
-
   const handleDoubleClick = (key: DesktopItem["key"]) => {
     switch (key) {
       case "terminal":

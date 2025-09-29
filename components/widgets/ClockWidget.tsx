@@ -47,12 +47,13 @@ export default function ClockWidget({ span }: { span?: Span }) {
     : "India Standard Time";
 
   return (
-    <WidgetCard title="Time" headerExtra={<span> IST</span>} className={spanToClasses(span)}>
-      <div className="font-mono text-zinc-200 h-full flex flex-col justify-center items-center">
+    <WidgetCard title="Time" headerExtra={<span>IST</span>} className={spanToClasses(span)}>
+      <div className="font-mono text-gray-100 h-full flex flex-col justify-center items-center space-y-3">
         <div className="text-center">
-          <div className="text-2xl font-bold leading-none mb-2">{timeString}</div>
-          <div className="text-xs text-zinc-400">{dateString}</div>
+          <div className="text-4xl font-bold leading-none mb-3 text-gray-100">{timeString}</div>
+          <div className="text-sm text-gray-300 leading-relaxed">{dateString}</div>
         </div>
+        <div className="w-full h-1 bg-gradient-to-r from-blue-500/30 to-purple-500/30 rounded-full"></div>
       </div>
     </WidgetCard>
   );

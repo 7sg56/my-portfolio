@@ -23,7 +23,7 @@ function spanToClasses(span?: Span): string {
 // Adam Head Model Component
 function AdamHeadModel({ mousePosition }: { mousePosition: { x: number; y: number } }) {
   const { scene, animations } = useGLTF('/adamHead/adamHead.gltf');
-  const { actions, mixer } = useAnimations(animations, scene);
+  const { actions } = useAnimations(animations, scene);
   const groupRef = useRef<THREE.Group>(null);
 
   // Load textures
@@ -157,9 +157,7 @@ function AdamHeadModel({ mousePosition }: { mousePosition: { x: number; y: numbe
   }, [actions]);
 
   // Mouse interaction and animation
-  useFrame((state) => {
-    const time = state.clock.elapsedTime;
-    
+  useFrame(() => {
     if (groupRef.current) {
       // Look towards mouse position - correct direction mapping
       const targetRotationY = Math.atan2(mousePosition.x, 1) * 0.8; // Look left/right towards mouse
@@ -358,10 +356,6 @@ export default function ThreeDWidget({ span }: { span?: Span }) {
     setMousePosition({ x: 0, y: 0 });
   }, []);
 
-  const handleModelError = useCallback(() => {
-    setModelError(true);
-    setUseAdamModel(false);
-  }, []);
 
   // Simulate loading time for Adam model
   useEffect(() => {
