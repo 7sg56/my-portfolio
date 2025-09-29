@@ -257,16 +257,18 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
         >
           <Banner visible={bannerVisible} />
           <div className="my-3 border-t" style={{ borderColor: "#313244" }} />
-          {history.map(item => (
-            <div key={item.id} className="mb-2">
-              <div className="flex items-start gap-2">
-                <Prompt text={prompt} />
-                <span className="whitespace-pre-wrap break-words">{item.command}</span>
+          <div className="max-w-[300px]">
+            {history.map(item => (
+              <div key={item.id} className="mb-2">
+                <div className="flex items-start gap-2">
+                  <Prompt text={prompt} />
+                  <span className="whitespace-pre-wrap break-words">{item.command}</span>
+                </div>
+                {item.output && <div className="mt-1 pl-6 break-words">{item.output}</div>}
               </div>
-              {item.output && <div className="mt-1 pl-6">{item.output}</div>}
-            </div>
-          ))}
-          <div ref={bottomRef} />
+            ))}
+            <div ref={bottomRef} />
+          </div>
         </div>
         <div className="mt-2 mb-4 flex items-center gap-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>
           <Prompt text={prompt} />
@@ -303,16 +305,18 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
         <div ref={containerRef} className="h-[70vh] overscroll-contain overflow-y-auto pr-2 font-mono text-sm" style={{ color: "#cdd6f4" }} onScroll={onScroll}>
           <Banner visible={bannerVisible} />
           <div className="my-3 border-t" style={{ borderColor: "#313244" }} />
-          {history.map(item => (
-            <div key={item.id} className="mb-2">
-              <div className="flex items-start gap-2">
-                <Prompt text={prompt} />
-                <span className="whitespace-pre-wrap break-words">{item.command}</span>
+          <div className="max-w-[300px]">
+            {history.map(item => (
+              <div key={item.id} className="mb-2">
+                <div className="flex items-start gap-2">
+                  <Prompt text={prompt} />
+                  <span className="whitespace-pre-wrap break-words">{item.command}</span>
+                </div>
+                {item.output && <div className="mt-1 pl-6 break-words">{item.output}</div>}
               </div>
-              {item.output && <div className="mt-1 pl-6">{item.output}</div>}
-            </div>
-          ))}
-          <div ref={bottomRef} />
+            ))}
+            <div ref={bottomRef} />
+          </div>
         </div>
 
         <div className="mt-2 mb-4 flex items-center gap-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>

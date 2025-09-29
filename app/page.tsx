@@ -240,11 +240,11 @@ export default function Home() {
                     defaultSeconds={10}
                     onSelect={(m) => {
                       if (m === 'desktop') {
-                        router.push('/os/desktop');
+                        router.push('/portfolio/desktop');
                       } else if (m === 'terminal') {
-                        router.push('/os/terminal');
+                        router.push('/portfolio/terminal');
                       } else if (m === 'sourish') {
-                        router.push('/os/sourish');
+                        router.push('/portfolio/sourish');
                       }
                     }}
                   />
