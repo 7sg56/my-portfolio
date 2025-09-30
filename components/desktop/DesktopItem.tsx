@@ -7,6 +7,7 @@ import WeatherWidget from "@/components/widgets/WeatherWidget";
 import TodoWidget from "@/components/widgets/TodoWidget";
 import ThreeDWidget from "@/components/widgets/ThreeDWidget";
 
+// Allow optional size overrides for widgets
 type DesktopItem = {
   id: string;
   type: "folder" | "widget" | "app";
@@ -16,6 +17,8 @@ type DesktopItem = {
   y: number;
   appType?: "finder" | "about" | "projects" | "gallery" | "upcoming";
   widgetType?: "clock" | "weather" | "todo" | "3d";
+  widthPx?: number;
+  heightPx?: number;
 };
 
 type DesktopItemProps = {
@@ -47,6 +50,9 @@ export default function DesktopItemComponent({
     }
   };
 
+  const widgetWidth = item.widthPx ?? 224; // matches previous w-56
+  const widgetHeight = item.heightPx ?? 192; // matches previous h-48
+
   return (
     <motion.div
       className={`absolute cursor-pointer group ${
@@ -60,7 +66,9 @@ export default function DesktopItemComponent({
       transition={{ duration: 0.3 }}
     >
       {item.type === "widget" ? (
-        <div className="w-56 h-48 bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl rounded-xl border border-gray-700/50 p-2 hover:bg-gradient-to-br hover:from-gray-700/90 hover:to-gray-800/90 transition-all duration-200 shadow-lg">
+        <div
+          style={{ width: widgetWidth, height: widgetHeight }}
+        >
           {renderDesktopWidget(item)}
         </div>
       ) : (

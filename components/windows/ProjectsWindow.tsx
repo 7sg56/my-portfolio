@@ -25,7 +25,7 @@ export default function ProjectsWindow(props: {
     >
       <div className="space-y-3">
         {PROJECTS.map((p) => (
-          <div key={p.slug} className="border border-zinc-800 rounded p-3">
+          <div key={p.slug} className="border border-zinc-700/40 rounded-xl p-4 bg-black/30 backdrop-blur">
             <div className="text-zinc-100 font-semibold">{p.name}</div>
             <div className="text-zinc-300">{p.desc}</div>
             <div className="text-zinc-400 text-sm">Tech: {p.tech.join(", ")}</div>

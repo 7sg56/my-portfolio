@@ -3,10 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Terminal from "@/components/terminal/Terminal";
-import AboutWindow from "@/components/windows/AboutWindow";
+import AboutHome from "@/components/windows/AboutHome";
 import ProjectsWindow from "@/components/windows/ProjectsWindow";
-import UpcomingWindow from "@/components/windows/UpcomingWindow";
-import GalleryWindow from "@/components/windows/GalleryWindow";
 import AppWindow from "@/components/windows/AppWindow";
 import NowListeningWidget from "@/components/widgets/NowListeningWidget";
 import ClockWidget from "@/components/widgets/ClockWidget";
@@ -36,17 +34,9 @@ export default function Home() {
   const [minAbout, setMinAbout] = useState(false);
   const [fsAbout, setFsAbout] = useState(false);
 
-  const [showUpcoming, setShowUpcoming] = useState(false);
-  const [minUpcoming, setMinUpcoming] = useState(false);
-  const [fsUpcoming, setFsUpcoming] = useState(false);
-
   const [showProjects, setShowProjects] = useState(false);
   const [minProjects, setMinProjects] = useState(false);
   const [fsProjects, setFsProjects] = useState(false);
-
-  const [showGallery, setShowGallery] = useState(false);
-  const [minGallery, setMinGallery] = useState(false);
-  const [fsGallery, setFsGallery] = useState(false);
 
   const openTerminal = () => {
     setShowTerminal(true);
@@ -61,14 +51,8 @@ export default function Home() {
       case "about":
         setShowAbout(true); setMinAbout(false);
         return;
-      case "upcoming":
-        setShowUpcoming(true); setMinUpcoming(false);
-        return;
       case "projects":
         setShowProjects(true); setMinProjects(false);
-        return;
-      case "gallery":
-        setShowGallery(true); setMinGallery(false);
         return;
     }
   };
@@ -120,9 +104,7 @@ export default function Home() {
                 active={{
                   terminal: showTerminal,
                   about: showAbout,
-                  projects: showProjects,
-                  gallery: showGallery,
-                  upcoming: showUpcoming
+                  projects: showProjects
                 }}
               />
 
@@ -171,14 +153,16 @@ export default function Home() {
           {/* App windows */}
           <AnimatePresence>
             {showAbout && !minAbout && (
-              <AboutWindow
-                open
+              <AppWindow
+                title="About"
                 fullscreen={fsAbout}
                 zIndex={35}
                 onClose={() => setShowAbout(false)}
                 onMinimize={() => setMinAbout(true)}
                 onToggleFullscreen={() => setFsAbout((x) => !x)}
-              />
+              >
+                <AboutHome onOpen={() => {}} />
+              </AppWindow>
             )}
             {showProjects && !minProjects && (
               <ProjectsWindow
@@ -190,26 +174,7 @@ export default function Home() {
                 onToggleFullscreen={() => setFsProjects((x) => !x)}
               />
             )}
-            {showUpcoming && !minUpcoming && (
-              <UpcomingWindow
-                open
-                fullscreen={fsUpcoming}
-                zIndex={33}
-                onClose={() => setShowUpcoming(false)}
-                onMinimize={() => setMinUpcoming(true)}
-                onToggleFullscreen={() => setFsUpcoming((x) => !x)}
-              />
-            )}
-            {showGallery && !minGallery && (
-              <GalleryWindow
-                open
-                fullscreen={fsGallery}
-                zIndex={32}
-                onClose={() => setShowGallery(false)}
-                onMinimize={() => setMinGallery(true)}
-                onToggleFullscreen={() => setFsGallery((x) => !x)}
-              />
-            )}
+            
           </AnimatePresence>
 
           {/* AppDrawer replaces previous dock */}

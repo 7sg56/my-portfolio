@@ -1,4 +1,4 @@
-export const BACKGROUND_IMAGE = "/bg2.png"; // set your background image here
+export const BACKGROUND_IMAGE = "/bg3.png"; // set your background image here
 
 export const currentTrack = {
   title: "I Wonder",

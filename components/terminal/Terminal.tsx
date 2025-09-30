@@ -67,7 +67,6 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
   const [bannerVisible, setBannerVisible] = useState(showBanner);
   const [prompt, setPrompt] = useState<string>("s0urishg@7sg56:~");
   const [autoScroll, setAutoScroll] = useState<boolean>(true);
-  const [atBottom, setAtBottom] = useState<boolean>(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -111,14 +110,14 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
     if (scrollMode === 'page') {
       const doc = document.documentElement;
       const nearBottom = (window.scrollY + window.innerHeight) >= (doc.scrollHeight - 10);
-      setAtBottom(nearBottom);
+      // Auto-scroll state updated
       setAutoScroll(nearBottom);
       return;
     }
     const el = containerRef.current;
     if (!el) return;
     const nearBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 10;
-    setAtBottom(nearBottom);
+    // Auto-scroll state updated
     setAutoScroll(nearBottom);
   }, [scrollMode]);
 
@@ -257,7 +256,7 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
         >
           <Banner visible={bannerVisible} />
           <div className="my-3 border-t" style={{ borderColor: "#313244" }} />
-          <div className="max-w-[300px]">
+          <div className="max-w-[900px]">
             {history.map(item => (
               <div key={item.id} className="mb-2">
                 <div className="flex items-start gap-2">

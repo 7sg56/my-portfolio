@@ -114,13 +114,13 @@ export default function AppWindow({
         transition={{ type: "spring", stiffness: 260, damping: 24, layout: { duration: 0.18 } }}
         className={
           (fullscreen
-            ? "pointer-events-auto h-full"
-            : "pointer-events-auto") +
-          " relative rounded-lg border backdrop-blur p-3 flex flex-col font-mono text-sm shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
+            ? "pointer-events-auto absolute inset-0"
+            : "pointer-events-auto absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2") +
+          " rounded-lg border p-3 flex flex-col font-mono text-sm shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
         }
         style={{
-          borderColor: DEBUG_UI ? "#89b4fa" : "#45475a",
-          backgroundColor: "rgba(30,30,46,0.85)",
+          borderColor: DEBUG_UI ? "#89b4fa" : "#27272a", // zinc-800
+          backgroundColor: "#18181a", // solid primary surface
           width: fullscreen ? "100%" : size.w,
           height: fullscreen ? "100%" : size.h,
           outline: DEBUG_UI ? "1px dashed #89b4fa" : undefined,
@@ -171,7 +171,7 @@ export default function AppWindow({
         {!fullscreen && (
           <div
             onPointerDown={startResize}
-            className="absolute bottom-2 right-2 h-3 w-3 rounded-sm border border-zinc-400/30 bg-zinc-500/40 cursor-se-resize"
+            className="absolute bottom-2 right-2 h-3 w-3 rounded-sm border border-zinc-600 bg-zinc-500 cursor-se-resize"
           />
         )}
       </motion.div>

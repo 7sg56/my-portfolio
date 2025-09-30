@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { BACKGROUND_IMAGE } from "@/config/site";
 import AppDrawer from "@/components/desktop/AppDrawer";
 
@@ -9,66 +9,8 @@ type DesktopProps = {
   onOpenTerminal?: () => void;
 };
 
-type DesktopItem = { 
-  key: "terminal" | "about" | "upcoming" | "projects" | "gallery"; 
-  label: string; 
-  icon?: string;
-  description?: string;
-};
-
-const desktopItems: DesktopItem[] = [
-  { 
-    key: "terminal", 
-    label: "Terminal", 
-    icon: "/window.svg",
-    description: "Command Line Interface"
-  },
-  { 
-    key: "about", 
-    label: "About Me", 
-    icon: "/globe.svg",
-    description: "Personal Information"
-  },
-  { 
-    key: "projects", 
-    label: "Projects", 
-    icon: "/globe.svg",
-    description: "Portfolio & Work"
-  },
-  { 
-    key: "gallery", 
-    label: "Gallery", 
-    icon: "/file.svg",
-    description: "Photos & Artwork"
-  },
-  { 
-    key: "upcoming", 
-    label: "Upcoming", 
-    icon: "/file.svg",
-    description: "Future Plans"
-  },
-];
 
 export default function Desktop({ onAction, onOpenTerminal }: DesktopProps) {
-  const handleDoubleClick = (key: DesktopItem["key"]) => {
-    switch (key) {
-      case "terminal":
-        onOpenTerminal?.();
-        break;
-      case "about":
-        onAction("__open_window__about");
-        break;
-      case "upcoming":
-        onAction("__open_window__upcoming");
-        break;
-      case "projects":
-        onAction("__open_window__projects");
-        break;
-      case "gallery":
-        onAction("__open_window__gallery");
-        break;
-    }
-  };
 
   return (
     <div className="absolute inset-0 select-none pointer-events-none" aria-label="Desktop background">

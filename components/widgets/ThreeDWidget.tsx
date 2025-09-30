@@ -335,7 +335,7 @@ export default function ThreeDWidget({ span }: { span?: Span }) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   const [useAdamModel, setUseAdamModel] = useState(true);
-  const [modelError, setModelError] = useState(false);
+  const [modelError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const handleMouseMove = useCallback((event: React.MouseEvent<HTMLDivElement>) => {

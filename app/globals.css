@@ -15,6 +15,28 @@
   }
 }
 
+/* Design tokens */
+:root {
+  --primary: #18181a;            /* solid window surface */
+  --accent: #2563eb;             /* default accent (update to match your image) */
+  --text: #e5e7eb;               /* primary text */
+  --text-2: #cbd5e1;             /* secondary text */
+  --border: #2a2a2d;             /* neutral border */
+  --glass-1: rgba(24,24,26,0.60); /* menus/dock */
+  --glass-2: rgba(24,24,26,0.50); /* cards/widgets */
+}
+
+/* Utility classes for theme */
+.surface-solid { background: var(--primary); }
+.glass-1 { background: var(--glass-1); backdrop-filter: blur(10px); }
+.glass-2 { background: var(--glass-2); backdrop-filter: blur(8px); }
+.border-theme { border-color: var(--border) !important; }
+.text-theme { color: var(--text) !important; }
+.text-theme-2 { color: var(--text-2) !important; }
+.bg-accent { background-color: var(--accent) !important; }
+.text-accent { color: var(--accent) !important; }
+.ring-accent { box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 65%, transparent); }
+
 /* CRT retro effects */
 @keyframes crt-flicker {
   0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
@@ -36,7 +58,7 @@
   opacity: 0.5;
 }
 
-/* Terminal-portfolio base layout mimic */
+/* Base layout */
 html, body {
   margin: 0;
   padding: 0;

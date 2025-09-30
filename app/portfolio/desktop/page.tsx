@@ -1,19 +1,29 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { AnimatePresence } from "motion/react";
 import MenuBar from "@/components/desktop/MenuBar";
 import Dock from "@/components/desktop/Dock";
-import DesktopItemComponent from "@/components/desktop/DesktopItem";
 import DesktopBackground from "@/components/desktop/DesktopBackground";
 import AppWindow from "@/components/windows/AppWindow";
-import AboutWindow from "@/components/windows/AboutWindow";
-import ProjectsWindow from "@/components/windows/ProjectsWindow";
-import GalleryWindow from "@/components/windows/GalleryWindow";
-import UpcomingWindow from "@/components/windows/UpcomingWindow";
-import FinderWindow from "@/components/windows/FinderWindow";
+import SkillsWindow from "@/components/windows/SkillsWindow";
+import ContactWindow from "@/components/windows/ContactWindow";
+import ProjectsContent from "@/components/windows/ProjectsContent";
+import AboutHome from "@/components/windows/AboutHome";
 
-// Desktop item types
+// Types
+export type AppType = "about" | "projects" | "skills" | "contact" | "terminal";
+export type WindowAppType = Exclude<AppType, "terminal">;
+export type WidgetType = "clock" | "weather" | "todo" | "3d";
+
+type DockApp = {
+  id: string;
+  name: string;
+  icon: string;
+  appType: string;
+};
+
 type DesktopItem = {
   id: string;
   type: "folder" | "widget" | "app";
@@ -21,178 +31,238 @@ type DesktopItem = {
   icon: string;
   x: number;
   y: number;
-  appType?: "finder" | "about" | "projects" | "gallery" | "upcoming";
-  widgetType?: "clock" | "weather" | "todo" | "3d";
+  appType?: WindowAppType; // desktop app shortcuts (no terminal here)
+  widgetType?: WidgetType;
+  // Optional for widgets: span in bento grid and computed pixel size
+  span?: { cols: number; rows: number };
+  widthPx?: number;
+  heightPx?: number;
 };
 
 // Dock app definitions
-const dockApps = [
-  { id: "finder", name: "Finder", icon: "/window.svg", appType: "finder" },
+const dockApps: DockApp[] = [
   { id: "about", name: "About", icon: "/window.svg", appType: "about" },
-  { id: "projects", name: "Projects", icon: "/globe.svg", appType: "projects" },
-  { id: "gallery", name: "Gallery", icon: "/file.svg", appType: "gallery" },
-  { id: "upcoming", name: "Upcoming", icon: "/next.svg", appType: "upcoming" },
+  { id: "skills", name: "Skills", icon: "/window.svg", appType: "skills" },
+  { id: "contact", name: "Contact", icon: "/window.svg", appType: "contact" },
   { id: "terminal", name: "Terminal", icon: "/window.svg", appType: "terminal" },
 ];
 
-// Desktop items (folders, widgets, etc.)
-const desktopItems: DesktopItem[] = [
-  { id: "clock", type: "widget", name: "Clock", icon: "🕐", x: 50, y: 50, widgetType: "clock" },
-  { id: "weather", type: "widget", name: "Weather", icon: "🌤️", x: 350, y: 50, widgetType: "weather" },
-  { id: "todo", type: "widget", name: "Todo", icon: "📝", x: 650, y: 50, widgetType: "todo" },
-  { id: "3d", type: "widget", name: "3D Model", icon: "🎮", x: 950, y: 50, widgetType: "3d" },
-  { id: "finder-app", type: "app", name: "Finder", icon: "🔍", x: 50, y: 400, appType: "finder" },
-  { id: "projects-folder", type: "folder", name: "Projects", icon: "📁", x: 200, y: 400 },
-  { id: "gallery-folder", type: "folder", name: "Gallery", icon: "📁", x: 350, y: 400 },
-];
+// Desktop items removed for cleaner OS look
+const desktopItems: Readonly<DesktopItem[]> = [] as const;
 
 export default function DesktopOSPage() {
-  const [openWindows, setOpenWindows] = useState<Record<string, boolean>>({});
-  const [focusedWindow, setFocusedWindow] = useState<string | null>(null);
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [finderPath, setFinderPath] = useState<string>("/");
+  const router = useRouter();
 
-  // Open window handler
-  const openWindow = useCallback((appType: string) => {
-    setOpenWindows(prev => ({ ...prev, [appType]: true }));
-    setFocusedWindow(appType);
-  }, []);
+  // track which windows are open and a z-order stack for layering
+  const [openWindows, setOpenWindows] = useState<Record<WindowAppType, boolean>>({
+    about: true,
+    projects: false,
+    skills: false,
+    contact: false,
+  });
+  const [windowStack, setWindowStack] = useState<WindowAppType[]>(["about"]);
+  const [focusedWindow, setFocusedWindow] = useState<WindowAppType | null>("about");
 
-  // Close window handler
-  const closeWindow = useCallback((appType: string) => {
-    setOpenWindows(prev => ({ ...prev, [appType]: false }));
-    if (focusedWindow === appType) {
-      setFocusedWindow(null);
-    }
-  }, [focusedWindow]);
+  // Track fullscreen state per window
+  const [fullscreenWindows, setFullscreenWindows] = useState<Record<WindowAppType, boolean>>({
+    about: false,
+    projects: false,
+    skills: false,
+    contact: false,
+  });
 
-  // Focus window handler
-  const focusWindow = useCallback((appType: string) => {
-    setFocusedWindow(appType);
-  }, []);
+  const computeLayout = useCallback(() => {
+    // Separate items
+    const foldersAndApps = desktopItems.filter((i) => i.type === "folder" || i.type === "app");
+    const widgets = desktopItems.filter((i) => i.type === "widget");
 
-  // Handle dock app click
-  const handleDockAppClick = (app: typeof dockApps[0]) => {
-    if (app.appType === "terminal") {
-      // Navigate to terminal
-      window.location.href = "/os/terminal";
+    const width = typeof window !== "undefined" ? window.innerWidth : 1440;
+    // const height = typeof window !== "undefined" ? window.innerHeight : 900;
+
+    // Left column layout for folders/apps
+    const leftMargin = 24;
+    const topOffset = 96; // account for menu bar
+    const vGap = 100;
+    // Left column layout for folders/apps
+    foldersAndApps.map((item, idx) => ({
+      ...item,
+      x: leftMargin,
+      y: topOffset + idx * vGap,
+    }));
+
+    // Right bento grid for widgets with variable spans
+    const rightMargin = 24;
+    let cols = 3;
+    let baseW = 224; // base tile width
+    let baseH = 192; // base tile height
+    let gap = 16;
+
+    // Responsive scaling for widget tiles
+    if (width < 1024) {
+      cols = 2; baseW = 180; baseH = 160; gap = 12;
+    } else if (width < 1440) {
+      cols = 3; baseW = 220; baseH = 180; gap = 14;
+    } else if (width < 1920) {
+      cols = 3; baseW = 240; baseH = 200; gap = 16;
     } else {
-      openWindow(app.appType!);
+      cols = 4; baseW = 260; baseH = 220; gap = 18;
     }
-  };
 
-  // Handle desktop item double click
-  const handleDesktopItemDoubleClick = (item: DesktopItem) => {
-    if (item.type === "widget") {
-      // Widgets are always visible, just focus them
-      return;
-    } else if (item.type === "folder") {
-      // Open folders in Finder with appropriate path
-      if (item.name === "Projects") {
-        setFinderPath("/Desktop/Projects");
-      } else if (item.name === "Gallery") {
-        setFinderPath("/Desktop/Gallery");
-      } else {
-        setFinderPath("/Desktop");
+    const gridW = cols * baseW + (cols - 1) * gap;
+    const xStart = Math.max(0, width - rightMargin - gridW);
+    const yStart = topOffset;
+
+    // Occupancy grid (rows will grow dynamically)
+    const occupancy: boolean[][] = [];
+    const ensureRows = (rows: number) => {
+      while (occupancy.length < rows) {
+        occupancy.push(Array(cols).fill(false));
       }
-      openWindow("finder");
-    } else if (item.type === "app" && item.appType) {
-      // Open app
-      openWindow(item.appType);
-    }
-  };
+    };
+    const canPlace = (r: number, c: number, spanCols: number, spanRows: number) => {
+      if (c + spanCols > cols) return false;
+      ensureRows(r + spanRows);
+      for (let rr = r; rr < r + spanRows; rr++) {
+        for (let cc = c; cc < c + spanCols; cc++) {
+          if (occupancy[rr][cc]) return false;
+        }
+      }
+      return true;
+    };
+    const markPlaced = (r: number, c: number, spanCols: number, spanRows: number) => {
+      for (let rr = r; rr < r + spanRows; rr++) {
+        for (let cc = c; cc < c + spanCols; cc++) {
+          occupancy[rr][cc] = true;
+        }
+      }
+    };
 
-  // Handle desktop item selection
-  const handleDesktopItemClick = (itemId: string, event: React.MouseEvent) => {
-    if (event.ctrlKey || event.metaKey) {
-      // Multi-select
-      setSelectedItems(prev => 
-        prev.includes(itemId) 
-          ? prev.filter(id => id !== itemId)
-          : [...prev, itemId]
-      );
-    } else {
-      // Single select
-      setSelectedItems([itemId]);
-    }
-  };
+    const placedWidgets: DesktopItem[] = [];
 
+    for (const item of widgets) {
+      const spanCols = Math.max(1, Math.min(cols, item.span?.cols ?? 1));
+      const spanRows = Math.max(1, item.span?.rows ?? 1);
+
+      let placed = false;
+      let r = 0;
+      while (!placed) {
+        ensureRows(r + spanRows);
+        for (let c = 0; c < cols; c++) {
+          if (canPlace(r, c, spanCols, spanRows)) {
+            const x = xStart + c * (baseW + gap);
+            const y = yStart + r * (baseH + gap);
+            const widthPx = spanCols * baseW + (spanCols - 1) * gap;
+            const heightPx = spanRows * baseH + (spanRows - 1) * gap;
+            placedWidgets.push({ ...item, x, y, widthPx, heightPx });
+            markPlaced(r, c, spanCols, spanRows);
+            placed = true;
+            break;
+          }
+        }
+        if (!placed) r += 1; // go to next row
+      }
+    }
+
+    // Layout computed
+  }, []);
+
+  useEffect(() => {
+    computeLayout();
+    if (typeof window !== "undefined") {
+      const onResize = () => computeLayout();
+      window.addEventListener("resize", onResize);
+      return () => window.removeEventListener("resize", onResize);
+    }
+  }, [computeLayout]);
+
+  // Window helpers
+  const bringToFront = useCallback((appType: WindowAppType) => {
+    setWindowStack(prev => [...prev.filter(w => w !== appType), appType]);
+    setFocusedWindow(appType);
+  }, []);
+
+  const openWindow = useCallback((appType: WindowAppType) => {
+    setOpenWindows(prev => ({ ...prev, [appType]: true }));
+    setWindowStack(prev => [...prev.filter(w => w !== appType), appType]);
+    setFocusedWindow(appType);
+  }, []);
+
+  const closeWindow = useCallback((appType: WindowAppType) => {
+    setOpenWindows(prev => ({ ...prev, [appType]: false }));
+    setWindowStack(prev => prev.filter(w => w !== appType));
+    setFocusedWindow(prev => (prev === appType ? null : prev));
+  }, []);
+
+  const toggleFullscreen = useCallback((appType: WindowAppType) => {
+    setFullscreenWindows(prev => ({ ...prev, [appType]: !prev[appType] }));
+    bringToFront(appType);
+  }, [bringToFront]);
+
+  // Dock app click
+  const handleDockAppClick = useCallback((app: DockApp) => {
+    if (app.appType === "terminal") {
+      router.push("/portfolio/terminal");
+    } else if (app.appType in openWindows) {
+      openWindow(app.appType as WindowAppType);
+    }
+  }, [openWindow, router, openWindows]);
+
+  const clearSelection = useCallback(() => {}, []);
+
+
+  // Window descriptors to remove JSX duplication
+  const WINDOW_CONFIG: Record<WindowAppType, { title: string; render: () => React.JSX.Element }> = {
+    about: { title: "About", render: () => <AboutHome onOpen={(app) => openWindow(app as WindowAppType)} /> },
+    projects: { title: "Projects", render: () => <ProjectsContent /> },
+    skills: { title: "Skills", render: () => <SkillsWindow /> },
+    contact: { title: "Contact / Socials", render: () => <ContactWindow /> },
+  } as const;
+
+  const zBase = 100; // base z-index for windows
 
   return (
-    <div className="relative w-full h-screen bg-black overflow-hidden select-none">
+    <div
+      className="relative w-full h-screen bg-black overflow-hidden select-none"
+      role="application"
+      aria-label="Desktop environment"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) {
+          clearSelection();
+          setFocusedWindow(null);
+        }
+      }}
+    >
       {/* Desktop Background */}
-      <DesktopBackground backgroundImage="/bg.jpg" />
+      <DesktopBackground backgroundImage="/bg3.png" overlay={false} />
 
       {/* Menu Bar */}
-      <MenuBar />
+      <MenuBar title={focusedWindow ? WINDOW_CONFIG[focusedWindow]?.title : "Desktop"} showSystemMenu={true} terminalHref="/portfolio/terminal" shutdownHref="/gui" />
 
-      {/* Desktop Items */}
-      <div className="absolute inset-0 pt-8">
-        {desktopItems.map((item) => (
-          <DesktopItemComponent
-            key={item.id}
-            item={item}
-            isSelected={selectedItems.includes(item.id)}
-            onClick={handleDesktopItemClick}
-            onDoubleClick={handleDesktopItemDoubleClick}
-          />
-        ))}
-      </div>
+      {/* Desktop Items removed in this revamp */}
 
       {/* Dock */}
       <Dock apps={dockApps} onAppClick={handleDockAppClick} />
 
       {/* Windows */}
       <AnimatePresence>
-            {openWindows.finder && (
-              <AppWindow
-                title="Finder"
-                onClose={() => closeWindow("finder")}
-                zIndex={focusedWindow === "finder" ? 50 : 40}
-              >
-                <FinderWindow initialPath={finderPath} />
-              </AppWindow>
-            )}
-
-        {openWindows.about && (
-          <AppWindow
-            title="About Me"
-            onClose={() => closeWindow("about")}
-            zIndex={focusedWindow === "about" ? 50 : 40}
-          >
-            <AboutWindow />
-          </AppWindow>
-        )}
-
-        {openWindows.projects && (
-          <AppWindow
-            title="Projects"
-            onClose={() => closeWindow("projects")}
-            zIndex={focusedWindow === "projects" ? 50 : 40}
-          >
-            <ProjectsWindow />
-          </AppWindow>
-        )}
-
-        {openWindows.gallery && (
-          <AppWindow
-            title="Gallery"
-            onClose={() => closeWindow("gallery")}
-            zIndex={focusedWindow === "gallery" ? 50 : 40}
-          >
-            <GalleryWindow />
-          </AppWindow>
-        )}
-
-        {openWindows.upcoming && (
-          <AppWindow
-            title="Upcoming"
-            onClose={() => closeWindow("upcoming")}
-            zIndex={focusedWindow === "upcoming" ? 50 : 40}
-          >
-            <UpcomingWindow />
-          </AppWindow>
-        )}
+        {(Object.keys(WINDOW_CONFIG) as WindowAppType[]).map((appType) => {
+          if (!openWindows[appType]) return null;
+          const orderIndex = Math.max(0, windowStack.indexOf(appType));
+          const { title, render } = WINDOW_CONFIG[appType];
+          return (
+            <AppWindow
+              key={appType}
+              title={title}
+              onClose={() => closeWindow(appType)}
+              onMinimize={() => closeWindow(appType)}
+              onToggleFullscreen={() => toggleFullscreen(appType)}
+              fullscreen={fullscreenWindows[appType]}
+              zIndex={zBase + orderIndex}
+            >
+              {render()}
+            </AppWindow>
+          );
+        })}
       </AnimatePresence>
     </div>
   );

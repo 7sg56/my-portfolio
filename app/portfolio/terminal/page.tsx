@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Terminal from "@/components/terminal/Terminal";
 
-
 export default function TerminalPage() {
   const [sessionKey] = useState<string>(() => crypto.randomUUID());
 
@@ -17,6 +16,7 @@ export default function TerminalPage() {
         background: "radial-gradient(80% 80% at 50% 50%, transparent 62%, rgba(0,0,0,0.45) 100%)"
       }} />
       <div className="crt-scanline pointer-events-none" />
+
 
       {/* Terminal with embedded banner (ASCII header) */}
       <div className="relative z-10 h-screen">

@@ -1,6 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { MinecraftCharacter, MINECRAFT_MODELS, type MinecraftKind } from "@/components/three/Minecraft";
+import * as THREE from "three";
 
 export type ThemeName = "default" | "mocha";
 
@@ -96,6 +99,92 @@ function link(href: string, text?: string) {
 export const aliases: Record<string, string> = {
   about: "aboutme",
 };
+
+// Minecraft character that looks towards the user's mouse; press 'q' to stop tracking
+function CharacterLookAt({ kind, initialTracking = true }: { kind: MinecraftKind; initialTracking?: boolean }) {
+  const groupRef = useRef<THREE.Group>(null);
+  const [tracking, setTracking] = useState<boolean>(initialTracking);
+  const mouse = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      // Normalize to [-1, 1] with respect to window
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = (e.clientY / window.innerHeight) * 2 - 1;
+      mouse.current.x = x;
+      mouse.current.y = y;
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === "q") setTracking(false);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, []);
+
+  useFrame(() => {
+    if (!groupRef.current || !tracking) return;
+    // Map normalized mouse to gentle yaw/pitch
+    const targetYaw = mouse.current.x * Math.PI * 0.3; // left/right
+    const targetPitch = -mouse.current.y * Math.PI * 0.15; // up/down (invert)
+    // Smoothly interpolate
+    groupRef.current.rotation.y += (targetYaw - groupRef.current.rotation.y) * 0.1;
+    groupRef.current.rotation.x += (targetPitch - groupRef.current.rotation.x) * 0.1;
+  });
+
+  // Use negative X scale to mirror across X so the model faces forward
+  const s = 0.075; // slightly smaller for better fit
+  return (
+    <group ref={groupRef} scale={[-s, s, s]}>
+      <MinecraftCharacter kind={kind} position={[0, -0.95, 0]} />
+    </group>
+  );
+}
+
+function CharacterSummon() {
+  const [kind, setKind] = useState<MinecraftKind | null>(null);
+  useEffect(() => {
+    // Select one random model on mount
+    const list = [...MINECRAFT_MODELS];
+    const idx = Math.floor(Math.random() * list.length);
+    setKind(list[idx]);
+  }, []);
+
+  // Choose camera based on model; only Enderman is further out
+  const cam = kind === 'enderman'
+    ? { position: [0, 1.6, 11.5] as [number, number, number], fov: 26 }
+    : { position: [0, 1.0, 5.5] as [number, number, number], fov: 35 };
+
+  return (
+    <div className="mt-2 inline-block rounded border border-zinc-700/70 bg-black/40" style={{ width: 260, height: 260 }}>
+      <Canvas camera={cam}>
+        {/* Base lights */}
+        <ambientLight intensity={1.0} />
+        <hemisphereLight intensity={0.7} args={[0xffffff, 0x444444]} />
+        <directionalLight intensity={1.2} position={[2, 3, 2]} />
+        {/* Extra lighting for Enderman (very dark) */}
+        {kind === 'enderman' && (
+          <>
+            {/* Strong front fill */}
+            <directionalLight intensity={3.0} position={[0, 3, 6]} />
+            <pointLight intensity={1.8} position={[0, 2.2, 2.5]} />
+            {/* Overhead spotlight to brighten full body */}
+            <spotLight intensity={2.4} position={[0, 6, 3]} angle={0.6} penumbra={0.5} />
+            {/* Rim/back light for silhouette separation */}
+            <directionalLight intensity={1.2} position={[-2, 3.5, -3]} />
+            {/* Slight ambient boost */}
+            <ambientLight intensity={0.5} />
+          </>
+        )}
+        {kind && <CharacterLookAt kind={kind} initialTracking />}
+      </Canvas>
+      <div className="text-[10px] text-zinc-400 p-1 px-2">{kind ? `${kind} summoned. Press q to stop looking at cursor.` : "Loading..."}</div>
+    </div>
+  );
+}
 
 export const commands: Record<string, CommandHandler> = {
   help: () => (
@@ -211,17 +300,8 @@ export const commands: Record<string, CommandHandler> = {
     return <div className="text-green-400">pong: <span className="text-zinc-200">{msg}</span></div>;
   },
 
-  // surprise
-  surprise: () => (
-    <pre className="whitespace-pre leading-5 text-green-300">{`  _____               _     _     _     _        
- / ____|             (_)   | |   | |   | |       
-| (___  _   _ _ __ ___ _  __| |___| |__ | | ___   
- \\___ \\| | | | '__/ _ \\ |/ _\u0060 / __| '_ \\| |/ _ \\  
- ____) | |_| | | |  __/ | (_| \\__ \\ | | | |  __/  
-|_____/ \\__,_|_|  \\___|_|\\__,_|___/_| |_|_|\\___|  
-
-        S  U  R  P  R  I  S  E !`}</pre>
-  ),
+  // surprise: random minecraft character
+  surprise: () => <CharacterSummon />,
 
   // shutdown with confirmation
   shutdown: () => (
