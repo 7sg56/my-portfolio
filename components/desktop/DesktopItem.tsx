@@ -2,10 +2,7 @@
 
 import React from "react";
 import { motion } from "motion/react";
-import ClockWidget from "@/components/widgets/ClockWidget";
-import WeatherWidget from "@/components/widgets/WeatherWidget";
 import TodoWidget from "@/components/widgets/TodoWidget";
-import ThreeDWidget from "@/components/widgets/ThreeDWidget";
 
 // Allow optional size overrides for widgets
 type DesktopItem = {
@@ -16,7 +13,7 @@ type DesktopItem = {
   x: number;
   y: number;
   appType?: "finder" | "about" | "projects" | "gallery" | "upcoming";
-  widgetType?: "clock" | "weather" | "todo" | "3d";
+  widgetType?: "todo";
   widthPx?: number;
   heightPx?: number;
 };
@@ -37,14 +34,8 @@ export default function DesktopItemComponent({
   // Render desktop widget
   const renderDesktopWidget = (item: DesktopItem) => {
     switch (item.widgetType) {
-      case "clock":
-        return <ClockWidget />;
-      case "weather":
-        return <WeatherWidget />;
       case "todo":
         return <TodoWidget />;
-      case "3d":
-        return <ThreeDWidget />;
       default:
         return null;
     }

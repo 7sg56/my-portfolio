@@ -42,7 +42,7 @@ export default function TodoWidget({ span }: { span?: Span }) {
             </div>
           ))}
         </div>
-        <div className="w-full h-1 bg-gradient-to-r from-green-500/30 to-emerald-500/30 rounded-full"></div>
+        <div className="w-full h-1 bg-gradient-to-r from-gray-300/50 to-gray-200/50 rounded-full"></div>
       </div>
     </WidgetCard>
   );

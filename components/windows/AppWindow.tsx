@@ -11,6 +11,7 @@ export type WindowProps = {
   title: string;
   open?: boolean;
   fullscreen?: boolean;
+  minimized?: boolean;
   zIndex?: number;
   onClose?: () => void;
   onMinimize?: () => void;
@@ -22,6 +23,7 @@ export default function AppWindow({
   id,
   title,
   fullscreen = false,
+  minimized = false,
   zIndex = 40,
   onClose,
   onMinimize,
@@ -102,6 +104,9 @@ export default function AppWindow({
     window.addEventListener("pointerup", onUp);
   };
 
+  // Don't render if minimized
+  if (minimized) return null;
+
   return (
     <div ref={containerRef} className="fixed inset-0 p-4 pointer-events-none" style={{ zIndex }}>
       <motion.div
@@ -120,7 +125,8 @@ export default function AppWindow({
         }
         style={{
           borderColor: DEBUG_UI ? "#89b4fa" : "#27272a", // zinc-800
-          backgroundColor: "#18181a", // solid primary surface
+          backgroundColor: "rgba(24, 24, 26, 0.85)", // transparent primary surface
+          backdropFilter: "blur(12px)",
           width: fullscreen ? "100%" : size.w,
           height: fullscreen ? "100%" : size.h,
           outline: DEBUG_UI ? "1px dashed #89b4fa" : undefined,

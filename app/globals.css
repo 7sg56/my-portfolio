@@ -18,7 +18,7 @@
 /* Design tokens */
 :root {
   --primary: #18181a;            /* solid window surface */
-  --accent: #2563eb;             /* default accent (update to match your image) */
+  --accent: #f8fafc;             /* off-white accent */
   --text: #e5e7eb;               /* primary text */
   --text-2: #cbd5e1;             /* secondary text */
   --border: #2a2a2d;             /* neutral border */
@@ -63,4 +63,41 @@ html, body {
   margin: 0;
   padding: 0;
   background-color: #000;
+}
+
+/* Custom slider styles */
+.slider {
+  background: linear-gradient(to right, #374151, #4b5563);
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(248, 250, 252, 0.4);
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(248, 250, 252, 0.6);
+}
+
+.slider::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 8px rgba(248, 250, 252, 0.4);
+  transition: all 0.2s ease;
+}
+
+.slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(248, 250, 252, 0.6);
 }

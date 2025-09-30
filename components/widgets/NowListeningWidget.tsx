@@ -35,7 +35,7 @@ export default function NowListeningWidget({ span, visible = true }: { span?: Sp
         {/* Compact horizontal layout */}
         <div className="flex items-center gap-3">
           {/* Small Spotify Icon */}
-          <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-md flex items-center justify-center shadow-lg flex-shrink-0">
+          <div className="w-10 h-10 bg-gradient-to-br from-gray-300 to-gray-200 rounded-md flex items-center justify-center shadow-lg flex-shrink-0">
             <svg 
               className="w-8 h-8 text-white" 
               viewBox="0 0 24 24" 
@@ -57,7 +57,7 @@ export default function NowListeningWidget({ span, visible = true }: { span?: Sp
         </div>
 
         {/* Bottom Spotify branding */}
-        <div className="flex justify-center gap-1 text-xs text-red-400">
+        <div className="flex justify-center gap-1 text-xs text-gray-300">
           <span>Listen on Spotify</span>
         </div>
       </div>

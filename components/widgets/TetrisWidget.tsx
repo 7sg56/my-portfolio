@@ -16,15 +16,15 @@ function spanToClasses(span?: Span): string {
   return cls.join(" ");
 }
 
-// Tetris pieces with red color variations
+// Tetris pieces with #a3a3a3 color
 const TETRIS_PIECES = [
-  { shape: [[1, 1, 1, 1]], color: "red", bgClass: "bg-red-400", borderClass: "border-red-300" }, // I-piece
-  { shape: [[1, 1], [1, 1]], color: "red", bgClass: "bg-red-500", borderClass: "border-red-400" }, // O-piece
-  { shape: [[0, 1, 0], [1, 1, 1]], color: "red", bgClass: "bg-red-600", borderClass: "border-red-500" }, // T-piece
-  { shape: [[0, 1, 1], [1, 1, 0]], color: "red", bgClass: "bg-red-700", borderClass: "border-red-600" }, // S-piece
-  { shape: [[1, 1, 0], [0, 1, 1]], color: "red", bgClass: "bg-red-800", borderClass: "border-red-700" }, // Z-piece
-  { shape: [[1, 0, 0], [1, 1, 1]], color: "red", bgClass: "bg-red-900", borderClass: "border-red-800" }, // J-piece
-  { shape: [[0, 0, 1], [1, 1, 1]], color: "red", bgClass: "bg-red-300", borderClass: "border-red-200" }, // L-piece
+  { shape: [[1, 1, 1, 1]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // I-piece
+  { shape: [[1, 1], [1, 1]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // O-piece
+  { shape: [[0, 1, 0], [1, 1, 1]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // T-piece
+  { shape: [[0, 1, 1], [1, 1, 0]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // S-piece
+  { shape: [[1, 1, 0], [0, 1, 1]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // Z-piece
+  { shape: [[1, 0, 0], [1, 1, 1]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // J-piece
+  { shape: [[0, 0, 1], [1, 1, 1]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // L-piece
 ];
 
 const BOARD_WIDTH = 6;
@@ -274,23 +274,27 @@ export default function TetrisWidget({ span }: { span?: Span }) {
       return 'bg-white/5 border border-white/10';
     }
     
-    const pieceIndex = Math.abs(cell) - 1;
-    const piece = TETRIS_PIECES[pieceIndex];
     const isCurrentPiece = cell < 0;
-    
-    if (piece && pieceIndex >= 0 && pieceIndex < TETRIS_PIECES.length) {
-      const baseStyle = `${piece.bgClass} border ${piece.borderClass} shadow-md`;
-      const currentPieceStyle = isCurrentPiece ? 'shadow-lg ring-1 ring-white/30' : '';
-      return `${baseStyle} ${currentPieceStyle}`;
+    const baseStyle = 'shadow-md';
+    const currentPieceStyle = isCurrentPiece ? 'shadow-lg ring-1 ring-gray-400/50' : '';
+    return `${baseStyle} ${currentPieceStyle}`;
+  };
+
+  // Get piece background color as inline style
+  const getCellBackgroundColor = (cell: number) => {
+    if (cell === 0) {
+      return {};
     }
-    
-    return 'bg-zinc-400 border border-zinc-300 shadow-md';
+    return {
+      backgroundColor: '#a3a3a3',
+      borderColor: '#a3a3a3'
+    };
   };
 
   const displayBoard = renderBoard();
 
   return (
-    <div className={`relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/70 backdrop-blur shadow-[0_10px_30px_rgba(0,0,0,0.4)] ${spanToClasses(span)}`}>
+    <div className={`relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/70 backdrop-blur shadow-[0_10px_30px_rgba(0,0,0,0.4)] h-full w-full ${spanToClasses(span)}`}>
       {/* Game Board - Full Widget */}
       <div 
         className="h-full w-full grid gap-1 p-2"
@@ -304,6 +308,7 @@ export default function TetrisWidget({ span }: { span?: Span }) {
             <div
               key={`${y}-${x}`}
               className={`w-full h-full rounded-sm transition-all duration-200 ${getCellStyle(cell)}`}
+              style={getCellBackgroundColor(cell)}
             />
           ))
         )}
@@ -317,7 +322,7 @@ export default function TetrisWidget({ span }: { span?: Span }) {
               <div className="text-2xl font-bold text-white">Tetris</div>
               <button
                 onClick={startGame}
-                className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors"
+                className="px-6 py-2 bg-[#a3a3a3] hover:bg-[#b3b3b3] text-white text-sm rounded-lg transition-colors font-semibold"
               >
                 Play
               </button>
@@ -326,11 +331,11 @@ export default function TetrisWidget({ span }: { span?: Span }) {
           
           {gameState === 'over' && (
             <div className="bg-black/80 backdrop-blur-sm rounded-lg p-4 space-y-3">
-              <div className="text-lg font-bold text-red-400">Game Over!</div>
+              <div className="text-lg font-bold text-gray-300">Game Over!</div>
               <div className="text-sm text-zinc-300">Score: {score}</div>
               <button
                 onClick={startGame}
-                className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors"
+                className="px-6 py-2 bg-[#a3a3a3] hover:bg-[#b3b3b3] text-white text-sm rounded-lg transition-colors font-semibold"
               >
                 Play Again
               </button>

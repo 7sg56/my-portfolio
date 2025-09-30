@@ -7,11 +7,8 @@ import AboutHome from "@/components/windows/AboutHome";
 import ProjectsWindow from "@/components/windows/ProjectsWindow";
 import AppWindow from "@/components/windows/AppWindow";
 import NowListeningWidget from "@/components/widgets/NowListeningWidget";
-import ClockWidget from "@/components/widgets/ClockWidget";
-import WeatherWidget from "@/components/widgets/WeatherWidget";
 import TodoWidget from "@/components/widgets/TodoWidget";
 import TetrisWidget from "@/components/widgets/TetrisWidget";
-import ThreeDWidget from "@/components/widgets/ThreeDWidget";
 import BootLog from "@/components/boot/BootLog";
 import HeroSelector from "@/components/boot/HeroSelector";
 import Hero from "@/components/hero/Hero";
@@ -111,18 +108,12 @@ export default function Home() {
               {/* Bento Grid Widgets - Right Side */}
               <div className="absolute right-0 top-0 w-1/2 h-full p-6">
                 <div className="h-full grid grid-cols-3 grid-rows-4 gap-4">
-
-                  <ClockWidget span={{ cols: 1, rows: 1 }} />
-                  
-                  <WeatherWidget span={{ cols: 1, rows: 1 }} />
                   
                   <TetrisWidget span={{ cols: 1, rows: 2 }} />
                   
                   <TodoWidget span={{ cols: 2, rows: 1 }} />
                   
                   <NowListeningWidget span={{ cols: 1, rows: 1 }} />
-                  
-                  <ThreeDWidget span={{ cols: 2, rows: 2 }} />
                 </div>
               </div>
             </>
