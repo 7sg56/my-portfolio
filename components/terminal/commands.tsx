@@ -5,6 +5,14 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { MinecraftCharacter, MINECRAFT_MODELS, type MinecraftKind } from "@/components/three/Minecraft";
 import * as THREE from "three";
 
+// Single-active summon coordination so only the latest stays active
+let activeSummonId: string | null = null;
+const activeListeners = new Set<(id: string | null) => void>();
+function setActiveSummon(id: string | null) {
+  activeSummonId = id;
+  activeListeners.forEach((fn) => fn(id));
+}
+
 export type ThemeName = "default" | "mocha";
 
 export type Env = {
@@ -98,24 +106,28 @@ function link(href: string, text?: string) {
 
 export const aliases: Record<string, string> = {
   about: "aboutme",
+  surprise: "spawn", // backward-compatible alias
 };
 
-// Minecraft character that looks towards the user's mouse; press 'q' to stop tracking
-function CharacterLookAt({ kind, initialTracking = true }: { kind: MinecraftKind; initialTracking?: boolean }) {
+// Follow-the-mouse character (tracking defaults ON). Keys: q stops, f toggles.
+function CharacterFollow({ kind, active }: { kind: MinecraftKind; active: boolean }) {
   const groupRef = useRef<THREE.Group>(null);
-  const [tracking, setTracking] = useState<boolean>(initialTracking);
+  const [tracking, setTracking] = useState<boolean>(true);
   const mouse = useRef({ x: 0, y: 0 });
+  const effectiveTracking = tracking && active;
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
-      // Normalize to [-1, 1] with respect to window
+      if (!effectiveTracking) return;
       const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = (e.clientY / window.innerHeight) * 2 - 1;
       mouse.current.x = x;
       mouse.current.y = y;
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() === "q") setTracking(false);
+      const k = e.key.toLowerCase();
+      if (k === "q") setTracking(false);
+      if (k === "f") setTracking((v) => !v);
     };
     window.addEventListener("mousemove", onMove);
     window.addEventListener("keydown", onKey);
@@ -123,19 +135,17 @@ function CharacterLookAt({ kind, initialTracking = true }: { kind: MinecraftKind
       window.removeEventListener("mousemove", onMove);
       window.removeEventListener("keydown", onKey);
     };
-  }, []);
+  }, [effectiveTracking]);
 
   useFrame(() => {
-    if (!groupRef.current || !tracking) return;
-    // Map normalized mouse to gentle yaw/pitch
-    const targetYaw = mouse.current.x * Math.PI * 0.3; // left/right
-    const targetPitch = -mouse.current.y * Math.PI * 0.15; // up/down (invert)
-    // Smoothly interpolate
+    if (!groupRef.current || !effectiveTracking) return;
+    const targetYaw = mouse.current.x * Math.PI * 0.3;
+    // Invert pitch so moving mouse up tilts model up
+    const targetPitch = mouse.current.y * Math.PI * 0.15;
     groupRef.current.rotation.y += (targetYaw - groupRef.current.rotation.y) * 0.1;
     groupRef.current.rotation.x += (targetPitch - groupRef.current.rotation.x) * 0.1;
   });
 
-  // Use negative X scale to mirror across X so the model faces forward
   const s = 0.075; // slightly smaller for better fit
   return (
     <group ref={groupRef} scale={[-s, s, s]}>
@@ -144,22 +154,42 @@ function CharacterLookAt({ kind, initialTracking = true }: { kind: MinecraftKind
   );
 }
 
-function CharacterSummon() {
-  const [kind, setKind] = useState<MinecraftKind | null>(null);
+function CharacterSpawn({ forcedKind }: { forcedKind?: MinecraftKind | null }) {
+  const [kind, setKind] = useState<MinecraftKind | null>(forcedKind ?? null);
+  const [id] = useState<string>(() => crypto.randomUUID());
+  const [isActive, setIsActive] = useState<boolean>(false);
+
   useEffect(() => {
-    // Select one random model on mount
+    // Pick specific kind if forced, else select random
+    if (forcedKind) {
+      setKind(forcedKind);
+      return;
+    }
     const list = [...MINECRAFT_MODELS];
     const idx = Math.floor(Math.random() * list.length);
     setKind(list[idx]);
-  }, []);
+  }, [forcedKind]);
 
-  // Choose camera based on model; only Enderman is further out
-  const cam = kind === 'enderman'
-    ? { position: [0, 1.6, 11.5] as [number, number, number], fov: 26 }
-    : { position: [0, 1.0, 5.5] as [number, number, number], fov: 35 };
+  useEffect(() => {
+    const onActive = (activeId: string | null) => setIsActive(activeId === id);
+    activeListeners.add(onActive);
+    // become active on mount
+    setActiveSummon(id);
+    return () => {
+      activeListeners.delete(onActive);
+      if (activeSummonId === id) setActiveSummon(null);
+    };
+  }, [id]);
+
+  // Choose camera based on model
+  const cam = (() => {
+    if (kind === 'enderman') return { position: [0, 1.6, 11.5] as [number, number, number], fov: 26 };
+    if (kind === 'steve') return { position: [0, 1.2, 10.0] as [number, number, number], fov: 28 };
+    return { position: [0, 1.0, 5.5] as [number, number, number], fov: 35 };
+  })();
 
   return (
-    <div className="mt-2 inline-block rounded border border-zinc-700/70 bg-black/40" style={{ width: 260, height: 260 }}>
+    <div className="mt-2 mb-4 block rounded border border-zinc-700/70 bg-black/40" style={{ width: 260, height: 260, display: isActive ? 'block' : 'none', overflow: 'hidden' }}>
       <Canvas camera={cam}>
         {/* Base lights */}
         <ambientLight intensity={1.0} />
@@ -179,9 +209,9 @@ function CharacterSummon() {
             <ambientLight intensity={0.5} />
           </>
         )}
-        {kind && <CharacterLookAt kind={kind} initialTracking />}
+        {kind && <CharacterFollow kind={kind} active={isActive} />}
       </Canvas>
-      <div className="text-[10px] text-zinc-400 p-1 px-2">{kind ? `${kind} summoned. Press q to stop looking at cursor.` : "Loading..."}</div>
+      <div className="text-[10px] text-zinc-400 p-1 px-2">{kind ? `${kind} spawned. (f: toggle follow, q: stop)` : "Loading..."}</div>
     </div>
   );
 }
@@ -202,10 +232,10 @@ export const commands: Record<string, CommandHandler> = {
         <div>View my projects</div>
         <div className="text-green-400">socials</div>
         <div>View my socials</div>
-        <div className="text-green-400">ping</div>
-        <div>Ping me a message (ping &lt;message&gt;)</div>
-        <div className="text-green-400">surprise</div>
-        <div>It&apos;s a surprise</div>
+        <div className="text-green-400">resume</div>
+        <div>Download resume (optionally: resume &lt;filename.pdf&gt;)</div>
+        <div className="text-green-400">spawn</div>
+        <div>Spawn a character (spawn [creeper|zombie|steve|enderman])</div>
         <div className="text-green-400">shutdown</div>
         <div>Return to GRUB menu (asks for confirmation)</div>
         <div className="text-green-400">clear</div>
@@ -294,14 +324,33 @@ export const commands: Record<string, CommandHandler> = {
     </div>
   ),
 
-  // ping
-  ping: (args) => {
-    const msg = args.join(" ") || "hello";
-    return <div className="text-green-400">pong: <span className="text-zinc-200">{msg}</span></div>;
+  // resume: attempt to download a PDF from /public
+  resume: (args) => {
+    const target = (args[0] || 'resume.pdf').replace(/^\/+/, '');
+    const url = `/${target}`;
+    try {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '';
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch {}
+    return (
+      <div className="space-y-1">
+        <div>Attempting download: <span className="text-zinc-200">{url}</span></div>
+        
+      </div>
+    );
   },
 
-  // surprise: random minecraft character
-  surprise: () => <CharacterSummon />,
+  // spawn: random or specific minecraft character
+  spawn: (args) => {
+    const arg = (args[0] || "").toLowerCase();
+    const asKind = (MINECRAFT_MODELS as readonly string[]).includes(arg) ? (arg as MinecraftKind) : null;
+    return <CharacterSpawn forcedKind={asKind} />;
+  },
 
   // shutdown with confirmation
   shutdown: () => (

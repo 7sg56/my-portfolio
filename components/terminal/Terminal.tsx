@@ -27,7 +27,7 @@ function Banner({ visible }: { visible: boolean }) {
   return (
     <div className="text-zinc-300">
       <pre className="whitespace-pre leading-5 text-green-300 crt-glow" style={{ color: "#86efac" }}>{art}</pre>
-      <div className="mt-1" style={{ color: "#a6adc8" }}>Type <span className="text-zinc-200">help</span> to see available commands.</div>
+      <div className="mt-1" style={{ color: "#a6adc8" }}>Built by <a href="https://github.com/7sg56" target="_blank" rel="noopener noreferrer" className="text-zinc-200 hover:text-green-400 underline">Sourish Ghosh</a>. Type <span className="text-zinc-200">help</span> to see available commands.</div>
     </div>
   );
 }
@@ -180,6 +180,9 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
 
     if (key === "clear") {
       setHistory([]);
+      // ensure next input is visible
+      setAutoScroll(true);
+      requestAnimationFrame(() => scrollToBottom());
       return;
     }
 
@@ -193,7 +196,10 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
     );
 
     setHistory(prev => [...prev, { id, command: text, output }]);
-  }, [env]);
+    // Force auto-scroll to show the newest output immediately
+    setAutoScroll(true);
+    requestAnimationFrame(() => scrollToBottom());
+  }, [env, scrollToBottom]);
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -256,7 +262,7 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
         >
           <Banner visible={bannerVisible} />
           <div className="my-3 border-t" style={{ borderColor: "#313244" }} />
-          <div className="max-w-[900px]">
+          <div className="max-w-[1100px]">
             {history.map(item => (
               <div key={item.id} className="mb-2">
                 <div className="flex items-start gap-2">
@@ -266,25 +272,26 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
                 {item.output && <div className="mt-1 pl-6 break-words">{item.output}</div>}
               </div>
             ))}
+            {/* Live input as part of the scrollable flow */}
+            <div className="mt-2 mb-4 flex items-center gap-2 font-mono text-sm">
+              <Prompt text={prompt} />
+              <input
+                ref={inputRef}
+                className="flex-1 bg-transparent outline-none placeholder-zinc-600"
+                placeholder="type a command… (try: help)"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={onKeyDown}
+                aria-label="Terminal command input"
+                autoComplete="off"
+                spellCheck={false}
+                style={{ caretColor: "#a6e3a1" }}
+              />
+            </div>
             <div ref={bottomRef} />
           </div>
         </div>
-        <div className="mt-2 mb-4 flex items-center gap-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>
-          <Prompt text={prompt} />
-          <input
-            ref={inputRef}
-            className="flex-1 bg-transparent outline-none placeholder-zinc-600"
-            placeholder="type a command… (try: help)"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={onKeyDown}
-            aria-label="Terminal command input"
-            autoComplete="off"
-            spellCheck={false}
-            style={{ caretColor: "#a6e3a1" }}
-          />
-        </div>
-{showFooter && (
+        {showFooter && (
           <div className="mt-2 text-[10px]" style={{ color: "#a6adc8" }}>Type &apos;clear&apos; to clear the screen.</div>
         )}
       </div>
@@ -314,24 +321,24 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
                 {item.output && <div className="mt-1 pl-6 break-words">{item.output}</div>}
               </div>
             ))}
+            {/* Live input as part of the scrollable flow */}
+            <div className="mt-2 mb-4 flex items-center gap-2 font-mono text-sm">
+              <Prompt text={prompt} />
+              <input
+                ref={inputRef}
+                className="flex-1 bg-transparent outline-none placeholder-zinc-600"
+                placeholder="type a command… (try: help)"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={onKeyDown}
+                aria-label="Terminal command input"
+                autoComplete="off"
+                spellCheck={false}
+                style={{ caretColor: "#a6e3a1" }}
+              />
+            </div>
             <div ref={bottomRef} />
           </div>
-        </div>
-
-        <div className="mt-2 mb-4 flex items-center gap-2 font-mono text-sm" style={{ color: "#cdd6f4" }}>
-          <Prompt text={prompt} />
-          <input
-            ref={inputRef}
-            className="flex-1 bg-transparent outline-none placeholder-zinc-600"
-            placeholder="type a command… (try: help)"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={onKeyDown}
-            aria-label="Terminal command input"
-            autoComplete="off"
-            spellCheck={false}
-            style={{ caretColor: "#a6e3a1" }}
-          />
         </div>
 
         {showFooter && (
