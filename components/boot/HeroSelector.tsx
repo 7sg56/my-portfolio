@@ -7,7 +7,7 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
   const [seconds, setSeconds] = useState(defaultSeconds);
   const items = useMemo(
     () => [
-      { key: "sourish" as const, label: "SourishGhosh", desc: "Curated for Professionals" },
+      { key: "sourish" as const, label: "SourishGhosh", desc: "Curated for Professionals", disabled: true, comingSoon: true },
       { key: "desktop" as const, label: "7sg56", desc: "For developers and admirers" },
       { key: "terminal" as const, label: "s0urishg", desc: "A Terminal about me" },
     ],
@@ -64,14 +64,30 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
     (e: KeyboardEvent) => {
       if (e.key === "ArrowUp") {
         e.preventDefault();
-        setIndex((i) => (i - 1 + items.length) % items.length);
+        setIndex((i) => {
+          let newIndex = (i - 1 + items.length) % items.length;
+          // Skip disabled items
+          while (items[newIndex]?.disabled && newIndex !== i) {
+            newIndex = (newIndex - 1 + items.length) % items.length;
+          }
+          return newIndex;
+        });
       } else if (e.key === "ArrowDown") {
         e.preventDefault();
-        setIndex((i) => (i + 1) % items.length);
+        setIndex((i) => {
+          let newIndex = (i + 1) % items.length;
+          // Skip disabled items
+          while (items[newIndex]?.disabled && newIndex !== i) {
+            newIndex = (newIndex + 1) % items.length;
+          }
+          return newIndex;
+        });
       } else if (e.key === "Enter") {
         e.preventDefault();
         const it = items[index];
-        onSelect(it.key);
+        if (!it.disabled) {
+          onSelect(it.key);
+        }
       } else if (e.key.toLowerCase() === "p" || e.key === " ") {
         setPaused((p) => !p);
       }
@@ -132,40 +148,65 @@ className="relative mx-auto w-full max-w-4xl rounded-xl border border-zinc-800/5
           <div className="mx-auto w-full max-w-2xl">
             {items.map((it, i) => {
               const selected = i === index;
+              const isDisabled = it.disabled;
               return (
                 <motion.button
                   key={it.key}
                   onClick={() => {
-                    onSelect(it.key);
+                    if (!isDisabled) {
+                      onSelect(it.key);
+                    }
                   }}
-                  onMouseEnter={() => setIndex(i)}
+                  onMouseEnter={() => {
+                    if (!isDisabled) {
+                      setIndex(i);
+                    }
+                  }}
                   initial={{ opacity: 0, y: 4 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.15, delay: i * 0.03 }}
+                  disabled={isDisabled}
                   className={[
                     "group relative w-full text-left rounded-md border border-zinc-800/70 px-4 py-3 mb-3",
-                    selected
-                      ? "bg-gradient-to-r from-zinc-900 to-zinc-900/40 shadow-inner"
-                      : "bg-zinc-950/60 hover:bg-zinc-900/50",
+                    isDisabled 
+                      ? "bg-zinc-950/30 opacity-50 cursor-not-allowed"
+                      : selected
+                        ? "bg-gradient-to-r from-zinc-900 to-zinc-900/40 shadow-inner"
+                        : "bg-zinc-950/60 hover:bg-zinc-900/50",
                   ].join(" ")}
                 >
                   {/* Left accent and caret when selected */}
                   <span className="absolute left-0 top-0 h-full w-1 rounded-l-md"
-                    style={{ background: selected ? "linear-gradient(180deg, #22c55e 0%, #16a34a 100%)" : "transparent" }}
+                    style={{ 
+                      background: selected && !isDisabled 
+                        ? "linear-gradient(180deg, #22c55e 0%, #16a34a 100%)" 
+                        : isDisabled 
+                          ? "linear-gradient(180deg, #ef4444 0%, #dc2626 100%)"
+                          : "transparent" 
+                    }}
                   />
                   <div className="flex items-center gap-3">
                     <div className="w-5 text-right font-mono text-zinc-500">
-                      {selected ? <span className="text-green-400">&gt;</span> : ""}
+                      {selected && !isDisabled ? <span className="text-green-400">&gt;</span> : ""}
+                      {isDisabled ? <span className="text-red-400">✗</span> : ""}
                     </div>
                     <div className="flex-1">
-                      <div className="text-zinc-100 font-semibold tracking-tight flex items-center gap-2">
+                      <div className={`font-semibold tracking-tight flex items-center gap-2 ${
+                        isDisabled ? "text-zinc-500" : "text-zinc-100"
+                      }`}>
                         <span>{it.label}</span>
                         {it.key === "desktop" && <span className="ml-1 text-xs text-zinc-500">(default)</span>}
+                        {it.comingSoon && <span className="ml-2 text-xs text-orange-400 font-mono">(coming soon)</span>}
                       </div>
-                      <div className="text-sm text-zinc-400">{it.desc}</div>
+                      <div className={`text-sm ${isDisabled ? "text-zinc-600" : "text-zinc-400"}`}>
+                        {it.desc}
+                      </div>
                     </div>
-                    {selected && (
+                    {selected && !isDisabled && (
                       <div className="text-xs font-mono text-green-400">selected</div>
+                    )}
+                    {isDisabled && (
+                      <div className="text-xs font-mono text-red-400">disabled</div>
                     )}
                   </div>
                 </motion.button>
