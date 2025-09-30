@@ -5,15 +5,22 @@ import { motion } from "motion/react";
 
 export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaultSeconds?: number; onSelect: (mode: "desktop" | "terminal" | "sourish") => void }) {
   const [seconds, setSeconds] = useState(defaultSeconds);
+  
+  // Detect if user is on mobile
+  const isMobile = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return window.innerWidth < 768;
+  }, []);
+  
   const items = useMemo(
     () => [
       { key: "sourish" as const, label: "SourishGhosh", desc: "Curated for Professionals", disabled: true, comingSoon: true },
-      { key: "desktop" as const, label: "7sg56", desc: "For developers and admirers" },
-      { key: "terminal" as const, label: "s0urishg", desc: "A Terminal about me" },
+      { key: "desktop" as const, label: "7sg56", desc: "For developers and admirers", isDefault: !isMobile },
+      { key: "terminal" as const, label: "s0urishg", desc: "A Terminal about me", isMobileFriendly: true, isDefault: isMobile },
     ],
-    []
+    [isMobile]
   );
-  const [index, setIndex] = useState(1); // default selection: Desktop OS
+  const [index, setIndex] = useState(isMobile ? 2 : 1); // default selection: Terminal OS for mobile, Desktop OS for desktop
 
   // Retro roles with typewriter effect (slower)
   const roles = useMemo(() => [
@@ -56,9 +63,9 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
   // Auto-boot when countdown ends (if not paused)
   useEffect(() => {
     if (!paused && seconds === 0) {
-      onSelect("desktop");
+      onSelect(isMobile ? "terminal" : "desktop");
     }
-  }, [paused, seconds, onSelect]);
+  }, [paused, seconds, onSelect, isMobile]);
 
   const handleKey = useCallback(
     (e: KeyboardEvent) => {
@@ -113,7 +120,7 @@ className="relative mx-auto w-full max-w-4xl rounded-xl border border-zinc-800/5
           <div className="text-sm font-mono text-zinc-300">GRUB v2.06 — Boot Manager</div>
           <div className="flex items-center gap-3">
             <div className="text-xs font-mono text-zinc-400">
-              {paused ? "Auto boot paused" : `Auto boot Desktop OS in ${seconds}s`}
+              {paused ? "Auto boot paused" : `Auto boot ${isMobile ? "Terminal OS" : "Desktop OS"} in ${seconds}s`}
             </div>
             <button
               onClick={() => setPaused((p) => !p)}
@@ -195,7 +202,8 @@ className="relative mx-auto w-full max-w-4xl rounded-xl border border-zinc-800/5
                         isDisabled ? "text-zinc-500" : "text-zinc-100"
                       }`}>
                         <span>{it.label}</span>
-                        {it.key === "desktop" && <span className="ml-1 text-xs text-zinc-500">(default)</span>}
+                        {it.isDefault && <span className="ml-1 text-xs text-zinc-500">(default)</span>}
+                        {it.isMobileFriendly && <span className="ml-2 text-xs text-blue-400 font-mono">(mobile-friendly)</span>}
                         {it.comingSoon && <span className="ml-2 text-xs text-orange-400 font-mono">(coming soon)</span>}
                       </div>
                       <div className={`text-sm ${isDisabled ? "text-zinc-600" : "text-zinc-400"}`}>

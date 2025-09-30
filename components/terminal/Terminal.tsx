@@ -26,8 +26,8 @@ function Banner({ visible }: { visible: boolean }) {
 
   return (
     <div className="text-zinc-300">
-      <pre className="whitespace-pre leading-5 text-green-300 crt-glow" style={{ color: "#86efac" }}>{art}</pre>
-      <div className="mt-1" style={{ color: "#a6adc8" }}>Built by <a href="https://github.com/7sg56" target="_blank" rel="noopener noreferrer" className="text-zinc-200 hover:text-green-400 underline">Sourish Ghosh</a>. Type <span className="text-zinc-200">help</span> to see available commands.</div>
+      <pre className="whitespace-pre leading-3 md:leading-5 text-green-300 crt-glow text-xs md:text-sm overflow-x-auto" style={{ color: "#86efac" }}>{art}</pre>
+      <div className="mt-1 text-xs md:text-sm" style={{ color: "#a6adc8" }}>Built by <a href="https://github.com/7sg56" target="_blank" rel="noopener noreferrer" className="text-zinc-200 hover:text-green-400 underline">Sourish Ghosh</a>. Type <span className="text-zinc-200">help</span> to see available commands.</div>
     </div>
   );
 }
@@ -256,13 +256,13 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
         )}
         <div
           ref={containerRef}
-          className={`${scrollMode === 'internal' ? 'overscroll-contain overflow-y-auto' : 'overflow-visible'} pr-2 font-mono text-sm flex-1 min-h-0 ${scrollHeightClass ?? ""}`}
+          className={`${scrollMode === 'internal' ? 'overscroll-contain overflow-y-auto' : 'overflow-visible'} pr-2 font-mono text-xs md:text-sm flex-1 min-h-0 ${scrollHeightClass ?? ""}`}
           style={{ color: "#cdd6f4" }}
           onScroll={scrollMode === 'internal' ? onScroll : undefined}
         >
           <Banner visible={bannerVisible} />
           <div className="my-3 border-t" style={{ borderColor: "#313244" }} />
-          <div className="max-w-[1100px]">
+          <div className="max-w-[1100px] px-2 md:px-0">
             {history.map(item => (
               <div key={item.id} className="mb-2">
                 <div className="flex items-start gap-2">
@@ -273,11 +273,11 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
               </div>
             ))}
             {/* Live input as part of the scrollable flow */}
-            <div className="mt-2 mb-4 flex items-center gap-2 font-mono text-sm">
+            <div className="mt-2 mb-4 flex items-center gap-2 font-mono text-xs md:text-sm">
               <Prompt text={prompt} />
               <input
                 ref={inputRef}
-                className="flex-1 bg-transparent outline-none placeholder-zinc-600"
+                className="flex-1 bg-transparent outline-none placeholder-zinc-600 text-xs md:text-sm"
                 placeholder="type a command… (try: help)"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -308,7 +308,7 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
           </div>
         )}
 
-        <div ref={containerRef} className="h-[70vh] overscroll-contain overflow-y-auto pr-2 font-mono text-sm" style={{ color: "#cdd6f4" }} onScroll={onScroll}>
+        <div ref={containerRef} className="h-[70vh] overscroll-contain overflow-y-auto pr-2 font-mono text-xs md:text-sm" style={{ color: "#cdd6f4" }} onScroll={onScroll}>
           <Banner visible={bannerVisible} />
           <div className="my-3 border-t" style={{ borderColor: "#313244" }} />
           <div className="max-w-[300px]">
@@ -322,11 +322,11 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
               </div>
             ))}
             {/* Live input as part of the scrollable flow */}
-            <div className="mt-2 mb-4 flex items-center gap-2 font-mono text-sm">
+            <div className="mt-2 mb-4 flex items-center gap-2 font-mono text-xs md:text-sm">
               <Prompt text={prompt} />
               <input
                 ref={inputRef}
-                className="flex-1 bg-transparent outline-none placeholder-zinc-600"
+                className="flex-1 bg-transparent outline-none placeholder-zinc-600 text-xs md:text-sm"
                 placeholder="type a command… (try: help)"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
