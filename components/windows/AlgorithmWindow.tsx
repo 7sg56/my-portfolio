@@ -7,6 +7,8 @@ export default function AlgorithmWindow() {
   const [isSorting, setIsSorting] = useState(false);
   const [currentAlgorithm, setCurrentAlgorithm] = useState<string>("");
   const [speed, setSpeed] = useState(100);
+  const [elapsedTime, setElapsedTime] = useState<number>(0);
+  const [startTime, setStartTime] = useState<number>(0);
 
   const algorithms = [
     { name: "Bubble Sort", value: "bubble" },
@@ -18,7 +20,7 @@ export default function AlgorithmWindow() {
 
   // Generate random array
   const generateArray = () => {
-    const newArray = Array.from({ length: 30 }, () => Math.floor(Math.random() * 100) + 10);
+    const newArray = Array.from({ length: 50 }, () => Math.floor(Math.random() * 140) + 10);
     setArray(newArray);
   };
 
@@ -26,6 +28,17 @@ export default function AlgorithmWindow() {
   useEffect(() => {
     generateArray();
   }, []);
+
+  // Timer for elapsed time
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isSorting && startTime > 0) {
+      interval = setInterval(() => {
+        setElapsedTime(Date.now() - startTime);
+      }, 10);
+    }
+    return () => clearInterval(interval);
+  }, [isSorting, startTime]);
 
   // Bubble Sort
   const bubbleSort = async (arr: number[]) => {
@@ -154,6 +167,8 @@ export default function AlgorithmWindow() {
     
     setIsSorting(true);
     setCurrentAlgorithm(algorithm);
+    setElapsedTime(0);
+    setStartTime(Date.now());
     
     const arr = [...array];
     
@@ -200,125 +215,58 @@ export default function AlgorithmWindow() {
           <button
             onClick={generateArray}
             disabled={isSorting}
-            className="px-4 py-2 bg-accent hover:bg-accent/90 text-white text-sm rounded-lg transition-all duration-200 disabled:opacity-50 hover:scale-105 active:scale-95"
+            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-theme-2 text-sm rounded-lg transition-all duration-200 disabled:opacity-50 hover:scale-105 active:scale-95"
           >
-            🎲 New Array
+            New Array
           </button>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-6xl mx-auto space-y-6">
-          {/* Algorithm Selection */}
-          <div className="glass-2 rounded-lg p-6 border border-theme bg-black/20 backdrop-blur-sm">
-            <h2 className="text-lg font-semibold text-theme mb-4">Choose Algorithm</h2>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              {algorithms.map((algo) => (
-                <button
-                  key={algo.value}
-                  onClick={() => startSorting(algo.value)}
-                  disabled={isSorting}
-                  className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    currentAlgorithm === algo.value
-                      ? "bg-accent text-white shadow-lg scale-105"
-                      : isSorting
-                      ? "bg-gray-700/50 text-gray-500 cursor-not-allowed"
-                      : "bg-gray-700/30 text-theme-2 hover:bg-gray-700/50 hover:text-theme hover:scale-105 active:scale-95"
-                  }`}
-                >
-                  {algo.name}
-                </button>
-              ))}
-            </div>
-          </div>
+      <div className="flex-1 flex flex-col p-4">
+        {/* Algorithm Selection - Compact */}
+        <div className="flex items-center justify-center gap-2 mb-4">
+          {algorithms.map((algo) => (
+            <button
+              key={algo.value}
+              onClick={() => startSorting(algo.value)}
+              disabled={isSorting}
+              className={`px-3 py-2 rounded text-sm font-medium transition-all duration-200 ${
+                currentAlgorithm === algo.value
+                  ? "bg-gray-200 text-black"
+                  : isSorting
+                  ? "bg-gray-700/50 text-gray-500 cursor-not-allowed"
+                  : "bg-gray-700/30 text-theme-2 hover:bg-gray-700/50 hover:text-theme"
+              }`}
+            >
+              {algo.name}
+            </button>
+          ))}
+        </div>
 
-          {/* Visualization */}
-          <div className="glass-2 rounded-lg p-6 border border-theme bg-black/20 backdrop-blur-sm">
-            <h2 className="text-lg font-semibold text-theme mb-4">Visualization</h2>
-            <div className="flex items-end justify-center gap-0.5 h-80 bg-gradient-to-t from-gray-900/80 to-gray-800/60 rounded-xl p-6 shadow-inner">
-              {array.map((value, index) => (
-                <div
-                  key={index}
-                  className={`transition-all duration-75 ease-out rounded-t-lg shadow-lg hover:shadow-xl`}
-                  style={{
-                    height: `${(value / 100) * 280}px`,
-                    width: `${Math.max(2, 100 / array.length)}%`,
-                    minWidth: '2px',
-                    background: `linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)`,
-                    boxShadow: `0 0 ${Math.max(2, value / 20)}px rgba(248, 250, 252, 0.4)`
-                  }}
-                />
-              ))}
-            </div>
-            <div className="mt-4 flex justify-center">
-              <div className="flex items-center gap-4 text-sm text-theme-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-accent rounded-full"></div>
-                  <span>Sorted Elements</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
-                  <span>Unsorted Elements</span>
-                </div>
-              </div>
-            </div>
+        {/* Visualization - Main Focus */}
+        <div className="flex-1 flex flex-col items-center justify-center">
+          <div className="flex items-end justify-center gap-1 h-48 bg-gray-900/30 rounded-lg p-3 w-full max-w-3xl">
+            {array.map((value, index) => (
+              <div
+                key={index}
+                className="transition-all duration-100 ease-out rounded-sm"
+                style={{
+                  height: `${(value / 150) * 180}px`,
+                  width: `${Math.max(3, 100 / array.length)}%`,
+                  minWidth: '3px',
+                  backgroundColor: '#64748b',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.2)'
+                }}
+              />
+            ))}
           </div>
-
-          {/* Algorithm Info */}
-          <div className="glass-2 rounded-lg p-6 border border-theme bg-black/20 backdrop-blur-sm">
-            <h2 className="text-lg font-semibold text-theme mb-4">Algorithm Information</h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <h3 className="font-semibold text-theme text-base">Time Complexity</h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded">
-                    <span className="text-theme-2 text-sm">Bubble Sort</span>
-                    <span className="text-red-400 text-sm font-mono">O(n²)</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded">
-                    <span className="text-theme-2 text-sm">Selection Sort</span>
-                    <span className="text-red-400 text-sm font-mono">O(n²)</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded">
-                    <span className="text-theme-2 text-sm">Insertion Sort</span>
-                    <span className="text-red-400 text-sm font-mono">O(n²)</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded">
-                    <span className="text-theme-2 text-sm">Quick Sort</span>
-                    <span className="text-green-400 text-sm font-mono">O(n log n)</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded">
-                    <span className="text-theme-2 text-sm">Merge Sort</span>
-                    <span className="text-green-400 text-sm font-mono">O(n log n)</span>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <h3 className="font-semibold text-theme text-base">Space Complexity</h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded">
-                    <span className="text-theme-2 text-sm">Bubble Sort</span>
-                    <span className="text-green-400 text-sm font-mono">O(1)</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded">
-                    <span className="text-theme-2 text-sm">Selection Sort</span>
-                    <span className="text-green-400 text-sm font-mono">O(1)</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded">
-                    <span className="text-theme-2 text-sm">Insertion Sort</span>
-                    <span className="text-green-400 text-sm font-mono">O(1)</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded">
-                    <span className="text-theme-2 text-sm">Quick Sort</span>
-                    <span className="text-yellow-400 text-sm font-mono">O(log n)</span>
-                  </div>
-                  <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded">
-                    <span className="text-theme-2 text-sm">Merge Sort</span>
-                    <span className="text-red-400 text-sm font-mono">O(n)</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div className="mt-4 flex justify-center gap-6 text-sm text-theme-2 font-mono">
+            <span>{array.length} elements | Max: {Math.max(...array)}</span>
+            {isSorting && (
+              <span className="text-accent">
+                Time: {(elapsedTime / 1000).toFixed(2)}s
+              </span>
+            )}
           </div>
         </div>
       </div>

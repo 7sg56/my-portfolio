@@ -8,7 +8,6 @@ import ProjectsWindow from "@/components/windows/ProjectsWindow";
 import AppWindow from "@/components/windows/AppWindow";
 import NowListeningWidget from "@/components/widgets/NowListeningWidget";
 import TodoWidget from "@/components/widgets/TodoWidget";
-import TetrisWidget from "@/components/widgets/TetrisWidget";
 import BootLog from "@/components/boot/BootLog";
 import HeroSelector from "@/components/boot/HeroSelector";
 import Hero from "@/components/hero/Hero";
@@ -109,7 +108,7 @@ export default function Home() {
               <div className="absolute right-0 top-0 w-1/2 h-full p-6">
                 <div className="h-full grid grid-cols-3 grid-rows-4 gap-4">
                   
-                  <TetrisWidget span={{ cols: 1, rows: 2 }} />
+                 
                   
                   <TodoWidget span={{ cols: 2, rows: 1 }} />
                   

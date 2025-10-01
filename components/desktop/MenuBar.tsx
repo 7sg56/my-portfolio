@@ -58,12 +58,8 @@ export default function MenuBar({ hidden = false, title = "7sg56", showSystemMen
           </div>
         )}
         <span className="font-semibold hidden sm:inline">{title}</span>
-        <span className="text-zinc-400 hidden sm:inline">File</span>
-        <span className="text-zinc-400 hidden sm:inline">Edit</span>
-        <span className="text-zinc-400 hidden sm:inline">View</span>
-        <span className="text-zinc-400 hidden sm:inline">Go</span>
-        <span className="text-zinc-400 hidden sm:inline">Window</span>
-        <span className="text-zinc-400 hidden sm:inline">Help</span>
+        <span className="text-zinc-400 hidden sm:inline"></span>
+
       </div>
       <div className="text-zinc-400" suppressHydrationWarning>{now}</div>
     </div>

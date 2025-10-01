@@ -7,8 +7,8 @@ interface ExperienceCardProps {
   company: string;
   duration: string;
   description: string;
-  tech: string[];
-  achievements: string[];
+  tech?: string[];
+  achievements?: string[];
   isCurrent?: boolean;
 }
 
@@ -33,12 +33,16 @@ export default function ExperienceCard({
       </div>
       <div className="text-theme-2 text-sm mb-2">{company} • {duration}</div>
       <div className="text-theme-2 mb-3">{description}</div>
-      <div className="text-theme-2 text-sm mb-3">Tech: {tech.join(", ")}</div>
-      <div className="flex gap-3 text-sm">
-        {achievements.map((achievement, index) => (
-          <span key={index} className="text-theme-2">• {achievement}</span>
-        ))}
-      </div>
+      {tech && tech.length > 0 && (
+        <div className="text-theme-2 text-sm mb-3">Tech: {tech.join(", ")}</div>
+      )}
+      {achievements && achievements.length > 0 && (
+        <div className="flex gap-3 text-sm">
+          {achievements.map((achievement, index) => (
+            <span key={index} className="text-theme-2">• {achievement}</span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

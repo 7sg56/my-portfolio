@@ -2,7 +2,7 @@
 
 import React from "react";
 import AppWindow from "@/components/windows/AppWindow";
-import { PROJECTS } from "@/components/terminal/commands";
+import { PROJECTS } from "@/lib/data";
 
 export default function ProjectsWindow(props: {
   open?: boolean;

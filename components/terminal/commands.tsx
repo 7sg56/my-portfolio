@@ -4,6 +4,20 @@ import React, { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { MinecraftCharacter, MINECRAFT_MODELS, type MinecraftKind } from "@/components/three/Minecraft";
 import * as THREE from "three";
+import { 
+  PROJECTS, 
+  EXPERIENCE, 
+  RESUME, 
+  PROFILE, 
+  SKILLS,
+  getProject, 
+  getAllProjects, 
+  getAllExperience, 
+  getResume, 
+  getProfile, 
+  getProjectsCount,
+  getAllSkills
+} from "@/lib/data";
 
 // Single-active summon coordination so only the latest stays active
 let activeSummonId: string | null = null;
@@ -28,73 +42,24 @@ export type Env = {
 
 export type CommandHandler = (args: string[], env: Env) => React.ReactNode;
 
-export type Project = {
-  name: string;
-  desc: string;
-  tech: string[];
-  repo?: string;
-  demo?: string;
-  slug: string; // lowercase key for lookup
+// Data is now imported from centralized lib/data.ts
+
+const Skills = () => {
+  const skills = getAllSkills();
+  
+  return (
+    <div className="space-y-1">
+      <div className="text-zinc-100">Skills</div>
+      <ul className="list-disc pl-6 text-zinc-300">
+        {skills.map((category) => (
+          <li key={category.title}>
+            <span className="text-zinc-200">{category.title}:</span> {category.skills.join(", ")}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 };
-
-const PROFILE = {
-  name: "Sourish Ghosh",
-  handle: "7sg56",
-  tagline: "Full-Stack Developer focused on Next.js + design systems",
-  about:
-    "I’m a B.Tech Computer Science student at SRMIST, Chennai, passionate about building scalable web applications and exploring modern web technologies. I enjoy creating clean, responsive designs and experimenting with full-stack projects. Beyond web development, I’m also interested in machine learning, particularly NLP, and I regularly try to solve problems on LeetCode. I’m currently looking for opportunities to contribute to meaningful projects and continue growing as a developer. Let's connect and create the unimaginable",
-  contact: {
-    email_masked: "sghosh.ile.7@gmail.com (masked)",
-    phone_masked: "You haven't reached that level of closeness to get my number :)",
-    open_to: "Open to work / mentorship",
-  },
-  socials: {
-    github: "https://github.com/7sg56",
-    linkedin: "https://www.linkedin.com/in/7sg56",
-    twitter: "https://x.com/sourishghosh777",
-    portfolio: "https://sourishghosh-7sg56.vercel.app",
-  },
-  education: {
-    summary: "B.Tech in CSE w/s SE (2024-2024) CGPA: 9.1",
-  },
-};
-
-export const PROJECTS: Project[] = [
-  {
-    name: "Stamped — Event management & Attendance system",
-    slug: "stamped",
-    desc: "Seamless event registration, instant QR check-ins, and real-time analytics.",
-    tech: ["Next.js", "Node.js", "Express", "MongoDB", "Tailwind", "JWT"],
-    repo: "https://github.com/7sg56/stamped-v0",
-    demo: "https://stamped-v0.vercel.app",
-  },
-];
-
-const Skills = () => (
-  <div className="space-y-1">
-    <div className="text-zinc-100">Skills</div>
-    <ul className="list-disc pl-6 text-zinc-300">
-      <li>
-        <span className="text-zinc-200">Languages:</span> JavaScript, TypeScript, Python, C++, Java, C
-      </li>
-      <li>
-        <span className="text-zinc-200">Frontend:</span> NextJs, React, Tailwind, SASS
-      </li>
-      <li>
-        <span className="text-zinc-200">Backend:</span> Node.js, Express
-      </li>
-      <li>
-        <span className="text-zinc-200">Databases:</span> MongoDB, MySQL, Supabase
-      </li>
-      <li>
-        <span className="text-zinc-200">DevOps/Infra:</span> Git, GitHub Actions, Vercel, Netlify, Render
-      </li>
-      <li>
-        <span className="text-zinc-200">Tools/Other:</span> VSCode, Figma, Postman, WSL
-      </li>
-    </ul>
-  </div>
-);
 
 function link(href: string, text?: string) {
   return (
@@ -258,11 +223,13 @@ export const commands: Record<string, CommandHandler> = {
     <div className="space-y-1">
       <div className="text-zinc-100">Experience</div>
       <ul className="list-disc pl-6 text-zinc-300 space-y-1">
-        <li>SRMIST — Active member, coding communities and hackathons</li>
-        <li>Open-source / Personal projects — {PROJECTS.length}+ projects, focusing on web apps and tooling</li>
-        <li>Clubs & Societies — Developer roles in campus clubs</li>
+        {getAllExperience().map((exp, index) => (
+          <li key={index}>
+            <span className="text-zinc-200">{exp.company}</span> — {exp.title} ({exp.period})
+          </li>
+        ))}
+        <li>Open-source / Personal projects — {getProjectsCount()}+ projects, focusing on web apps and tooling</li>
       </ul>
-      <div className="text-zinc-500">Note: Replace with specific organizations and roles as they become available.</div>
     </div>
   ),
 
@@ -274,13 +241,7 @@ export const commands: Record<string, CommandHandler> = {
     const sub = (args[0] || "list").toLowerCase();
     if (sub === "view") {
       const key = (args[1] || "").toLowerCase();
-      let p: Project | undefined;
-      if (/^\d+$/.test(key)) {
-        const idx = parseInt(key, 10) - 1;
-        p = PROJECTS[idx];
-      } else {
-        p = PROJECTS.find((x) => x.slug === key || x.name.toLowerCase().includes(key));
-      }
+      let p = getProject(key);
       if (!p) return <div className="text-red-300">Usage: projects view &lt;slug|#&gt;</div>;
       return (
         <div className="space-y-1">
@@ -296,9 +257,9 @@ export const commands: Record<string, CommandHandler> = {
     }
     return (
       <div className="space-y-1">
-        <div className="text-zinc-100">Projects ({PROJECTS.length})</div>
+        <div className="text-zinc-100">Projects ({getProjectsCount()})</div>
         <ul className="list-disc pl-6 space-y-1">
-          {PROJECTS.map((p, i) => (
+          {getAllProjects().map((p, i) => (
             <li key={p.slug}>
               <span className="text-zinc-200">[{i + 1}] {p.name}</span>
               <span className="text-zinc-500"> — {p.desc}</span>{" "}
@@ -326,12 +287,13 @@ export const commands: Record<string, CommandHandler> = {
 
   // resume: attempt to download a PDF from /public
   resume: (args) => {
-    const target = (args[0] || 'resume.pdf').replace(/^\/+/, '');
+    const resume = getResume();
+    const target = (args[0] || resume.url).replace(/^\/+/, '');
     const url = `/${target}`;
     try {
       const a = document.createElement('a');
       a.href = url;
-      a.download = '';
+      a.download = resume.filename;
       a.style.display = 'none';
       document.body.appendChild(a);
       a.click();
@@ -339,8 +301,9 @@ export const commands: Record<string, CommandHandler> = {
     } catch {}
     return (
       <div className="space-y-1">
-        <div>Attempting download: <span className="text-zinc-200">{url}</span></div>
-        
+        <div className="text-zinc-100">Resume</div>
+        <div>Attempting download: <span className="text-zinc-200">{resume.filename}</span></div>
+        <div className="text-zinc-500 text-sm">Last updated: {resume.lastUpdated}</div>
       </div>
     );
   },

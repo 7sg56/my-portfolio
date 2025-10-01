@@ -1,30 +1,10 @@
 "use client";
 
 import React from "react";
+import { getAllSkills } from "@/lib/data";
 
 export default function SkillsWindow() {
-  const skillCategories = [
-    {
-      title: "Frontend",
-      skills: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion", "Three.js"]
-    },
-    {
-      title: "Backend",
-      skills: ["Node.js", "Express", "tRPC", "GraphQL", "REST APIs", "WebSockets"]
-    },
-    {
-      title: "Databases",
-      skills: ["PostgreSQL", "MongoDB", "Prisma", "Redis", "SQLite", "Supabase"]
-    },
-    {
-      title: "DevOps",
-      skills: ["AWS", "Docker", "Vercel", "GitHub Actions", "CI/CD", "Kubernetes"]
-    },
-    {
-      title: "Tools",
-      skills: ["Git", "Figma", "VS Code", "Postman", "Jest", "Playwright"]
-    }
-  ];
+  const skillCategories = getAllSkills();
 
   return (
     <div className="h-full overflow-y-auto p-6">

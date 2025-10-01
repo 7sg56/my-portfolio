@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { PROJECTS } from "@/components/terminal/commands";
+import { PROJECTS } from "@/lib/data";
 
 export default function ProjectsContent() {
   return (

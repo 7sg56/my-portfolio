@@ -33,7 +33,7 @@ const BOARD_HEIGHT = 12;
 type Board = number[][];
 type Piece = { shape: number[][]; color: string; bgClass: string; borderClass: string; x: number; y: number };
 
-export default function TetrisWidget({ span }: { span?: Span }) {
+export default function TetrisGameWindow() {
   const [board, setBoard] = useState<Board>(() => 
     Array(BOARD_HEIGHT).fill(null).map(() => Array(BOARD_WIDTH).fill(0))
   );
@@ -294,10 +294,10 @@ export default function TetrisWidget({ span }: { span?: Span }) {
   const displayBoard = renderBoard();
 
   return (
-    <div className={`relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/70 backdrop-blur shadow-[0_10px_30px_rgba(0,0,0,0.4)] h-full w-full ${spanToClasses(span)}`}>
+    <div className="relative overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900/70 backdrop-blur shadow-[0_10px_30px_rgba(0,0,0,0.4)] h-full w-full">
       {/* Game Board - Full Widget */}
       <div 
-        className="h-full w-full grid gap-1 p-2"
+        className="h-full w-full grid gap-1.5 p-3"
         style={{ 
           gridTemplateColumns: `repeat(${BOARD_WIDTH}, 1fr)`,
           gridTemplateRows: `repeat(${BOARD_HEIGHT}, 1fr)`

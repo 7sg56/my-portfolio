@@ -9,17 +9,78 @@ import SkillsWindow from "@/components/windows/SkillsWindow";
 import ContactWindow from "@/components/windows/ContactWindow";
 import ProjectsContent from "@/components/windows/ProjectsContent";
 import AboutHome from "@/components/windows/AboutHome";
-import LoreWindow from "@/components/windows/LoreWindow";
+import TetrisGameWindow from "@/components/windows/TetrisGameWindow";
 import AlgorithmWindow from "@/components/windows/AlgorithmWindow";
 import TodoWidget from "@/components/widgets/TodoWidget";
 import NowListeningWidget from "@/components/widgets/NowListeningWidget";
-import TetrisWidget from "@/components/widgets/TetrisWidget";
-import QuotesWidget from "@/components/widgets/QuotesWidget";
+import DateNowWidget from "@/components/widgets/DateNowWidget";
+import TechStackStrip from "@/components/TechStackStrip";
+
+
+// Animated Role Text Component
+const AnimatedRoleText = () => {
+  const [currentRole, setCurrentRole] = useState("innovation");
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [showText, setShowText] = useState(true);
+
+  const roles = ["innovation", "creativity", "excellence", "vision"];
+  const randomChars = "abcdefghijklmnopqrstuvwxyz";
+
+  useEffect(() => {
+    const sequence = async () => {
+      let currentIndex = 0;
+      
+      const cycleRoles = async () => {
+        // Show current role for 3 seconds
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        
+        // Glitch/randomizer animation
+        setIsAnimating(true);
+        for (let i = 0; i < 8; i++) {
+          const randomText = Array.from({ length: currentRole.length }, () => 
+            randomChars[Math.floor(Math.random() * randomChars.length)]
+          ).join('');
+          setCurrentRole(randomText);
+          await new Promise(resolve => setTimeout(resolve, 80));
+        }
+        
+        // Move to next role
+        currentIndex = (currentIndex + 1) % roles.length;
+        setCurrentRole(roles[currentIndex]);
+        setIsAnimating(false);
+        
+        // Continue cycling
+        cycleRoles();
+      };
+
+      cycleRoles();
+    };
+
+    sequence();
+  }, []);
+
+  return (
+    <motion.span
+      className="text-accent font-medium ml-2"
+      animate={{
+        y: isAnimating ? [0, -2, 0] : 0,
+        opacity: showText ? 1 : 0,
+        scale: isAnimating ? [1, 1.05, 1] : 1
+      }}
+      transition={{
+        duration: 0.1,
+        ease: "easeInOut"
+      }}
+    >
+      {currentRole}
+    </motion.span>
+  );
+};
 
 // Types
-export type AppType = "about" | "projects" | "skills" | "contact" | "lore" | "algorithms";
+export type AppType = "about" | "projects" | "skills" | "contact" | "tetris" | "algorithms";
 export type WindowAppType = Exclude<AppType, "terminal">;
-export type WidgetType = "todo" | "now-listening" | "tetris" | "quotes";
+export type WidgetType = "todo" | "now-listening" | "date-now" | "tetris";
 
 type DockApp = {
   id: string;
@@ -66,11 +127,26 @@ const ContactIcon = () => (
   </svg>
 );
 
-const LoreIcon = () => (
+const TetrisIcon = () => (
   <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="6" y="4" width="20" height="24" rx="2" fill="#f8fafc" fillOpacity="0.1" stroke="#f8fafc" strokeWidth="2"/>
-    <path d="M10 8h12M10 12h8M10 16h12M10 20h6" stroke="#f8fafc" strokeWidth="2" strokeLinecap="round"/>
-    <circle cx="22" cy="20" r="2" fill="#f8fafc"/>
+    <rect x="4" y="4" width="24" height="24" rx="2" fill="#f8fafc" fillOpacity="0.1" stroke="#f8fafc" strokeWidth="2"/>
+    {/* T-piece */}
+    <rect x="12" y="8" width="4" height="4" fill="#f8fafc"/>
+    <rect x="8" y="12" width="4" height="4" fill="#f8fafc"/>
+    <rect x="12" y="12" width="4" height="4" fill="#f8fafc"/>
+    <rect x="16" y="12" width="4" height="4" fill="#f8fafc"/>
+  </svg>
+);
+
+const ProjectsIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="4" y="4" width="24" height="24" rx="2" fill="#f8fafc" fillOpacity="0.1" stroke="#f8fafc" strokeWidth="2"/>
+    <rect x="8" y="8" width="6" height="4" fill="#f8fafc"/>
+    <rect x="8" y="14" width="6" height="4" fill="#f8fafc"/>
+    <rect x="8" y="20" width="6" height="4" fill="#f8fafc"/>
+    <rect x="16" y="8" width="6" height="4" fill="#f8fafc"/>
+    <rect x="16" y="14" width="6" height="4" fill="#f8fafc"/>
+    <rect x="16" y="20" width="6" height="4" fill="#f8fafc"/>
   </svg>
 );
 
@@ -87,9 +163,10 @@ const AlgorithmsIcon = () => (
 // Dock app definitions
 const dockApps: DockApp[] = [
   { id: "about", name: "About", icon: "about", appType: "about" },
+  { id: "projects", name: "Projects", icon: "projects", appType: "projects" },
   { id: "skills", name: "Skills", icon: "skills", appType: "skills" },
   { id: "contact", name: "Contact", icon: "contact", appType: "contact" },
-  { id: "lore", name: "Lore", icon: "lore", appType: "lore" },
+  { id: "tetris", name: "Tetris", icon: "tetris", appType: "tetris" },
   { id: "algorithms", name: "Algorithms", icon: "algorithms", appType: "algorithms" },
 ];
 
@@ -103,7 +180,7 @@ export default function DesktopOSPage() {
     projects: false,
     skills: false,
     contact: false,
-    lore: false,
+    tetris: false,
     algorithms: false,
   });
 
@@ -119,7 +196,7 @@ export default function DesktopOSPage() {
     projects: false,
     skills: false,
     contact: false,
-    lore: false,
+    tetris: false,
     algorithms: false,
   });
 
@@ -129,7 +206,7 @@ export default function DesktopOSPage() {
     projects: false,
     skills: false,
     contact: false,
-    lore: false,
+    tetris: false,
     algorithms: false,
   });
 
@@ -278,6 +355,8 @@ export default function DesktopOSPage() {
   }, []);
 
   const toggleFullscreen = useCallback((appType: WindowAppType) => {
+    // Disable fullscreen for tetris game
+    if (appType === 'tetris') return;
     setFullscreenWindows(prev => ({ ...prev, [appType]: !prev[appType] }));
     bringToFront(appType);
   }, [bringToFront]);
@@ -299,31 +378,19 @@ export default function DesktopOSPage() {
 
   const clearSelection = useCallback(() => {}, []);
 
-  // 4 Corner Widget Layout
+  // Widget Layout
   const desktopItems: DesktopItem[] = useMemo(() => [
     {
-      id: "quotes-widget",
-      name: "Random Quotes",
+      id: "todo-widget",
+      name: "Things I Be Doing",
       icon: "",
       type: "widget",
-      widgetType: "quotes",
-      // TOP-LEFT CORNER
-      x: 10,   // ← Distance from left edge
-      y: 50,  // ← Distance from top edge
-      widthPx: 400,  // ← Widget width
-      heightPx: 200, // ← Widget height
-    },
-    {
-      id: "tetris-widget",
-      name: "Tetris",
-      icon: "",
-      type: "widget",
-      widgetType: "tetris",
+      widgetType: "todo",
       // TOP-RIGHT CORNER
-      x: width - 210,  // ← Distance from right edge (width - widgetWidth - margin)
+      x: width - 330,  // ← Distance from right edge (width - widgetWidth - margin)
       y: 50,  // ← Distance from top edge
-      widthPx: 200,  // ← Widget width
-      heightPx: 400, // ← Widget height
+      widthPx: 310,  // ← Widget width (400 * 0.75)
+      heightPx: 150, // ← Widget height (200 * 0.75)
     },
     {
       id: "now-listening-widget",
@@ -332,22 +399,22 @@ export default function DesktopOSPage() {
       type: "widget",
       widgetType: "now-listening",
       // BOTTOM-LEFT CORNER
-      x: 10,   // ← Distance from left edge
-      y: height - 150,  // ← Distance from bottom edge (height - widgetHeight - margin)
-      widthPx: 200,  // ← Widget width
-      heightPx: 150, // ← Widget height
+      x: 10,  // ← Left edge with small margin
+      y: height - 160,  // ← Bottom edge with margin for dock
+      widthPx: 150,  // ← Widget width (200 * 0.75)
+      heightPx: 150, // ← Widget height (200 * 0.75)
     },
     {
-      id: "todo-widget",
-      name: "Things I Be Doing",
+      id: "date-now-widget",
+      name: "Date Now",
       icon: "",
       type: "widget",
-      widgetType: "todo",
-      // BOTTOM-RIGHT CORNER
-      x: width - 320,  // ← Distance from right edge (width - widgetWidth - margin)
-      y: height - 200, // ← Distance from bottom edge (height - widgetHeight - margin)
-      widthPx: 300,  // ← Widget width
-      heightPx: 180, // ← Widget height
+      widgetType: "date-now",
+      // BOTTOM-RIGHT (beside now-listening)
+      x: width - 170,  // ← Beside now-listening widget (330 - 150 - 15 margin)
+      y: 210,  // ← Same y as now-listening widget
+      widthPx: 150,  // ← Widget width (200 * 0.75)
+      heightPx: 150, // ← Widget height (200 * 0.75)
     },
   ], [width, height]);
 
@@ -358,10 +425,8 @@ export default function DesktopOSPage() {
         return <TodoWidget />;
       case "now-listening":
         return <NowListeningWidget />;
-      case "tetris":
-        return <TetrisWidget />;
-      case "quotes":
-        return <QuotesWidget />;
+      case "date-now":
+        return <DateNowWidget />;
       default:
         return null;
     }
@@ -374,7 +439,7 @@ export default function DesktopOSPage() {
     projects: { title: "Projects", render: () => <ProjectsContent /> },
     skills: { title: "Skills", render: () => <SkillsWindow /> },
     contact: { title: "Contact / Socials", render: () => <ContactWindow /> },
-    lore: { title: "Lore", render: () => <LoreWindow /> },
+    tetris: { title: "Tetris Game", render: () => <TetrisGameWindow /> },
     algorithms: { title: "Algorithms", render: () => <AlgorithmWindow /> },
   } as const;
 
@@ -398,13 +463,82 @@ export default function DesktopOSPage() {
       {/* Menu Bar */}
       <MenuBar title={focusedWindow ? WINDOW_CONFIG[focusedWindow]?.title : "Desktop"} showSystemMenu={true} terminalHref="/portfolio/terminal" shutdownHref="/gui" />
 
+      {/* Animated Hero Text */}
+      <div className="absolute left-8 z-10" style={{ top: '180px' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.5 }}
+          className="space-y-2"
+        >
+          <div className="text-white space-y-6">
+            {/* Main Name - Large and Bold */}
+            <motion.h1 
+              className="font-black uppercase tracking-tight"
+              style={{ fontSize: '4rem', lineHeight: '0.9' }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 0.8 }}
+            >
+              SOURISH GHOSH
+            </motion.h1>
+            
+            {/* Tagline with animated roles */}
+            <motion.div 
+              className="text-xl font-light leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: 1.2 }}
+            >
+              <span className="text-gray-300">I build </span>
+              <span className="text-gray-200 mx-2">digital experiences </span>
+              <span className="text-gray-300">with</span>
+              <br />
+              <span className="text-gray-400">passion, precision and</span>
+              <AnimatedRoleText />
+            </motion.div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* TechStackStrip - positioned at bottom, rotated 45deg anticlockwise, shifted right */}
+      <div 
+        className="absolute z-[300] origin-center" 
+        style={{ 
+          bottom: '120px', 
+          right: '-250px',
+          transform: 'rotate(-35deg)',
+          width: '800px'
+        }}
+      >
+        <TechStackStrip 
+          items={[
+            "Next.js",
+            "React",
+            "TypeScript",
+            "Tailwind CSS",
+            "Node.js", 
+            "Express.js",
+            "Vercel",
+            "Supabase",
+            "PostgreSQL",
+            "Framer Motion",
+            "JWT",
+            "Redis"
+          ]}
+          duration={25}
+          pauseOnHover={false}
+          className="bg-black/30 backdrop-blur-sm text-white min-h-[50px] flex items-center"
+        />
+      </div>
+
       {/* Desktop Widgets */}
       {desktopItems.map((item) => {
         if (item.type !== "widget" || !item.widgetType) return null;
         return (
           <motion.div
             key={item.id}
-            className="absolute pointer-events-auto"
+            className="absolute pointer-events-auto border border-gray-100 rounded-lg"
             style={{
               left: item.x,
               top: item.y,
@@ -420,8 +554,9 @@ export default function DesktopOSPage() {
         );
       })}
 
+
       {/* Custom Dock with unique icons */}
-      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
+      <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-4 py-3 flex items-end gap-2 shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
           {dockApps.map((app) => {
             const isOpen = openWindows[app.appType as WindowAppType];
@@ -436,9 +571,10 @@ export default function DesktopOSPage() {
               >
                 <div className={`w-12 h-12 glass-2 border border-theme rounded-xl flex items-center justify-center mb-1 hover:glass-1 transition-colors duration-200 shadow-md ${hasIndicator ? 'ring-2 ring-accent/50' : ''}`}>
                   {app.icon === "about" && <AboutIcon />}
+                  {app.icon === "projects" && <ProjectsIcon />}
                   {app.icon === "skills" && <SkillsIcon />}
                   {app.icon === "contact" && <ContactIcon />}
-                  {app.icon === "lore" && <LoreIcon />}
+                  {app.icon === "tetris" && <TetrisIcon />}
                   {app.icon === "algorithms" && <AlgorithmsIcon />}
                 </div>
                 {/* macOS-style indicator dot */}
@@ -465,10 +601,11 @@ export default function DesktopOSPage() {
               title={title}
               onClose={() => closeWindow(appType)}
               onMinimize={() => minimizeWindow(appType)}
-              onToggleFullscreen={() => toggleFullscreen(appType)}
+              onToggleFullscreen={appType === 'tetris' ? undefined : () => toggleFullscreen(appType)}
               fullscreen={fullscreenWindows[appType]}
               minimized={isMinimized}
               zIndex={zBase + orderIndex}
+              customSize={appType === 'tetris' ? { width: 300, height: 600 } : undefined}
             >
               {render()}
             </AppWindow>

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import ExperienceCard from "./ExperienceCard";
+import { getAllExperience } from "@/lib/data";
 
 export type OpenAppFn = (app: "about" | "projects" | "skills" | "contact") => void;
 
@@ -167,87 +168,36 @@ export default function AboutHome({ onOpen }: { onOpen: OpenAppFn }) {
     </div>
   );
 
-  const renderExperience = () => (
-    <div className="flex flex-col gap-6 text-theme-2 max-w-7xl h-full overflow-y-auto">
-      <div className="flex items-center justify-between sticky top-0 bg-gradient-to-b from-black/90 to-transparent backdrop-blur-sm z-10 pb-4">
-        <h2 className="text-2xl font-bold text-theme">Experience</h2>
-        <button 
-          className="text-theme hover:text-theme-2 transition-colors"
-          onClick={() => setCurrentView("home")}
-        >
-          ← Back to Home
-        </button>
+  const renderExperience = () => {
+    const experience = getAllExperience();
+    
+    return (
+      <div className="flex flex-col gap-6 text-theme-2 max-w-7xl h-full overflow-y-auto">
+        <div className="flex items-center justify-between sticky top-0 bg-gradient-to-b from-black/90 to-transparent backdrop-blur-sm z-10 pb-4">
+          <h2 className="text-2xl font-bold text-theme">Experience</h2>
+          <button 
+            className="text-theme hover:text-theme-2 transition-colors"
+            onClick={() => setCurrentView("home")}
+          >
+            ← Back to Home
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {experience.map((exp, index) => (
+            <ExperienceCard
+              key={index}
+              title={exp.title}
+              company={exp.company}
+              duration={exp.period}
+              description={exp.description}
+              isCurrent={exp.period.includes("Present")}
+            />
+          ))}
+        </div>
       </div>
-
-      <div className="space-y-3">
-        <ExperienceCard
-          title="Senior Full‑stack Developer"
-          company="TechCorp Solutions"
-          duration="2023 — Present"
-          description="Leading development of enterprise-scale web applications using Next.js and TypeScript. Architected microservices infrastructure serving 100k+ daily active users."
-          tech={["Next.js", "TypeScript", "Node.js", "PostgreSQL", "Docker", "AWS"]}
-          achievements={[
-            "Built feature‑rich applications with optimized render paths",
-            "Led team of 3 developers",
-            "Improved performance by 60%"
-          ]}
-          isCurrent={true}
-        />
-
-        <ExperienceCard
-          title="Frontend Developer"
-          company="Digital Agency Pro"
-          duration="2021 — 2023"
-          description="Specialized in creating responsive, accessible web applications for diverse client portfolio. Focused on performance optimization and user experience enhancement."
-          tech={["React", "TypeScript", "Tailwind CSS", "Figma", "Webpack", "Jest"]}
-          achievements={[
-            "Led component library development",
-            "Enhanced UX metrics by 40%",
-            "Improved accessibility compliance"
-          ]}
-        />
-
-        <ExperienceCard
-          title="Software Engineering Intern"
-          company="StartupXYZ"
-          duration="2020 — 2021"
-          description="Gained hands-on experience with modern web development practices and agile methodologies. Worked on internal tools and customer-facing applications."
-          tech={["Node.js", "Express", "MongoDB", "React", "Git", "Docker"]}
-          achievements={[
-            "Developed internal dashboard",
-            "Built REST APIs",
-            "Implemented CI/CD pipelines"
-          ]}
-        />
-
-        <ExperienceCard
-          title="Freelance Web Developer"
-          company="Independent"
-          duration="2019 — 2021"
-          description="Delivered custom web solutions for small to medium businesses, focusing on modern technologies and best practices."
-          tech={["React", "Node.js", "MongoDB", "Stripe", "Vercel", "Netlify"]}
-          achievements={[
-            "Delivered 15+ client projects",
-            "Built e-commerce solutions",
-            "Provided ongoing maintenance"
-          ]}
-        />
-
-        <ExperienceCard
-          title="Bachelor of Technology in Computer Science"
-          company="University of Technology"
-          duration="2017 — 2021"
-          description="Specialized in Software Engineering, Data Structures, and Algorithms. Focused on full-stack development and software architecture."
-          tech={["AWS Developer Associate", "Google Cloud Professional", "React Developer", "Agile Project Management"]}
-          achievements={[
-            "CGPA: 8.5/10",
-            "Multiple group projects",
-            "Research in ML/NLP"
-          ]}
-        />
-      </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="flex h-full w-full items-center justify-center p-6">

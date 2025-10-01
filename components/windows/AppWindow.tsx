@@ -13,6 +13,8 @@ export type WindowProps = {
   fullscreen?: boolean;
   minimized?: boolean;
   zIndex?: number;
+  customSize?: { width: number; height: number };
+  disableMinimize?: boolean;
   onClose?: () => void;
   onMinimize?: () => void;
   onToggleFullscreen?: () => void;
@@ -25,6 +27,8 @@ export default function AppWindow({
   fullscreen = false,
   minimized = false,
   zIndex = 40,
+  customSize,
+  disableMinimize = false,
   onClose,
   onMinimize,
   onToggleFullscreen,
@@ -42,7 +46,9 @@ export default function AppWindow({
   }, [fullscreen]);
 
   // Local size state for windowed mode
-  const [size, setSize] = useState<{ w: number; h: number }>({ w: 900, h: 560 });
+  const [size, setSize] = useState<{ w: number; h: number }>(
+    customSize ? { w: customSize.width, h: customSize.height } : { w: 900, h: 560 }
+  );
   const [savedSize, setSavedSize] = useState<{ w: number; h: number } | null>(null);
   const prevFsRef = useRef(fullscreen);
 
@@ -77,7 +83,7 @@ export default function AppWindow({
 
   // Resize handler (bottom-right corner)
   const startResize = (e: React.PointerEvent) => {
-    if (fullscreen) return;
+    if (fullscreen || customSize) return;
     e.preventDefault();
     e.stopPropagation();
     const startX = e.clientX;
@@ -121,7 +127,8 @@ export default function AppWindow({
           (fullscreen
             ? "pointer-events-auto absolute inset-0"
             : "pointer-events-auto absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2") +
-          " rounded-lg border p-3 flex flex-col font-mono text-sm shadow-[0_10px_30px_rgba(0,0,0,0.4)]"
+          " rounded-lg border flex flex-col font-mono text-sm shadow-[0_10px_30px_rgba(0,0,0,0.4)]" +
+          (customSize ? " p-0" : " p-3")
         }
         style={{
           borderColor: DEBUG_UI ? "#89b4fa" : "#27272a", // zinc-800
@@ -134,8 +141,8 @@ export default function AppWindow({
         {...dragProps}
       >
         <div
-          className="flex items-center gap-2 pb-2 cursor-move select-none"
-          onDoubleClick={onToggleFullscreen}
+          className="flex items-center gap-2 pb-2 px-3 pt-3 cursor-move select-none"
+          onDoubleClick={onToggleFullscreen || undefined}
           onPointerDown={(e) => dragControls.start(e)}
         >
           <button
@@ -149,32 +156,40 @@ export default function AppWindow({
           />
           <button
             type="button"
-            title="Minimize"
-            aria-label="Minimize"
+            title={disableMinimize ? "Minimize disabled" : "Minimize"}
+            aria-label={disableMinimize ? "Minimize disabled" : "Minimize"}
             onPointerDown={(e) => e.stopPropagation()}
-            onClick={onMinimize}
+            onClick={disableMinimize ? undefined : onMinimize}
             className="h-3 w-3 rounded-full"
-            style={{ backgroundColor: "#f9e2af" }}
+            style={{ 
+              backgroundColor: disableMinimize ? "#6b7280" : "#f9e2af",
+              cursor: disableMinimize ? "not-allowed" : "pointer",
+              opacity: disableMinimize ? 0.5 : 1
+            }}
           />
           <button
             type="button"
-            title="Toggle fullscreen"
-            aria-label="Toggle fullscreen"
+            title={onToggleFullscreen ? "Toggle fullscreen" : "Fullscreen disabled"}
+            aria-label={onToggleFullscreen ? "Toggle fullscreen" : "Fullscreen disabled"}
             onPointerDown={(e) => e.stopPropagation()}
             onClick={onToggleFullscreen}
             className="h-3 w-3 rounded-full"
-            style={{ backgroundColor: "#a6e3a1" }}
+            style={{ 
+              backgroundColor: onToggleFullscreen ? "#a6e3a1" : "#6b7280",
+              cursor: onToggleFullscreen ? "pointer" : "not-allowed",
+              opacity: onToggleFullscreen ? 1 : 0.5
+            }}
           />
           <span className="ml-3 text-xs" style={{ color: "#a6adc8" }}>
             {title}
           </span>
         </div>
-        <div className="flex-1 min-h-0 overflow-y-auto pr-2" style={{ color: "#cdd6f4" }}>
+        <div className={`flex-1 min-h-0 overflow-y-auto ${customSize ? "" : "pr-2"}`} style={{ color: "#cdd6f4" }}>
           {children}
         </div>
 
         {/* Resize corner handle */}
-        {!fullscreen && (
+        {!fullscreen && !customSize && (
           <div
             onPointerDown={startResize}
             className="absolute bottom-2 right-2 h-3 w-3 rounded-sm border border-zinc-600 bg-zinc-500 cursor-se-resize"
