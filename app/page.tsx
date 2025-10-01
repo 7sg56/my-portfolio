@@ -155,14 +155,16 @@ export default function Home() {
               </AppWindow>
             )}
             {showProjects && !minProjects && (
-              <ProjectsWindow
-                open
+              <AppWindow
+                title="Projects"
                 fullscreen={fsProjects}
                 zIndex={34}
                 onClose={() => setShowProjects(false)}
                 onMinimize={() => setMinProjects(true)}
                 onToggleFullscreen={() => setFsProjects((x) => !x)}
-              />
+              >
+                <ProjectsWindow />
+              </AppWindow>
             )}
             
           </AnimatePresence>

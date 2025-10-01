@@ -571,7 +571,7 @@ export default function DesktopOSPage() {
                 whileTap={{ scale: 0.95 }}
               >
                 <div 
-                  className={`glass-2 border border-theme rounded-xl flex items-center justify-center mb-1 hover:glass-1 transition-colors duration-200 shadow-md ${hasIndicator ? 'ring-2 ring-accent/50' : ''}`}
+                  className={`glass-2 border border-theme rounded-xl flex items-center justify-center mb-1 hover:glass-1 transition-colors duration-200 shadow-md ${hasIndicator ? 'ring-2 ring-red-500/50' : ''}`}
                   style={{
                     width: `${dock.iconSize}px`,
                     height: `${dock.iconSize}px`
@@ -586,7 +586,7 @@ export default function DesktopOSPage() {
                 </div>
                 {/* macOS-style indicator dot */}
                 {hasIndicator && (
-                  <div className="absolute -bottom-1 w-1 h-1 rounded-full bg-accent"></div>
+                  <div className="absolute -bottom-1 w-1 h-1 rounded-full bg-red-500"></div>
                 )}
                 <span 
                   className="font-medium text-gray-200"

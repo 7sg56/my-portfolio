@@ -217,7 +217,7 @@ export default function AlgorithmWindow() {
           <button
             onClick={generateArray}
             disabled={isSorting}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-theme-2 text-sm rounded-lg transition-all duration-200 disabled:opacity-50 hover:scale-105 active:scale-95"
+            className="px-4 py-2 bg-red-800 hover:bg-red-700 text-red-100 text-sm rounded-lg transition-all duration-200 disabled:opacity-50 hover:scale-105 active:scale-95"
           >
             New Array
           </button>
@@ -234,10 +234,10 @@ export default function AlgorithmWindow() {
               disabled={isSorting}
               className={`px-3 py-2 rounded text-sm font-medium transition-all duration-200 ${
                 currentAlgorithm === algo.value
-                  ? "bg-gray-200 text-black"
+                  ? "bg-red-600 text-white"
                   : isSorting
-                  ? "bg-gray-700/50 text-gray-500 cursor-not-allowed"
-                  : "bg-gray-700/30 text-theme-2 hover:bg-gray-700/50 hover:text-theme"
+                  ? "bg-black/40 text-white cursor-not-allowed"
+                  : "bg-black/30 text-theme-2 hover:bg-black/40 hover:text-red-300"
               }`}
             >
               {algo.name}
@@ -247,7 +247,7 @@ export default function AlgorithmWindow() {
 
         {/* Visualization - Main Focus */}
         <div className="flex-1 flex flex-col items-center justify-center">
-          <div className="flex items-end justify-center gap-1 h-48 bg-gray-900/30 rounded-lg p-3 w-full max-w-3xl">
+          <div className="flex items-end justify-center gap-1 h-48 bg-black/20 backdrop-blur-sm rounded-xl p-3 w-full max-w-3xl">
             {array.map((value, index) => (
               <div
                 key={index}
@@ -256,7 +256,7 @@ export default function AlgorithmWindow() {
                   height: `${(value / 150) * 180}px`,
                   width: `${Math.max(3, 100 / array.length)}%`,
                   minWidth: '3px',
-                  backgroundColor: '#dc2626',
+                  backgroundColor: '#991b1b',
                   boxShadow: '0 1px 2px rgba(0,0,0,0.2)'
                 }}
               />

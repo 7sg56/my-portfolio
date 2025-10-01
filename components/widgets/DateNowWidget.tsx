@@ -13,7 +13,7 @@ export default function DateNowWidget() {
       <div className="h-full w-full p-4 flex flex-col items-center justify-center">
         {/* Day and Month on same line */}
         <div className="text-center mb-3">
-          <span className="text-lg font-bold font-mono text-red-400">
+          <span className="text-lg font-bold font-mono text-red-500">
             {dayName}
           </span>
           <span className="text-lg font-bold font-mono text-zinc-100 ml-2">

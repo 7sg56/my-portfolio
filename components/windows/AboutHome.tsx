@@ -66,7 +66,7 @@ export default function AboutHome({ onOpen }: { onOpen: OpenAppFn }) {
               <h2 className="text-2xl font-bold text-theme">Welcome</h2>
               <div className="glass-2 rounded-lg p-6 border border-theme bg-black/20 backdrop-blur-sm relative overflow-hidden">
                 <p className="text-theme-2 leading-relaxed mb-4">
-                  I'm Sourish Ghosh, a software developer living in India.
+                  I&apos;m Sourish Ghosh, a software developer living in India.
                 </p>
                 <p className="text-theme-2 leading-relaxed">
                   Thanks for taking the time to explore my portfolio. I hope you enjoy it as much I did enjoy developing it. 
@@ -124,8 +124,8 @@ export default function AboutHome({ onOpen }: { onOpen: OpenAppFn }) {
               <h2 className="text-2xl font-bold text-theme">Hobbies</h2>
               <div className="glass-2 rounded-lg p-6 border border-theme bg-black/20 backdrop-blur-sm relative overflow-hidden">
                 <p className="text-theme-2 leading-relaxed">
-                  Outside of tech, I'm a big Soulsborne fan when it comes to gaming (yes, I've chased those platinum trophies). 
-                  I'm also a proud cat lover, and when I'm not coding or gaming, I enjoy cooking and experimenting in the kitchen. 
+                  Outside of tech, I&apos;m a big Soulsborne fan when it comes to gaming (yes, I&apos;ve chased those platinum trophies). 
+                  I&apos;m also a proud cat lover, and when I&apos;m not coding or gaming, I enjoy cooking and experimenting in the kitchen. 
                   On the strategic side, I like playing chess, where I currently hold a 1500 rating on Chess.com.
                 </p>
               </div>
