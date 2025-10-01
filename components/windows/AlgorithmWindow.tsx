@@ -197,7 +197,9 @@ export default function AlgorithmWindow() {
   return (
     <div className="h-full flex flex-col bg-black/20 backdrop-blur-sm">
       <div className="flex items-center justify-between px-6 py-4 border-b border-theme bg-black/30 backdrop-blur-md">
-        <h1 className="text-2xl font-bold text-theme">Algorithm Visualizer</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-2xl font-bold text-theme">Algorithm Visualizer</h1>
+        </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <label className="text-theme-2 text-sm">Speed:</label>
@@ -254,7 +256,7 @@ export default function AlgorithmWindow() {
                   height: `${(value / 150) * 180}px`,
                   width: `${Math.max(3, 100 / array.length)}%`,
                   minWidth: '3px',
-                  backgroundColor: '#64748b',
+                  backgroundColor: '#dc2626',
                   boxShadow: '0 1px 2px rgba(0,0,0,0.2)'
                 }}
               />
@@ -263,7 +265,7 @@ export default function AlgorithmWindow() {
           <div className="mt-4 flex justify-center gap-6 text-sm text-theme-2 font-mono">
             <span>{array.length} elements | Max: {Math.max(...array)}</span>
             {isSorting && (
-              <span className="text-accent">
+              <span className="text-red-400">
                 Time: {(elapsedTime / 1000).toFixed(2)}s
               </span>
             )}

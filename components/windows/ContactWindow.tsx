@@ -51,7 +51,7 @@ export default function ContactWindow() {
                       href={link.url} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-accent hover:text-accent/80 underline"
+                      className="text-red-400 hover:text-red-300 hover:underline transition-colors font-medium"
                     >
                       {link.url}
                     </a>

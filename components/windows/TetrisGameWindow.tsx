@@ -16,15 +16,15 @@ type Span = { cols?: 1 | 2 | 3; rows?: 1 | 2 | 3 | 4 };
 //   return cls.join(" ");
 // }
 
-// Tetris pieces with #a3a3a3 color
+// Tetris pieces with grey shades
 const TETRIS_PIECES = [
-  { shape: [[1, 1, 1, 1]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // I-piece
-  { shape: [[1, 1], [1, 1]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // O-piece
-  { shape: [[0, 1, 0], [1, 1, 1]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // T-piece
-  { shape: [[0, 1, 1], [1, 1, 0]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // S-piece
-  { shape: [[1, 1, 0], [0, 1, 1]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // Z-piece
-  { shape: [[1, 0, 0], [1, 1, 1]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // J-piece
-  { shape: [[0, 0, 1], [1, 1, 1]], color: "#a3a3a3", bgClass: "bg-[#a3a3a3]", borderClass: "border-[#a3a3a3]" }, // L-piece
+  { shape: [[1, 1, 1, 1]], color: "#6b7280", bgClass: "bg-gray-500", borderClass: "border-gray-500" }, // I-piece
+  { shape: [[1, 1], [1, 1]], color: "#9ca3af", bgClass: "bg-gray-400", borderClass: "border-gray-400" }, // O-piece
+  { shape: [[0, 1, 0], [1, 1, 1]], color: "#4b5563", bgClass: "bg-gray-600", borderClass: "border-gray-600" }, // T-piece
+  { shape: [[0, 1, 1], [1, 1, 0]], color: "#374151", bgClass: "bg-gray-700", borderClass: "border-gray-700" }, // S-piece
+  { shape: [[1, 1, 0], [0, 1, 1]], color: "#1f2937", bgClass: "bg-gray-800", borderClass: "border-gray-800" }, // Z-piece
+  { shape: [[1, 0, 0], [1, 1, 1]], color: "#111827", bgClass: "bg-gray-900", borderClass: "border-gray-900" }, // J-piece
+  { shape: [[0, 0, 1], [1, 1, 1]], color: "#6b7280", bgClass: "bg-gray-500", borderClass: "border-gray-500" }, // L-piece
 ];
 
 const BOARD_WIDTH = 6;
@@ -286,8 +286,8 @@ export default function TetrisGameWindow() {
       return {};
     }
     return {
-      backgroundColor: '#a3a3a3',
-      borderColor: '#a3a3a3'
+      backgroundColor: '#6b7280',
+      borderColor: '#6b7280'
     };
   };
 
@@ -322,7 +322,7 @@ export default function TetrisGameWindow() {
               <div className="text-2xl font-bold text-white">Tetris</div>
               <button
                 onClick={startGame}
-                className="px-6 py-2 bg-[#a3a3a3] hover:bg-[#b3b3b3] text-white text-sm rounded-lg transition-colors font-semibold"
+                className="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white text-sm rounded-lg transition-colors font-semibold"
               >
                 Play
               </button>
@@ -335,7 +335,7 @@ export default function TetrisGameWindow() {
               <div className="text-sm text-zinc-300">Score: {score}</div>
               <button
                 onClick={startGame}
-                className="px-6 py-2 bg-[#a3a3a3] hover:bg-[#b3b3b3] text-white text-sm rounded-lg transition-colors font-semibold"
+                className="px-6 py-2 bg-gray-600 hover:bg-gray-500 text-white text-sm rounded-lg transition-colors font-semibold"
               >
                 Play Again
               </button>

@@ -6,40 +6,42 @@ import { motion, AnimatePresence } from "motion/react";
 export default function BootLog({ progress, title = "Booting Sourish’s Portfolio…" }: { progress: number; title?: string }) {
   const lines = useMemo(
     () => [
-      "SOURISH 486DX BIOS v1.23   © 1995 Sourish Microsystems",
-      "Primary Master:  WDC AC2540H  540MB  LBA",
-      "Primary Slave :  None",
-      "Secondary Mast:  MATSHITA CD-ROM CR-8004",
-      "Secondary Slav:  None",
-      "Video BIOS:     VGA Compatible, 512KB",
-      "Memory Test:    640K OK + 15360K OK",
+      "SOURISH PORTFOLIO BIOS v2.0   © 2024 Sourish Microsystems",
+      "Primary Master:  Next.js SSD  2TB  LBA",
+      "Primary Slave :  React Framework  1TB",
+      "Secondary Mast:  TypeScript CD-ROM",
+      "Secondary Slav:  Tailwind CSS Cache",
+      "Video BIOS:     WebGL Compatible, 4GB",
+      "Memory Test:    16GB OK + 8GB VRAM OK",
       "Keyboard:       Detected",
-      "Mouse:          PS/2 Compatible",
-      "Floppy Drive A: 1.44MB 3½\"",
+      "Mouse:          Web Compatible",
+      "Network:        Vercel CDN Ready",
       "",
-      "Detecting IDE Primary Master...    WDC AC2540H",
-      "Detecting IDE Secondary Master...  MATSHITA CR-8004",
+      "Detecting IDE Primary Master...    Next.js SSD",
+      "Detecting IDE Secondary Master...  TypeScript CD-ROM",
       "",
-      "PCI Device Listing...",
+      "Portfolio Device Listing...",
       " Bus  Dev  Fun  Vendor  Device  Class   IRQ",
-      " 00   01   00   8086    1237    Host    --",
-      " 00   02   00   8086    7000    ISA     --",
-      " 00   02   01   8086    7010    IDE     14",
-      " 00   02   02   8086    7020    USB     11",
-      " 00   09   00   10EC    8139    LAN     10",
+      " 00   01   00   React   18.0    UI      --",
+      " 00   02   00   Next.js 14.0    SSR     14",
+      " 00   02   01   Framer  Motion  Anim    11",
+      " 00   02   02   Tailwind CSS    Styles  10",
+      " 00   09   00   Supabase DB     Backend 12",
       "",
       "Press DEL to enter SETUP, F12 for Boot Menu",
       "Verifying DMI Pool Data............. OK",
-      "Boot from ATAPI CD-ROM :  ...",
-      "Boot from Hard Disk...",
+      "Boot from Portfolio CD-ROM :  ...",
+      "Boot from Desktop Environment...",
       "",
       "Loading Portfolio OS...",
-      "Initializing modules: projects, skills, terminal, widgets",
-      "Mounting home directory... OK",
-      "Starting services... OK",
-      "Target: Graphical Interface (default)",
+      "Initializing modules: about, projects, skills, contact, tetris, algorithms",
+      "Mounting desktop directory... OK",
+      "Starting widgets: todo, now-listening, date-now... OK",
+      "Loading tech stack: Next.js, React, TypeScript, Tailwind... OK",
+      "Initializing responsive system... OK",
+      "Target: Desktop Interface (default)",
       "",
-      "Handing off to bootloader...",
+      "Handing off to desktop environment...",
     ],
     []
   );
@@ -50,7 +52,10 @@ export default function BootLog({ progress, title = "Booting Sourish’s Portfol
   useEffect(() => {
     if (visible >= lines.length) return;
     const jitter = (min: number, max: number) => Math.random() * (max - min) + min;
-    const timer = setTimeout(() => setVisible((v) => Math.min(lines.length, v + 1)), jitter(25, 80));
+    // Calculate timing to complete in max 2 seconds
+    const totalTime = 2000; // 2 seconds in milliseconds
+    const timePerLine = totalTime / lines.length;
+    const timer = setTimeout(() => setVisible((v) => Math.min(lines.length, v + 1)), jitter(timePerLine * 0.5, timePerLine * 1.5));
     return () => clearTimeout(timer);
   }, [visible, lines.length]);
 
@@ -70,7 +75,7 @@ export default function BootLog({ progress, title = "Booting Sourish’s Portfol
         <div className="relative min-h-full font-mono text-green-200 text-xs md:text-sm leading-relaxed">
           {/* Sticky top line (title as part of the log) */}
           <div className="sticky top-0 z-10 bg-black/85 px-4 py-1.5">
-            <span className="crt-glow">[ BIOS ] {title}</span>
+            <span className="crt-glow">[ OS ] {title}</span>
           </div>
 
           {/* Log content */}

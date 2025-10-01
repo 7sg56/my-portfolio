@@ -7,7 +7,7 @@ import DesktopBackground from "@/components/desktop/DesktopBackground";
 import AppWindow from "@/components/windows/AppWindow";
 import SkillsWindow from "@/components/windows/SkillsWindow";
 import ContactWindow from "@/components/windows/ContactWindow";
-import ProjectsContent from "@/components/windows/ProjectsContent";
+import ProjectsWindow from "@/components/windows/ProjectsWindow";
 import AboutHome from "@/components/windows/AboutHome";
 import TetrisGameWindow from "@/components/windows/TetrisGameWindow";
 import AlgorithmWindow from "@/components/windows/AlgorithmWindow";
@@ -15,6 +15,7 @@ import TodoWidget from "@/components/widgets/TodoWidget";
 import NowListeningWidget from "@/components/widgets/NowListeningWidget";
 import DateNowWidget from "@/components/widgets/DateNowWidget";
 import TechStackStrip from "@/components/TechStackStrip";
+import { getResponsiveConfig, responsive, type ResponsiveConfig } from "@/lib/responsive";
 
 
 // Animated Role Text Component
@@ -174,7 +175,7 @@ export default function DesktopOSPage() {
 
   // track which windows are open and a z-order stack for layering
   const [openWindows, setOpenWindows] = useState<Record<WindowAppType, boolean>>({
-    about: true,
+    about: false,
     projects: false,
     skills: false,
     contact: false,
@@ -185,8 +186,11 @@ export default function DesktopOSPage() {
   // Window dimensions - use consistent initial values to prevent hydration mismatch
   const [width, setWidth] = useState(1440);
   const [height, setHeight] = useState(900);
-  const [windowStack, setWindowStack] = useState<WindowAppType[]>(["about"]);
-  const [focusedWindow, setFocusedWindow] = useState<WindowAppType | null>("about");
+  const [windowStack, setWindowStack] = useState<WindowAppType[]>([]);
+  const [focusedWindow, setFocusedWindow] = useState<WindowAppType | null>(null);
+  
+  // Responsive configuration
+  const responsiveConfig = useMemo(() => getResponsiveConfig(width, height), [width, height]);
 
   // Track fullscreen state per window
   const [fullscreenWindows, setFullscreenWindows] = useState<Record<WindowAppType, boolean>>({
@@ -225,41 +229,22 @@ export default function DesktopOSPage() {
     const foldersAndApps = desktopItems.filter((i) => i.type === "folder" || i.type === "app");
     const widgets = desktopItems.filter((i) => i.type === "widget");
 
-    const currentWidth = width;
-    // const height = typeof window !== "undefined" ? window.innerHeight : 900;
+    const layout = responsive.layout(responsiveConfig);
+    const grid = responsive.grid(responsiveConfig);
 
-    // Left column layout for folders/apps
-    const leftMargin = 24;
-    const topOffset = 96; // account for menu bar
-    const vGap = 100;
     // Left column layout for folders/apps
     foldersAndApps.map((item, idx) => ({
       ...item,
-      x: leftMargin,
-      y: topOffset + idx * vGap,
+      x: layout.leftMargin,
+      y: layout.topOffset + idx * layout.verticalGap,
     }));
 
     // Right bento grid for widgets with variable spans
-    const rightMargin = 24;
-    let cols = 3;
-    let baseW = 224; // base tile width
-    let baseH = 192; // base tile height
-    let gap = 16;
-
-    // Responsive scaling for widget tiles
-    if (currentWidth < 1024) {
-      cols = 2; baseW = 180; baseH = 160; gap = 12;
-    } else if (currentWidth < 1440) {
-      cols = 3; baseW = 220; baseH = 180; gap = 14;
-    } else if (currentWidth < 1920) {
-      cols = 3; baseW = 240; baseH = 200; gap = 16;
-    } else {
-      cols = 4; baseW = 260; baseH = 220; gap = 18;
-    }
+    const { cols, baseW, baseH, gap } = grid;
 
     const gridW = cols * baseW + (cols - 1) * gap;
-    const xStart = Math.max(0, currentWidth - rightMargin - gridW);
-    const yStart = topOffset;
+    const xStart = Math.max(0, width - layout.rightMargin - gridW);
+    const yStart = layout.topOffset;
 
     // Occupancy grid (rows will grow dynamically)
     const occupancy: boolean[][] = [];
@@ -313,7 +298,7 @@ export default function DesktopOSPage() {
     }
 
     // Layout computed
-  }, [width]);
+  }, [width, responsiveConfig]);
 
   useEffect(() => {
     computeLayout();
@@ -376,45 +361,51 @@ export default function DesktopOSPage() {
 
   const clearSelection = useCallback(() => {}, []);
 
-  // Widget Layout
-  const desktopItems: DesktopItem[] = useMemo(() => [
-    {
-      id: "todo-widget",
-      name: "Things I Be Doing",
-      icon: "",
-      type: "widget",
-      widgetType: "todo",
-      // TOP-RIGHT CORNER
-      x: width - 330,  // ← Distance from right edge (width - widgetWidth - margin)
-      y: 50,  // ← Distance from top edge
-      widthPx: 310,  // ← Widget width (400 * 0.75)
-      heightPx: 150, // ← Widget height (200 * 0.75)
-    },
-    {
-      id: "now-listening-widget",
-      name: "Now Listening",
-      icon: "",
-      type: "widget",
-      widgetType: "now-listening",
-      // BOTTOM-LEFT CORNER
-      x: 10,  // ← Left edge with small margin
-      y: height - 160,  // ← Bottom edge with margin for dock
-      widthPx: 150,  // ← Widget width (200 * 0.75)
-      heightPx: 150, // ← Widget height (200 * 0.75)
-    },
-    {
-      id: "date-now-widget",
-      name: "Date Now",
-      icon: "",
-      type: "widget",
-      widgetType: "date-now",
-      // BOTTOM-RIGHT (beside now-listening)
-      x: width - 170,  // ← Beside now-listening widget (330 - 150 - 15 margin)
-      y: 210,  // ← Same y as now-listening widget
-      widthPx: 150,  // ← Widget width (200 * 0.75)
-      heightPx: 150, // ← Widget height (200 * 0.75)
-    },
-  ], [width, height]);
+  // Widget Layout - Using Responsive System
+  const desktopItems: DesktopItem[] = useMemo(() => {
+    const todoWidget = responsive.widget(responsiveConfig, 310, 150);
+    const smallWidget = responsive.widget(responsiveConfig, 150, 150);
+    const margin = responsiveConfig.widgetMargin;
+    
+    return [
+      {
+        id: "todo-widget",
+        name: "Things I Be Doing",
+        icon: "",
+        type: "widget",
+        widgetType: "todo",
+        // TOP-RIGHT CORNER
+        x: width - todoWidget.width - margin,
+        y: responsiveConfig.heroTop * 0.3,
+        widthPx: todoWidget.width,
+        heightPx: todoWidget.height,
+      },
+      {
+        id: "now-listening-widget",
+        name: "Now Listening",
+        icon: "",
+        type: "widget",
+        widgetType: "now-listening",
+        // BOTTOM-LEFT CORNER
+        x: margin,
+        y: height - (160 * responsiveConfig.widgetScale),
+        widthPx: smallWidget.width,
+        heightPx: smallWidget.height,
+      },
+      {
+        id: "date-now-widget",
+        name: "Date Now",
+        icon: "",
+        type: "widget",
+        widgetType: "date-now",
+        // BOTTOM-RIGHT - Keep original position for Mac 13-inch (1440px)
+        x: width - smallWidget.width - margin,
+        y: 220, // Fixed position for testing
+        widthPx: smallWidget.width,
+        heightPx: smallWidget.height,
+      },
+    ];
+  }, [width, height, responsiveConfig]);
 
   // Widget renderer - direct widgets
   const renderWidget = (widgetType: WidgetType) => {
@@ -434,7 +425,7 @@ export default function DesktopOSPage() {
   // Window descriptors to remove JSX duplication
   const WINDOW_CONFIG: Record<WindowAppType, { title: string; render: () => React.JSX.Element }> = {
     about: { title: "About", render: () => <AboutHome onOpen={(app) => openWindow(app as WindowAppType)} /> },
-    projects: { title: "Projects", render: () => <ProjectsContent /> },
+    projects: { title: "Projects", render: () => <ProjectsWindow /> },
     skills: { title: "Skills", render: () => <SkillsWindow /> },
     contact: { title: "Contact / Socials", render: () => <ContactWindow /> },
     tetris: { title: "Tetris Game", render: () => <TetrisGameWindow /> },
@@ -461,20 +452,34 @@ export default function DesktopOSPage() {
       {/* Menu Bar */}
       <MenuBar title={focusedWindow ? WINDOW_CONFIG[focusedWindow]?.title : "Desktop"} showSystemMenu={true} terminalHref="/portfolio/terminal" shutdownHref="/" />
 
-      {/* Hero Text */}
-      <div className="absolute left-8 z-10" style={{ top: '180px' }}>
+      {/* Hero Text - Using Responsive System */}
+      <div 
+        className="absolute z-10" 
+        style={{ 
+          left: `${responsiveConfig.heroLeft}px`,
+          top: `${responsiveConfig.heroTop}px`
+        }}
+      >
         <div className="space-y-2">
-          <div className="text-white space-y-6">
-            {/* Main Name - Large and Bold */}
+          <div className="text-white space-y-4 lg:space-y-6">
+            {/* Main Name - Responsive Size */}
             <h1 
               className="font-black uppercase tracking-tight"
-              style={{ fontSize: '4rem', lineHeight: '0.9' }}
+              style={{ 
+                fontSize: responsiveConfig.heroNameSize,
+                lineHeight: '0.9' 
+              }}
             >
               <span className="text-red-500">S</span>OURISH <span className="text-red-500">G</span>HOSH
             </h1>
             
-            {/* Tagline with animated roles */}
-            <div className="text-xl font-light leading-relaxed">
+            {/* Tagline - Responsive */}
+            <div 
+              className="font-light leading-relaxed"
+              style={{
+                fontSize: responsiveConfig.heroTaglineSize
+              }}
+            >
               <span className="text-gray-300">I build </span>
               <span className="text-gray-200 mx-2">digital experiences </span>
               <span className="text-gray-300">with</span>
@@ -486,14 +491,14 @@ export default function DesktopOSPage() {
         </div>
       </div>
 
-      {/* TechStackStrip - positioned at bottom, rotated 45deg anticlockwise, shifted right */}
+      {/* TechStackStrip - Using Responsive System */}
       <div 
         className="absolute z-[300] origin-center" 
         style={{ 
-          bottom: '120px', 
-          right: '-250px',
+          bottom: `${responsiveConfig.techStripBottom}px`,
+          right: `${responsiveConfig.techStripRight}px`,
           transform: 'rotate(-35deg)',
-          width: '800px'
+          width: `${responsiveConfig.techStripWidth}px`
         }}
       >
         <TechStackStrip 
@@ -540,21 +545,38 @@ export default function DesktopOSPage() {
       })}
 
 
-      {/* Custom Dock with unique icons */}
+      {/* Custom Dock - Using Responsive System */}
       <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl px-4 py-3 flex items-end gap-2 shadow-[0_20px_60px_rgba(0,0,0,0.4)]">
+        <div 
+          className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl flex items-end shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
+          style={{
+            padding: `${responsiveConfig.dockPadding}px`,
+            gap: `${responsiveConfig.dockGap}px`
+          }}
+        >
           {dockApps.map((app) => {
             const isOpen = openWindows[app.appType as WindowAppType];
             const hasIndicator = isOpen;
+            const dock = responsive.dock(responsiveConfig);
             return (
               <motion.button
                 key={app.id}
-                className="flex flex-col items-center w-16 h-16 text-gray-100 hover:scale-110 transition-transform duration-200 relative"
+                className="flex flex-col items-center text-gray-100 hover:scale-110 transition-transform duration-200 relative"
+                style={{
+                  width: `${dock.buttonSize}px`,
+                  height: `${dock.buttonSize}px`
+                }}
                 onClick={() => handleDockAppClick(app)}
                 whileHover={{ y: -5 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <div className={`w-12 h-12 glass-2 border border-theme rounded-xl flex items-center justify-center mb-1 hover:glass-1 transition-colors duration-200 shadow-md ${hasIndicator ? 'ring-2 ring-accent/50' : ''}`}>
+                <div 
+                  className={`glass-2 border border-theme rounded-xl flex items-center justify-center mb-1 hover:glass-1 transition-colors duration-200 shadow-md ${hasIndicator ? 'ring-2 ring-accent/50' : ''}`}
+                  style={{
+                    width: `${dock.iconSize}px`,
+                    height: `${dock.iconSize}px`
+                  }}
+                >
                   {app.icon === "about" && <AboutIcon />}
                   {app.icon === "projects" && <ProjectsIcon />}
                   {app.icon === "skills" && <SkillsIcon />}
@@ -566,7 +588,12 @@ export default function DesktopOSPage() {
                 {hasIndicator && (
                   <div className="absolute -bottom-1 w-1 h-1 rounded-full bg-accent"></div>
                 )}
-                <span className="text-[10px] font-medium text-gray-200">{app.name}</span>
+                <span 
+                  className="font-medium text-gray-200"
+                  style={{ fontSize: `${dock.fontSize}px` }}
+                >
+                  {app.name}
+                </span>
               </motion.button>
             );
           })}

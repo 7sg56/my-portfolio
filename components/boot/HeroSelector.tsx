@@ -14,9 +14,9 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
   
   const items = useMemo(
     () => [
-      { key: "sourish" as const, label: "SourishGhosh", desc: "Curated for Professionals", disabled: true, comingSoon: true },
-      { key: "desktop" as const, label: "7sg56", desc: "For developers and admirers", isDefault: !isMobile },
-      { key: "terminal" as const, label: "s0urishg", desc: "A Terminal about me", isMobileFriendly: true, isDefault: isMobile },
+      { key: "sourish" as const, label: "7sg56", desc: "Curated for Professionals", disabled: true, comingSoon: true },
+      { key: "desktop" as const, label: "Desktop", desc: "For developers and admirers", isDefault: !isMobile },
+      { key: "terminal" as const, label: "Terminal", desc: "A Terminal about me", isMobileFriendly: true, isDefault: isMobile },
     ],
     [isMobile]
   );
@@ -119,8 +119,10 @@ className="relative mx-auto w-full max-w-4xl rounded-xl border border-zinc-800/5
         <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800/50 bg-zinc-900/30 rounded-t-xl">
           <div className="text-sm font-mono text-zinc-300">GRUB v2.06 — Boot Manager</div>
           <div className="flex items-center gap-3">
-            <div className="text-xs font-mono text-zinc-400">
-              {paused ? "Auto boot paused" : `Auto boot ${isMobile ? "Terminal OS" : "Desktop OS"} in ${seconds}s`}
+            <div className="text-xs font-mono text-green-400">
+              {paused ? "Auto boot paused" : `Auto boot ${isMobile ? "Terminal OS" : "Desktop OS"} in `}
+              {!paused && <span className="text-green-300 font-bold text-sm">{seconds}</span>}
+              {!paused && <span className="text-green-400">s</span>}
             </div>
             <button
               onClick={() => setPaused((p) => !p)}

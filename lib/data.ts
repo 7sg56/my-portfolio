@@ -113,8 +113,8 @@ export const SKILLS: SkillCategory[] = [
 
 // ===== RESUME =====
 export const RESUME: Resume = {
-  url: "/resume.pdf", 
-  filename: "sourish_ghosh_resume.pdf",
+  url: "/sourish-ghosh-resume.pdf", 
+  filename: "sourish-ghosh-resume.pdf",
   lastUpdated: "2025-10-01" 
 };
 
