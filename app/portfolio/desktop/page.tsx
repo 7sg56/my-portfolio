@@ -21,51 +21,49 @@ import TechStackStrip from "@/components/TechStackStrip";
 const AnimatedRoleText = () => {
   const [currentRole, setCurrentRole] = useState("innovation");
   const [isAnimating, setIsAnimating] = useState(false);
-  const [showText, setShowText] = useState(true);
 
   const roles = ["innovation", "creativity", "excellence", "vision"];
   const randomChars = "abcdefghijklmnopqrstuvwxyz";
 
   useEffect(() => {
-    const sequence = async () => {
-      let currentIndex = 0;
-      
-      const cycleRoles = async () => {
-        // Show current role for 3 seconds
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        
+    let currentIndex = 0;
+    
+    const cycleRoles = () => {
+      // Show current role for 2.5 seconds
+      setTimeout(() => {
         // Glitch/randomizer animation
         setIsAnimating(true);
-        for (let i = 0; i < 8; i++) {
-          const randomText = Array.from({ length: currentRole.length }, () => 
-            randomChars[Math.floor(Math.random() * randomChars.length)]
-          ).join('');
-          setCurrentRole(randomText);
-          await new Promise(resolve => setTimeout(resolve, 80));
-        }
+        let glitchCount = 0;
         
-        // Move to next role
-        currentIndex = (currentIndex + 1) % roles.length;
-        setCurrentRole(roles[currentIndex]);
-        setIsAnimating(false);
-        
-        // Continue cycling
-        cycleRoles();
-      };
-
-      cycleRoles();
+        const glitchInterval = setInterval(() => {
+          if (glitchCount < 40) {
+            const randomText = Array.from({ length: roles[currentIndex].length }, () => 
+              randomChars[Math.floor(Math.random() * randomChars.length)]
+            ).join('');
+            setCurrentRole(randomText);
+            glitchCount++;
+          } else {
+            clearInterval(glitchInterval);
+            // Move to next role
+            currentIndex = (currentIndex + 1) % roles.length;
+            setCurrentRole(roles[currentIndex]);
+            setIsAnimating(false);
+            // Continue cycling
+            setTimeout(cycleRoles, 2500);
+          }
+        }, 20);
+      }, 2500);
     };
 
-    sequence();
+    cycleRoles();
   }, []);
 
   return (
     <motion.span
       className="text-accent font-medium ml-2"
       animate={{
-        y: isAnimating ? [0, -2, 0] : 0,
-        opacity: showText ? 1 : 0,
-        scale: isAnimating ? [1, 1.05, 1] : 1
+        y: isAnimating ? [0, -1, 0] : 0,
+        scale: isAnimating ? [1, 1.02, 1] : 1
       }}
       transition={{
         duration: 0.1,
@@ -461,44 +459,31 @@ export default function DesktopOSPage() {
       <DesktopBackground backgroundImage="/bg3.png" overlay={false} />
 
       {/* Menu Bar */}
-      <MenuBar title={focusedWindow ? WINDOW_CONFIG[focusedWindow]?.title : "Desktop"} showSystemMenu={true} terminalHref="/portfolio/terminal" shutdownHref="/gui" />
+      <MenuBar title={focusedWindow ? WINDOW_CONFIG[focusedWindow]?.title : "Desktop"} showSystemMenu={true} terminalHref="/portfolio/terminal" shutdownHref="/" />
 
-      {/* Animated Hero Text */}
+      {/* Hero Text */}
       <div className="absolute left-8 z-10" style={{ top: '180px' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="space-y-2"
-        >
+        <div className="space-y-2">
           <div className="text-white space-y-6">
             {/* Main Name - Large and Bold */}
-            <motion.h1 
+            <h1 
               className="font-black uppercase tracking-tight"
               style={{ fontSize: '4rem', lineHeight: '0.9' }}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.8 }}
             >
-              SOURISH GHOSH
-            </motion.h1>
+              <span className="text-red-500">S</span>OURISH <span className="text-red-500">G</span>HOSH
+            </h1>
             
             {/* Tagline with animated roles */}
-            <motion.div 
-              className="text-xl font-light leading-relaxed"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 1.2 }}
-            >
+            <div className="text-xl font-light leading-relaxed">
               <span className="text-gray-300">I build </span>
               <span className="text-gray-200 mx-2">digital experiences </span>
               <span className="text-gray-300">with</span>
               <br />
               <span className="text-gray-400">passion, precision and</span>
               <AnimatedRoleText />
-            </motion.div>
+            </div>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* TechStackStrip - positioned at bottom, rotated 45deg anticlockwise, shifted right */}
@@ -538,7 +523,7 @@ export default function DesktopOSPage() {
         return (
           <motion.div
             key={item.id}
-            className="absolute pointer-events-auto border border-gray-100 rounded-lg"
+            className="absolute pointer-events-auto border border-gray-700/50 rounded-xl bg-black/20 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:border-gray-600/70"
             style={{
               left: item.x,
               top: item.y,

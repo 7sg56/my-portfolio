@@ -38,9 +38,9 @@ export default function ContactWindow() {
         {/* Social Links */}
         <div className="max-w-2xl mx-auto">
           <p className="text-theme-2 font-bold text-center mb-6">
-            I'm always ready to collaborate and build things together! 
+            I&apos;m always ready to collaborate and build things together! 
             <br />
-            <span className="text-accent">Let's connect and make it happen.</span>
+            <span className="text-accent">Let&apos;s connect and make it happen.</span>
           </p>
           <div className="glass-2 rounded-lg p-6 border border-theme bg-black/20 backdrop-blur-sm">
             <div className="space-y-4">

@@ -111,7 +111,7 @@ export default function NowListeningWidget({ span, visible = true }: { span?: Sp
           </button>
           <button 
             onClick={handlePlayPause}
-            className="text-zinc-400 hover:text-white transition-colors"
+            className="text-red-500 hover:text-red-400 transition-colors"
             title={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? (

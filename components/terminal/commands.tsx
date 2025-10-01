@@ -5,16 +5,11 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { MinecraftCharacter, MINECRAFT_MODELS, type MinecraftKind } from "@/components/three/Minecraft";
 import * as THREE from "three";
 import { 
-  PROJECTS, 
-  EXPERIENCE, 
-  RESUME, 
-  PROFILE, 
-  SKILLS,
   getProject, 
   getAllProjects, 
   getAllExperience, 
   getResume, 
-  getProfile, 
+  getProfile,
   getProjectsCount,
   getAllSkills
 } from "@/lib/data";
@@ -210,13 +205,16 @@ export const commands: Record<string, CommandHandler> = {
   ),
 
   // aboutme
-  aboutme: () => (
-    <div className="space-y-1">
-      <div className="text-zinc-100 font-semibold">{PROFILE.name}</div>
-      <div className="text-zinc-300">{PROFILE.tagline}</div>
-      <div className="text-zinc-400 whitespace-pre-wrap">{PROFILE.about}</div>
-    </div>
-  ),
+  aboutme: () => {
+    const profile = getProfile();
+    return (
+      <div className="space-y-1">
+        <div className="text-zinc-100 font-semibold">{profile.name}</div>
+        <div className="text-zinc-300">{profile.tagline}</div>
+        <div className="text-zinc-400 whitespace-pre-wrap">{profile.about}</div>
+      </div>
+    );
+  },
 
   // experience
   experience: () => (
@@ -241,7 +239,7 @@ export const commands: Record<string, CommandHandler> = {
     const sub = (args[0] || "list").toLowerCase();
     if (sub === "view") {
       const key = (args[1] || "").toLowerCase();
-      let p = getProject(key);
+      const p = getProject(key);
       if (!p) return <div className="text-red-300">Usage: projects view &lt;slug|#&gt;</div>;
       return (
         <div className="space-y-1">
@@ -274,16 +272,19 @@ export const commands: Record<string, CommandHandler> = {
   },
 
   // socials (keep existing)
-  socials: () => (
-    <div className="space-y-1">
-      <div className="text-zinc-100">Links & Contact</div>
-      <div>GitHub: {link(PROFILE.socials.github)}</div>
-      <div>LinkedIn: {link(PROFILE.socials.linkedin)}</div>
-      <div>Twitter/X: {link(PROFILE.socials.twitter)}</div>
-      <div>Portfolio: {link(PROFILE.socials.portfolio)}</div>
-      <div>Email: <span className="text-zinc-200">{PROFILE.contact.email_masked}</span></div>
-    </div>
-  ),
+  socials: () => {
+    const profile = getProfile();
+    return (
+      <div className="space-y-1">
+        <div className="text-zinc-100">Links & Contact</div>
+        <div>GitHub: {link(profile.socials.github)}</div>
+        <div>LinkedIn: {link(profile.socials.linkedin)}</div>
+        <div>Twitter/X: {link(profile.socials.twitter)}</div>
+        <div>Portfolio: {link(profile.socials.portfolio)}</div>
+        <div>Email: <span className="text-zinc-200">{profile.contact.email_masked}</span></div>
+      </div>
+    );
+  },
 
   // resume: attempt to download a PDF from /public
   resume: (args) => {

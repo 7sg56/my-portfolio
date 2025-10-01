@@ -59,7 +59,13 @@ export default function TechStackStrip({
               className="mx-3 my-3 inline-flex items-center rounded-full bg-secondary px-4 py-2 text-base font-bold text-secondary-foreground whitespace-nowrap shadow-sm"
               aria-hidden={i >= items.length ? true : undefined}
             >
-              {renderLabel(item)}
+              {renderLabel(item) === "Next.js" ? (
+                <>
+                  <span className="text-red-500">NEXT</span>.js
+                </>
+              ) : (
+                renderLabel(item)
+              )}
             </span>
           ))}
         </div>

@@ -56,7 +56,13 @@ export default function TodoWidget({ span }: { span?: Span }) {
                       : 'opacity-0 scale-75 translate-x-0'
                   }`}
                 >
-                  {task.title}
+                  {task.title === "Romancing a Marlboro Red" ? (
+                    <>
+                      Romancing a Marlboro <span className="text-red-500">Red</span>
+                    </>
+                  ) : (
+                    task.title
+                  )}
                 </div>
               );
             })}

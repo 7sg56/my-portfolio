@@ -3,18 +3,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 
 type Span = { cols?: 1 | 2 | 3; rows?: 1 | 2 | 3 | 4 };
-function spanToClasses(span?: Span): string {
-  if (!span) return "";
-  const cls: string[] = [];
-  if (span.cols === 1) cls.push("col-span-1");
-  if (span.cols === 2) cls.push("col-span-2");
-  if (span.cols === 3) cls.push("col-span-3");
-  if (span.rows === 1) cls.push("row-span-1");
-  if (span.rows === 2) cls.push("row-span-2");
-  if (span.rows === 3) cls.push("row-span-3");
-  if (span.rows === 4) cls.push("row-span-4");
-  return cls.join(" ");
-}
+// function spanToClasses(span?: Span): string {
+//   if (!span) return "";
+//   const cls: string[] = [];
+//   if (span.cols === 1) cls.push("col-span-1");
+//   if (span.cols === 2) cls.push("col-span-2");
+//   if (span.cols === 3) cls.push("col-span-3");
+//   if (span.rows === 1) cls.push("row-span-1");
+//   if (span.rows === 2) cls.push("row-span-2");
+//   if (span.rows === 3) cls.push("row-span-3");
+//   if (span.rows === 4) cls.push("row-span-4");
+//   return cls.join(" ");
+// }
 
 // Tetris pieces with #a3a3a3 color
 const TETRIS_PIECES = [
