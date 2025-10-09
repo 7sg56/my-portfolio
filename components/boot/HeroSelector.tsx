@@ -6,25 +6,19 @@ import { motion } from "motion/react";
 export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaultSeconds?: number; onSelect: (mode: "desktop" | "terminal" | "sourish") => void }) {
   const [seconds, setSeconds] = useState(defaultSeconds);
   
-  // Detect if user is on mobile
-  const isMobile = useMemo(() => {
-    if (typeof window === "undefined") return false;
-    return window.innerWidth < 768;
-  }, []);
-
-  // Touch support for mobile
+  // Touch support (optional; not used for gating behavior)
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   
   const items = useMemo(
     () => [
       { key: "sourish" as const, label: "7sg56", desc: "Curated for Professionals", disabled: true, comingSoon: true },
-      { key: "desktop" as const, label: "Desktop", desc: "For developers and admirers", isDefault: !isMobile },
-      { key: "terminal" as const, label: "Terminal", desc: "A Terminal about me", isMobileFriendly: true, isDefault: isMobile },
+      { key: "desktop" as const, label: "Desktop", desc: "For developers and admirers", isDefault: true },
+      { key: "terminal" as const, label: "Terminal", desc: "A Terminal about me" },
     ],
-    [isMobile]
+    []
   );
-  const [index, setIndex] = useState(isMobile ? 2 : 1); // default selection: Terminal OS for mobile, Desktop OS for desktop
+  const [index, setIndex] = useState(1); // default selection: Desktop OS
 
   // Retro roles with typewriter effect (slower)
   const roles = useMemo(() => [
@@ -67,9 +61,9 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
   // Auto-boot when countdown ends (if not paused)
   useEffect(() => {
     if (!paused && seconds === 0) {
-      onSelect(isMobile ? "terminal" : "desktop");
+      onSelect("desktop");
     }
-  }, [paused, seconds, onSelect, isMobile]);
+  }, [paused, seconds, onSelect]);
 
   const handleKey = useCallback(
     (e: KeyboardEvent) => {
@@ -168,7 +162,7 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
           <div className="text-xs sm:text-sm font-mono text-zinc-300">GRUB v2.06 — Boot Manager</div>
           <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <div className="text-xs font-mono text-green-400">
-              {paused ? "Auto boot paused" : `Auto boot ${isMobile ? "Terminal OS" : "Desktop OS"} in `}
+              {paused ? "Auto boot paused" : "Auto boot Desktop OS in "}
               {!paused && <span className="text-green-300 font-bold text-sm">{seconds}</span>}
               {!paused && <span className="text-green-400">s</span>}
             </div>
@@ -188,9 +182,7 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
             {typed}
             <span className="ml-1 text-green-500 animate-pulse">|</span>
           </div>
-          <p className="mt-2 text-xs text-zinc-400">
-            {isMobile ? "Tap to select • Swipe to navigate" : "Press Enter to continue • Use P to pause/resume"}
-          </p>
+          <p className="mt-2 text-xs text-zinc-400">Press Enter to continue • Use P to pause/resume</p>
           <div className="mt-3 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3">
             <a href="/sourish-ghosh-resume.pdf" download className="text-xs font-mono px-3 py-1.5 rounded border border-zinc-800 bg-zinc-900/40 hover:bg-zinc-900/60 text-zinc-200 touch-manipulation">Resume</a>
             <a href="https://github.com/7sg56" target="_blank" rel="noopener noreferrer" className="text-xs font-mono px-3 py-1.5 rounded border border-zinc-800 bg-zinc-900/40 hover:bg-zinc-900/60 text-zinc-200 touch-manipulation">GitHub</a>
@@ -256,7 +248,6 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
                         <span className="text-sm sm:text-base">{it.label}</span>
                         <div className="flex flex-wrap gap-1 sm:gap-2">
                           {it.isDefault && <span className="text-xs text-zinc-500">(default)</span>}
-                          {it.isMobileFriendly && <span className="text-xs text-blue-400 font-mono">(mobile-friendly)</span>}
                           {it.comingSoon && <span className="text-xs text-orange-400 font-mono">(coming soon)</span>}
                         </div>
                       </div>
@@ -280,16 +271,7 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
         {/* Footer help */}
         <div className="px-4 sm:px-8 pb-4 sm:pb-6">
           <div className="flex items-center justify-center text-xs font-mono text-zinc-500">
-            <div className="text-center">
-              {isMobile ? (
-                <div>
-                  <div>Swipe up/down to navigate</div>
-                  <div>Tap to select • Tap pause to stop timer</div>
-                </div>
-              ) : (
-                <div>Use ↑ ↓ to choose, Enter to boot • P to pause/resume</div>
-              )}
-            </div>
+            <div className="text-center">Use ↑ ↓ to choose, Enter to boot • P to pause/resume</div>
           </div>
         </div>
       </motion.div>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useEffect, useMemo } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "motion/react";
 import MenuBar from "@/components/desktop/MenuBar";
 import DesktopBackground from "@/components/desktop/DesktopBackground";
@@ -298,7 +299,7 @@ export default function DesktopOSPage() {
     }
 
     // Layout computed
-  }, [width, height, responsiveConfig]);
+  }, [width, responsiveConfig]);
 
   
 
@@ -437,17 +438,35 @@ export default function DesktopOSPage() {
   const zBase = 100; // base z-index for windows
 
   return (
-    <div
-      className="relative w-full h-screen bg-black overflow-hidden select-none"
-      role="application"
-      aria-label="Desktop environment"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) {
-          clearSelection();
-          setFocusedWindow(null);
-        }
-      }}
-    >
+    <div>
+      {/* Mobile message (SSR-safe, CSS-hidden on md and up) */}
+      <div className="lg:hidden flex items-center justify-center min-h-screen bg-black text-white p-6 text-center">
+        <div className="space-y-3 max-w-md">
+          <div className="text-2xl font-semibold">Not supported on Small Screens</div>
+          <div className="text-zinc-300">Please use a desktop device</div>
+          <div className="pt-2">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-zinc-700 bg-zinc-900/60 hover:bg-zinc-800/60 text-zinc-200"
+            >
+              ← Go to Boot Menu
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Actual desktop UI hidden on small screens */}
+      <div
+        className="hidden lg:block relative w-full h-screen bg-black overflow-hidden select-none"
+        role="application"
+        aria-label="Desktop environment"
+        onMouseDown={(e) => {
+          if (e.target === e.currentTarget) {
+            clearSelection();
+            setFocusedWindow(null);
+          }
+        }}
+      >
       {/* Desktop Background */}
       <DesktopBackground backgroundImage="/bg3.png" overlay={false} />
 
@@ -626,6 +645,7 @@ export default function DesktopOSPage() {
           );
         })}
       </AnimatePresence>
+      </div>
     </div>
   );
 }

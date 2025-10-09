@@ -1,19 +1,38 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import Terminal from "@/components/terminal/Terminal";
 
 export default function TerminalPage() {
   const [sessionKey] = useState<string>(() => crypto.randomUUID());
 
   return (
-    <div
-      className="fixed inset-0 bg-black text-green-400 font-mono overflow-hidden px-1 md:px-1 relative"
-      style={{
-        fontFamily:
-          'Menlo, Monaco, Consolas, "Courier New", Courier, ui-monospace, monospace',
-      }}
-    >
+    <div>
+      {/* Mobile message */}
+      <div className="md:hidden flex items-center justify-center min-h-screen bg-black text-green-400 p-6 text-center">
+        <div className="space-y-3 max-w-md">
+          <div className="text-2xl font-semibold">Coming soon</div>
+          <div className="text-green-300">Terminal experience for mobiles is coming soon.</div>
+          <div className="pt-2">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-green-400/30 bg-green-400/10 hover:bg-green-400/20 text-green-300"
+            >
+              ← Go to Boot Menu
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop terminal */}
+      <div
+        className="hidden md:block fixed inset-0 bg-black text-green-400 font-mono overflow-hidden px-1 md:px-1 relative"
+        style={{
+          fontFamily:
+            'Menlo, Monaco, Consolas, "Courier New", Courier, ui-monospace, monospace',
+        }}
+      >
       
       {/* Mobile-friendly terminal container */}
       <div className="relative z-10 h-screen w-full flex flex-col">
@@ -66,6 +85,7 @@ export default function TerminalPage() {
         }}
       />
       <div className="crt-scanline" />
+      </div>
     </div>
   );
 }
