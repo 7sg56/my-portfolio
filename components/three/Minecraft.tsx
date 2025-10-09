@@ -5,7 +5,7 @@ import { useGLTF } from "@react-three/drei";
 import { Group } from "three";
 import { ThreeElements } from "@react-three/fiber";
 
-export const MINECRAFT_MODELS = ["creeper", "zombie", "steve", "enderman", "villager"] as const;
+export const MINECRAFT_MODELS = ["creeper", "zombie", "steve", "enderman"] as const;
 export type MinecraftKind = typeof MINECRAFT_MODELS[number];
 
 function urlFor(kind: MinecraftKind) {
@@ -18,8 +18,6 @@ function urlFor(kind: MinecraftKind) {
       return "/minecraft_-_steve/scene.gltf";
     case "enderman":
       return "/minecraft_-_enderman/scene.gltf";
-    case "villager":
-      return "/minecraft_-_villager/scene.gltf";
   }
 }
 

@@ -31,7 +31,7 @@ const songs: Song[] = [
   { title: "I Wonder", artist: "Kanye West" },
 ];
 
-export default function NowListeningWidget({ span, visible = true }: { span?: Span; visible?: boolean }) {
+export default function NowListeningWidget({ span }: { span?: Span }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [barHeights, setBarHeights] = useState([20, 40, 30]);

@@ -15,7 +15,7 @@ import TodoWidget from "@/components/widgets/TodoWidget";
 import NowListeningWidget from "@/components/widgets/NowListeningWidget";
 import DateNowWidget from "@/components/widgets/DateNowWidget";
 import TechStackStrip from "@/components/TechStackStrip";
-import { getResponsiveConfig, responsive, type ResponsiveConfig } from "@/lib/responsive";
+import { getResponsiveConfig, responsive} from "@/lib/responsive";
 
 
 // Animated Role Text Component
@@ -23,7 +23,7 @@ const AnimatedRoleText = () => {
   const [currentRole, setCurrentRole] = useState("innovation");
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const roles = ["innovation", "creativity", "excellence", "vision"];
+  const roles = useMemo(() => ["innovation", "creativity", "excellence", "vision"], []);
   const randomChars = "abcdefghijklmnopqrstuvwxyz";
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const AnimatedRoleText = () => {
     };
 
     cycleRoles();
-  }, []);
+  }, [roles]);
 
   return (
     <motion.span
@@ -224,10 +224,10 @@ export default function DesktopOSPage() {
     return () => window.removeEventListener('resize', updateDimensions);
   }, []);
 
-  const computeLayout = useCallback(() => {
+  const computeLayout = useCallback((items: DesktopItem[]) => {
     // Separate items
-    const foldersAndApps = desktopItems.filter((i) => i.type === "folder" || i.type === "app");
-    const widgets = desktopItems.filter((i) => i.type === "widget");
+    const foldersAndApps = items.filter((i) => i.type === "folder" || i.type === "app");
+    const widgets = items.filter((i) => i.type === "widget");
 
     const layout = responsive.layout(responsiveConfig);
     const grid = responsive.grid(responsiveConfig);
@@ -298,20 +298,9 @@ export default function DesktopOSPage() {
     }
 
     // Layout computed
-  }, [width, responsiveConfig]);
+  }, [width, height, responsiveConfig]);
 
-  useEffect(() => {
-    computeLayout();
-    if (typeof window !== "undefined") {
-      const onResize = () => {
-        setWidth(window.innerWidth);
-        setHeight(window.innerHeight);
-        computeLayout();
-      };
-      window.addEventListener("resize", onResize);
-      return () => window.removeEventListener("resize", onResize);
-    }
-  }, [computeLayout]);
+  
 
   // Window helpers
   const bringToFront = useCallback((appType: WindowAppType) => {
@@ -406,6 +395,19 @@ export default function DesktopOSPage() {
       },
     ];
   }, [width, height, responsiveConfig]);
+
+  useEffect(() => {
+    computeLayout(desktopItems);
+    if (typeof window !== "undefined") {
+      const onResize = () => {
+        setWidth(window.innerWidth);
+        setHeight(window.innerHeight);
+        computeLayout(desktopItems);
+      };
+      window.addEventListener("resize", onResize);
+      return () => window.removeEventListener("resize", onResize);
+    }
+  }, [computeLayout, desktopItems]);
 
   // Widget renderer - direct widgets
   const renderWidget = (widgetType: WidgetType) => {

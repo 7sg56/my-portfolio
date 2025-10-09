@@ -197,7 +197,7 @@ export const commands: Record<string, CommandHandler> = {
         <div className="text-green-400">resume</div>
         <div>Download my resume</div>
         <div className="text-green-400">spawn</div>
-        <div>It's a secret</div>
+        <div>It&#39;s a secret</div>
         <div className="text-green-400">shutdown</div>
         <div>Return to GRUB menu</div>
         <div className="text-green-400">clear</div>

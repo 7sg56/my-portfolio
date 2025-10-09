@@ -29,7 +29,7 @@ function Banner({ visible }: { visible: boolean }) {
       <pre
         className="whitespace-pre font-mono leading-none text-white crt-glow text-[10px] md:text-xs overflow-x-auto block"
         style={{
-          color: "#ffffff",
+          color: "#dbdbdb",
           fontFamily:
             'Menlo, Monaco, Consolas, "Courier New", Courier, monospace',
           fontVariantLigatures: 'none',
