@@ -13,20 +13,36 @@ function Banner({ visible }: { visible: boolean }) {
   if (!visible) return null;
 
   const art = `
-  ██████  ▒█████   █    ██  ██▀███   ██▓  ██████  ██░ ██      ▄████  ██░ ██  ▒█████    ██████  ██░ ██ 
-▒██    ▒ ▒██▒  ██▒ ██  ▓██▒▓██ ▒ ██▒▓██▒▒██    ▒ ▓██░ ██▒    ██▒ ▀█▒▓██░ ██▒▒██▒  ██▒▒██    ▒ ▓██░ ██▒
-░ ▓██▄   ▒██░  ██▒▓██  ▒██░▓██ ░▄█ ▒▒██▒░ ▓██▄   ▒██▀▀██░   ▒██░▄▄▄░▒██▀▀██░▒██░  ██▒░ ▓██▄   ▒██▀▀██░
-  ▒   ██▒▒██   ██░▓▓█  ░██░▒██▀▀█▄  ░██░  ▒   ██▒░▓█ ░██    ░▓█  ██▓░▓█ ░██ ▒██   ██░  ▒   ██▒░▓█ ░██ 
-▒██████▒▒░ ████▓▒░▒▒█████▓ ░██▓ ▒██▒░██░▒██████▒▒░▓█▒░██▓   ░▒▓███▀▒░▓█▒░██▓░ ████▓▒░▒██████▒▒░▓█▒░██▓
-▒ ▒▓▒ ▒ ░░ ▒░▒░▒░ ░▒▓▒ ▒ ▒ ░ ▒▓ ░▒▓░░▓  ▒ ▒▓▒ ▒ ░ ▒ ░░▒░▒    ░▒   ▒  ▒ ░░▒░▒░ ▒░▒░▒░ ▒ ▒▓▒ ▒ ░ ▒ ░░▒░▒
-░ ░▒  ░ ░  ░ ▒ ▒░ ░░▒░ ░ ░   ░▒ ░ ▒░ ▒ ░░ ░▒  ░ ░ ▒ ░▒░ ░     ░   ░  ▒ ░▒░ ░  ░ ▒ ▒░ ░ ░▒  ░ ░ ▒ ░▒░ ░
-░  ░  ░  ░ ░ ░ ▒   ░░░ ░ ░   ░░   ░  ▒ ░░  ░  ░   ░  ░░ ░   ░ ░   ░  ░  ░░ ░░ ░ ░ ▒  ░  ░  ░   ░  ░░ ░
-      ░      ░ ░     ░        ░      ░        ░   ░  ░  ░         ░  ░  ░  ░    ░ ░        ░   ░  ░  ░
-`;
+ 
+ 
+ ░██████╗░█████╗░██╗░░░██╗██████╗░██╗░██████╗██╗░░██╗  ░██████╗░██╗░░██╗░█████╗░░██████╗██╗░░██╗
+ ██╔════╝██╔══██╗██║░░░██║██╔══██╗██║██╔════╝██║░░██║  ██╔════╝░██║░░██║██╔══██╗██╔════╝██║░░██║
+ ╚█████╗░██║░░██║██║░░░██║██████╔╝██║╚█████╗░███████║  ██║░░██╗░███████║██║░░██║╚█████╗░███████║
+ ░╚═══██╗██║░░██║██║░░░██║██╔══██╗██║░╚═══██╗██╔══██║  ██║░░╚██╗██╔══██║██║░░██║░╚═══██╗██╔══██║
+ ██████╔╝╚█████╔╝╚██████╔╝██║░░██║██║██████╔╝██║░░██║  ╚██████╔╝██║░░██║╚█████╔╝██████╔╝██║░░██║
+ ╚═════╝░░╚════╝░░╚═════╝░╚═╝░░╚═╝╚═╝╚═════╝░╚═╝░░╚═╝  ░╚═════╝░╚═╝░░╚═╝░╚════╝░╚═════╝░╚═╝░░╚═╝                                                                                          
+  
+  `;
 
   return (
     <div className="text-zinc-300">
-      <pre className="whitespace-pre leading-3 md:leading-5 text-green-300 crt-glow text-xs md:text-sm overflow-x-auto" style={{ color: "#86efac" }}>{art}</pre>
+      <pre
+        className="whitespace-pre font-mono leading-none text-white crt-glow text-[10px] md:text-xs overflow-x-auto block"
+        style={{
+          color: "#ffffff",
+          fontFamily:
+            'Menlo, Monaco, Consolas, "Courier New", Courier, monospace',
+          fontVariantLigatures: 'none',
+          fontKerning: 'none',
+          letterSpacing: 0,
+          lineHeight: 1,
+          tabSize: 4,
+          whiteSpace: 'pre',
+          wordSpacing: 0,
+        }}
+      >
+        {art}
+      </pre>
       <div className="mt-1 text-xs md:text-sm" style={{ color: "#a6adc8" }}>Built by <a href="https://github.com/7sg56" target="_blank" rel="noopener noreferrer" className="text-zinc-200 hover:text-green-400 underline">Sourish Ghosh</a>. Type <span className="text-zinc-200">help</span> to see available commands.</div>
     </div>
   );
@@ -256,7 +272,7 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
         )}
         <div
           ref={containerRef}
-          className={`${scrollMode === 'internal' ? 'overscroll-contain overflow-y-auto' : 'overflow-visible'} pr-2 font-mono text-xs md:text-sm flex-1 min-h-0 ${scrollHeightClass ?? ""}`}
+          className={`${scrollMode === 'internal' ? 'overscroll-contain overflow-y-auto' : 'overflow-visible'} px-3 font-mono text-xs md:text-sm flex-1 min-h-0 ${scrollHeightClass ?? ""}`}
           style={{ color: "#cdd6f4" }}
           onScroll={scrollMode === 'internal' ? onScroll : undefined}
         >
@@ -308,7 +324,7 @@ export default function Terminal({ embedded = false, chrome = true, externalComm
           </div>
         )}
 
-        <div ref={containerRef} className="h-[70vh] overscroll-contain overflow-y-auto pr-2 font-mono text-xs md:text-sm" style={{ color: "#cdd6f4" }} onScroll={onScroll}>
+        <div ref={containerRef} className="h-[70vh] overscroll-contain overflow-y-auto px-3 font-mono text-xs md:text-sm" style={{ color: "#cdd6f4" }} onScroll={onScroll}>
           <Banner visible={bannerVisible} />
           <div className="my-3 border-t" style={{ borderColor: "#313244" }} />
           <div className="max-w-[300px]">

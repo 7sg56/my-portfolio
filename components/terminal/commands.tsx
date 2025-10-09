@@ -182,22 +182,24 @@ export const commands: Record<string, CommandHandler> = {
       <div className="grid grid-cols-[140px_1fr] gap-x-4 gap-y-1 font-mono text-sm">
         <div className="text-green-400">help</div>
         <div>List all commands</div>
-        <div className="text-green-400">aboutme</div>
-        <div>Who am I?</div>
+        <div className="text-green-400">startx</div>
+        <div>access GUI</div>
+        <div className="text-green-400">about</div>
+        <div>Who Am I ?</div>
         <div className="text-green-400">experience</div>
-        <div>Companies / Societies / Clubs I have worked for</div>
+        <div>Places I have worked</div>
         <div className="text-green-400">skills</div>
-        <div>My tech stack</div>
+        <div>My Tech Stack</div>
         <div className="text-green-400">projects</div>
         <div>View my projects</div>
         <div className="text-green-400">socials</div>
         <div>View my socials</div>
         <div className="text-green-400">resume</div>
-        <div>Download resume (optionally: resume &lt;filename.pdf&gt;)</div>
+        <div>Download my resume</div>
         <div className="text-green-400">spawn</div>
-        <div>Spawn a character (spawn [creeper|zombie|steve|enderman])</div>
+        <div>It's a secret</div>
         <div className="text-green-400">shutdown</div>
-        <div>Return to GRUB menu (asks for confirmation)</div>
+        <div>Return to GRUB menu</div>
         <div className="text-green-400">clear</div>
         <div>Clear terminal</div>
       </div>
@@ -213,6 +215,15 @@ export const commands: Record<string, CommandHandler> = {
         <div className="text-zinc-300">{profile.tagline}</div>
         <div className="text-zinc-400 whitespace-pre-wrap">{profile.about}</div>
       </div>
+    );
+  },
+
+  startx: () => {
+    try {
+      window.location.assign('/portfolio/desktop');
+    } catch {}
+    return (
+      <div className="text-zinc-300">Launching Desktop… <span className="text-green-400">/portfolio/desktop</span></div>
     );
   },
 
