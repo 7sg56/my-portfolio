@@ -60,6 +60,14 @@ export const PROJECTS: Project[] = [
     repo: "https://github.com/7sg56/stamped-v0",
     demo: "https://stamped-v0.vercel.app",
   },
+  {
+    name: "DawnMark - Online Markdown editor with live file uploads",
+    slug: "dawnmark",
+    desc: "A sleek, user-friendly online Markdown editor with real-time preview and seamless file uploads.",
+    tech: ["Next.js", "TypeScript", "Tailwind CSS", "React", "Vercel"],
+    repo: "https://github.com/7sg56/dawnmark",
+    demo: "https://dawnmark.netlify.app",
+  },
 ];
 
 // ===== EXPERIENCE =====
