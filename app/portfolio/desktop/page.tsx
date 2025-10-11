@@ -366,7 +366,7 @@ export default function DesktopOSPage() {
         widgetType: "todo",
         // TOP-RIGHT CORNER
         x: width - todoWidget.width - margin,
-        y: responsiveConfig.heroTop * 0.3,
+        y: responsiveConfig.heroTop * 0.3 - 20,
         widthPx: todoWidget.width,
         heightPx: todoWidget.height,
       },
@@ -382,18 +382,18 @@ export default function DesktopOSPage() {
         widthPx: smallWidget.width,
         heightPx: smallWidget.height,
       },
-      {
-        id: "date-now-widget",
-        name: "Date Now",
-        icon: "",
-        type: "widget",
-        widgetType: "date-now",
-        // BOTTOM-RIGHT - Keep original position for Mac 13-inch (1440px)
-        x: width - smallWidget.width - margin,
-        y: 220, // Fixed position for testing
-        widthPx: smallWidget.width,
-        heightPx: smallWidget.height,
-      },
+        {
+          id: "date-now-widget",
+          name: "Date Now",
+          icon: "",
+          type: "widget",
+          widgetType: "date-now",
+          // BOTTOM-RIGHT - Position below todo widget
+          x: width - smallWidget.width - margin,
+          y: (responsiveConfig.heroTop * 0.3) + todoWidget.height - 5, // Below todo widget with gap
+          widthPx: smallWidget.width,
+          heightPx: smallWidget.height,
+        },
     ];
   }, [width, height, responsiveConfig]);
 
@@ -478,7 +478,7 @@ export default function DesktopOSPage() {
         className="absolute z-10" 
         style={{ 
           left: `${responsiveConfig.heroLeft}px`,
-          top: `${responsiveConfig.heroTop}px`
+          top: `${responsiveConfig.heroTop - 40}px`
         }}
       >
         <div className="space-y-2">
