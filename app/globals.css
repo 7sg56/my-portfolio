@@ -65,6 +65,15 @@ html, body {
   background-color: #000;
 }
 
+/* Hide scrollbar while maintaining scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
+
 /* Custom slider styles */
 .slider {
   background: linear-gradient(to right, #374151, #4b5563);

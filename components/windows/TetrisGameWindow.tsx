@@ -15,22 +15,22 @@ import React, { useState, useEffect, useCallback } from "react";
 //   return cls.join(" ");
 // }
 
-// Tetris pieces with red color
+// Tetris pieces with unique colors and IDs
 const TETRIS_PIECES = [
-  { shape: [[1, 1, 1, 1]], color: "red", bgClass: "bg-red-600", borderClass: "border-red-600" }, // I-piece
-  { shape: [[1, 1], [1, 1]], color: "red", bgClass: "bg-red-500", borderClass: "border-red-500" }, // O-piece
-  { shape: [[0, 1, 0], [1, 1, 1]], color: "red", bgClass: "bg-red-700", borderClass: "border-red-700" }, // T-piece
-  { shape: [[0, 1, 1], [1, 1, 0]], color: "red", bgClass: "bg-red-800", borderClass: "border-red-800" }, // S-piece
-  { shape: [[1, 1, 0], [0, 1, 1]], color: "red", bgClass: "bg-red-900", borderClass: "border-red-900" }, // Z-piece
-  { shape: [[1, 0, 0], [1, 1, 1]], color: "red", bgClass: "bg-red-950", borderClass: "border-red-950" }, // J-piece
-  { shape: [[0, 0, 1], [1, 1, 1]], color: "red", bgClass: "bg-red-600", borderClass: "border-red-600" }, // L-piece
+  { id: 1, shape: [[1, 1, 1, 1]], color: "red", bgClass: "bg-red-600", borderClass: "border-red-600" }, // I-piece
+  { id: 2, shape: [[1, 1], [1, 1]], color: "yellow", bgClass: "bg-yellow-500", borderClass: "border-yellow-500" }, // O-piece
+  { id: 3, shape: [[0, 1, 0], [1, 1, 1]], color: "purple", bgClass: "bg-purple-600", borderClass: "border-purple-600" }, // T-piece
+  { id: 4, shape: [[0, 1, 1], [1, 1, 0]], color: "green", bgClass: "bg-green-600", borderClass: "border-green-600" }, // S-piece
+  { id: 5, shape: [[1, 1, 0], [0, 1, 1]], color: "blue", bgClass: "bg-blue-600", borderClass: "border-blue-600" }, // Z-piece
+  { id: 6, shape: [[1, 0, 0], [1, 1, 1]], color: "orange", bgClass: "bg-orange-600", borderClass: "border-orange-600" }, // J-piece
+  { id: 7, shape: [[0, 0, 1], [1, 1, 1]], color: "cyan", bgClass: "bg-cyan-600", borderClass: "border-cyan-600" }, // L-piece
 ];
 
 const BOARD_WIDTH = 6;
 const BOARD_HEIGHT = 12;
 
 type Board = number[][];
-type Piece = { shape: number[][]; color: string; bgClass: string; borderClass: string; x: number; y: number };
+type Piece = { id: number; shape: number[][]; color: string; bgClass: string; borderClass: string; x: number; y: number };
 
 export default function TetrisGameWindow() {
   const [board, setBoard] = useState<Board>(() => 
@@ -38,7 +38,6 @@ export default function TetrisGameWindow() {
   );
   const [currentPiece, setCurrentPiece] = useState<Piece | null>(null);
   const [score, setScore] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [gameState, setGameState] = useState<'idle' | 'playing' | 'paused' | 'over'>('idle');
 
@@ -76,96 +75,138 @@ export default function TetrisGameWindow() {
 
   // Place piece on board
   const placePiece = useCallback((piece: Piece) => {
-    const newBoard = board.map(row => [...row]);
-    const pieceIndex = TETRIS_PIECES.findIndex(p => p.color === piece.color) + 1; // +1 to avoid 0
-    
-    for (let y = 0; y < piece.shape.length; y++) {
-      for (let x = 0; x < piece.shape[y].length; x++) {
-        if (piece.shape[y][x]) {
-          const boardY = piece.y + y;
-          const boardX = piece.x + x;
-          if (boardY >= 0 && boardY < BOARD_HEIGHT && boardX >= 0 && boardX < BOARD_WIDTH) {
-            newBoard[boardY][boardX] = pieceIndex;
+    setBoard(prevBoard => {
+      const newBoard = prevBoard.map(row => [...row]);
+      const pieceIndex = piece.id; // Use the unique ID directly
+      
+      for (let y = 0; y < piece.shape.length; y++) {
+        for (let x = 0; x < piece.shape[y].length; x++) {
+          if (piece.shape[y][x]) {
+            const boardY = piece.y + y;
+            const boardX = piece.x + x;
+            if (boardY >= 0 && boardY < BOARD_HEIGHT && boardX >= 0 && boardX < BOARD_WIDTH) {
+              newBoard[boardY][boardX] = pieceIndex;
+            }
           }
         }
       }
-    }
-    
-    setBoard(newBoard);
-  }, [board]);
+      
+      return newBoard;
+    });
+  }, []);
 
   // Clear completed lines
   const clearLines = useCallback(() => {
-    let linesCleared = 0;
-    const newBoard = board.filter(row => {
-      if (row.every(cell => cell > 0)) {
-        linesCleared++;
-        return false;
+    setBoard(prevBoard => {
+      let linesCleared = 0;
+      const newBoard = prevBoard.filter(row => {
+        if (row.every(cell => cell > 0)) {
+          linesCleared++;
+          return false;
+        }
+        return true;
+      });
+      
+      // Add empty rows at top
+      while (newBoard.length < BOARD_HEIGHT) {
+        newBoard.unshift(Array(BOARD_WIDTH).fill(0));
       }
-      return true;
+      
+      if (linesCleared > 0) {
+        // Traditional Tetris scoring: 1 line = 100, 2 lines = 300, 3 lines = 500, 4 lines (Tetris) = 800
+        const scoreMap = [0, 100, 300, 500, 800];
+        setScore(prev => prev + (scoreMap[linesCleared] || linesCleared * 100));
+      }
+      
+      return newBoard;
     });
-    
-    // Add empty rows at top
-    while (newBoard.length < BOARD_HEIGHT) {
-      newBoard.unshift(Array(BOARD_WIDTH).fill(0));
-    }
-    
-    if (linesCleared > 0) {
-      setBoard(newBoard);
-      // Traditional Tetris scoring: 1 line = 100, 2 lines = 300, 3 lines = 500, 4 lines (Tetris) = 800
-      const scoreMap = [0, 100, 300, 500, 800];
-      setScore(prev => prev + (scoreMap[linesCleared] || linesCleared * 100));
-    }
-  }, [board]);
+  }, []);
 
   // Move piece down
   const dropPiece = useCallback(() => {
-    if (!currentPiece || gameOver) return;
+    if (!currentPiece || gameState === 'over') return;
     
     if (canPlacePiece(currentPiece, currentPiece.x, currentPiece.y + 1)) {
       setCurrentPiece(prev => prev ? { ...prev, y: prev.y + 1 } : null);
     } else {
-      // Place piece and generate new one
-      placePiece(currentPiece);
-      clearLines();
+      // Place piece and clear lines in one state update
+      setBoard(prevBoard => {
+        const newBoard = prevBoard.map(row => [...row]);
+        const pieceIndex = currentPiece.id;
+        
+        // Place the piece
+        for (let y = 0; y < currentPiece.shape.length; y++) {
+          for (let x = 0; x < currentPiece.shape[y].length; x++) {
+            if (currentPiece.shape[y][x]) {
+              const boardY = currentPiece.y + y;
+              const boardX = currentPiece.x + x;
+              if (boardY >= 0 && boardY < BOARD_HEIGHT && boardX >= 0 && boardX < BOARD_WIDTH) {
+                newBoard[boardY][boardX] = pieceIndex;
+              }
+            }
+          }
+        }
+        
+        // Clear completed lines
+        let linesCleared = 0;
+        const filteredBoard = newBoard.filter(row => {
+          if (row.every(cell => cell > 0)) {
+            linesCleared++;
+            return false;
+          }
+          return true;
+        });
+        
+        // Add empty rows at top
+        while (filteredBoard.length < BOARD_HEIGHT) {
+          filteredBoard.unshift(Array(BOARD_WIDTH).fill(0));
+        }
+        
+        // Update score if lines were cleared
+        if (linesCleared > 0) {
+          const scoreMap = [0, 100, 300, 500, 800];
+          setScore(prev => prev + (scoreMap[linesCleared] || linesCleared * 100));
+        }
+        
+        return filteredBoard;
+      });
       
       const newPiece = generatePiece();
       if (!canPlacePiece(newPiece, newPiece.x, newPiece.y)) {
-        setGameOver(true);
         setIsPlaying(false);
         setGameState('over');
       } else {
         setCurrentPiece(newPiece);
       }
     }
-  }, [currentPiece, gameOver, canPlacePiece, placePiece, clearLines, generatePiece]);
+  }, [currentPiece, gameState, canPlacePiece, generatePiece]);
 
   // Move piece horizontally
   const movePiece = useCallback((direction: 'left' | 'right') => {
-    if (!currentPiece || gameOver || !isPlaying) return;
+    if (!currentPiece || gameState === 'over' || !isPlaying) return;
     
     const newX = direction === 'left' ? currentPiece.x - 1 : currentPiece.x + 1;
     if (canPlacePiece(currentPiece, newX, currentPiece.y)) {
       setCurrentPiece(prev => prev ? { ...prev, x: newX } : null);
     }
-  }, [currentPiece, gameOver, isPlaying, canPlacePiece]);
+  }, [currentPiece, gameState, isPlaying, canPlacePiece]);
 
   // Fast drop piece (soft drop)
   const softDropPiece = useCallback(() => {
-    if (!currentPiece || gameOver || !isPlaying) return;
+    if (!currentPiece || gameState === 'over' || !isPlaying) return;
     
     if (canPlacePiece(currentPiece, currentPiece.x, currentPiece.y + 1)) {
       setCurrentPiece(prev => prev ? { ...prev, y: prev.y + 1 } : null);
       setScore(prev => prev + 1); // Bonus point for soft drop
     }
-  }, [currentPiece, gameOver, isPlaying, canPlacePiece]);
+  }, [currentPiece, gameState, isPlaying, canPlacePiece]);
 
   // Rotate piece
   const rotatePiece = useCallback(() => {
-    if (!currentPiece || gameOver || !isPlaying) return;
+    if (!currentPiece || gameState === 'over' || !isPlaying) return;
     
-    // Don't rotate the square piece (O-piece)
-    if (currentPiece.color === 'yellow') return;
+    // Don't rotate the square piece (O-piece) - check by ID or shape
+    if (currentPiece.id === 2 || (currentPiece.shape.length === 2 && currentPiece.shape[0].length === 2)) return;
     
     // Rotate shape 90 degrees clockwise
     const rotatedShape = currentPiece.shape[0].map((_, index) =>
@@ -188,14 +229,13 @@ export default function TetrisGameWindow() {
         return;
       }
     }
-  }, [currentPiece, gameOver, isPlaying, canPlacePiece]);
+  }, [currentPiece, gameState, isPlaying, canPlacePiece]);
 
   // Start game
   const startGame = () => {
     setBoard(Array(BOARD_HEIGHT).fill(null).map(() => Array(BOARD_WIDTH).fill(0)));
     setCurrentPiece(generatePiece());
     setScore(0);
-    setGameOver(false);
     setIsPlaying(true);
     setGameState('playing');
   };
@@ -233,16 +273,16 @@ export default function TetrisGameWindow() {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [isPlaying, movePiece, softDropPiece, rotatePiece]);
 
-  // Game loop
+  // Game loop with better state management
   useEffect(() => {
-    if (!isPlaying) return;
+    if (!isPlaying || gameState === 'over') return;
     
     const gameLoop = setInterval(() => {
       dropPiece();
     }, 800);
     
     return () => clearInterval(gameLoop);
-  }, [isPlaying, dropPiece]);
+  }, [isPlaying, gameState === 'over', dropPiece]);
 
   // Render board with current piece
   const renderBoard = () => {
@@ -250,7 +290,7 @@ export default function TetrisGameWindow() {
     
     // Add current piece to display
     if (currentPiece) {
-      const currentPieceIndex = TETRIS_PIECES.findIndex(p => p.color === currentPiece.color) + 1;
+      const currentPieceIndex = currentPiece.id;
       for (let y = 0; y < currentPiece.shape.length; y++) {
         for (let x = 0; x < currentPiece.shape[y].length; x++) {
           if (currentPiece.shape[y][x]) {
@@ -284,9 +324,32 @@ export default function TetrisGameWindow() {
     if (cell === 0) {
       return {};
     }
+    
+    const pieceId = Math.abs(cell);
+    const piece = TETRIS_PIECES.find(p => p.id === pieceId);
+    
+    if (!piece) {
+      return {
+        backgroundColor: '#991b1b',
+        borderColor: '#991b1b'
+      };
+    }
+    
+    // Map piece colors to actual hex values
+    const colorMap: { [key: string]: string } = {
+      'red': '#dc2626',
+      'yellow': '#eab308', 
+      'purple': '#9333ea',
+      'green': '#16a34a',
+      'blue': '#2563eb',
+      'orange': '#ea580c',
+      'cyan': '#0891b2'
+    };
+    
+    const color = colorMap[piece.color] || '#991b1b';
     return {
-      backgroundColor: '#991b1b',
-      borderColor: '#991b1b'
+      backgroundColor: color,
+      borderColor: color
     };
   };
 

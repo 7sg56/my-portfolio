@@ -22,24 +22,24 @@ export default function ExperienceCard({
   isCurrent = false,
 }: ExperienceCardProps) {
   return (
-    <div className="border border-theme/40 rounded-xl p-4 glass-1">
+    <div className="border border-red-500/20 rounded-xl p-4 bg-black/30">
       <div className="flex items-start justify-between mb-2">
-        <div className="text-theme font-semibold">{title}</div>
+        <div className="text-white font-semibold">{title}</div>
         {isCurrent && (
-          <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-3 py-1 rounded-full text-xs font-medium text-green-400 border border-green-500/30">
+          <div className="bg-green-500/20 px-3 py-1 rounded-full text-xs font-medium text-green-400 border border-green-500/30">
             Current
           </div>
         )}
       </div>
-      <div className="text-theme-2 text-sm mb-2">{company} • {duration}</div>
-      <div className="text-theme-2 mb-3">{description}</div>
+      <div className="text-gray-300 text-sm mb-2">{company} • <span className="text-red-400">{duration}</span></div>
+      <div className="text-gray-200 mb-3">{description}</div>
       {tech && tech.length > 0 && (
-        <div className="text-theme-2 text-sm mb-3">Tech: {tech.join(", ")}</div>
+        <div className="text-gray-300 text-sm mb-3">Tech: <span className="text-red-400">{tech.join(", ")}</span></div>
       )}
       {achievements && achievements.length > 0 && (
         <div className="flex gap-3 text-sm">
           {achievements.map((achievement, index) => (
-            <span key={index} className="text-theme-2">• {achievement}</span>
+            <span key={index} className="text-gray-300">• <span className="text-red-400">{achievement}</span></span>
           ))}
         </div>
       )}

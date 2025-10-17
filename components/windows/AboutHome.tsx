@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import ExperienceCard from "./ExperienceCard";
-import { getAllExperience, getResume } from "@/lib/data";
+import { getAllExperience, getResume, getProfile } from "@/lib/data";
+import { motion } from "motion/react";
 
 export type OpenAppFn = (app: "about" | "projects" | "skills" | "contact") => void;
 
@@ -21,116 +22,186 @@ export default function AboutHome({ onOpen }: { onOpen: OpenAppFn }) {
 
   const renderAbout = () => {
     const resume = getResume();
+    const profile = getProfile();
+    
+    const containerVariants = {
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: {
+          staggerChildren: 0.1
+        }
+      }
+    };
+
+    const itemVariants = {
+      hidden: { opacity: 0, y: 20 },
+      visible: { opacity: 1, y: 0 }
+    };
     
     return (
-      <div className="h-full flex flex-col bg-black/20 backdrop-blur-sm">
+      <div className="h-full flex flex-col bg-black/40 backdrop-blur-sm relative z-50">
         {/* Header with CTA buttons */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-theme bg-black/30 backdrop-blur-md">
-          <h1 className="text-2xl font-bold text-theme">About</h1>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/40 backdrop-blur-md">
+          <h1 className="text-2xl font-bold text-white">About</h1>
           <div className="flex flex-row gap-2">
-            <button
+            <motion.button
               onClick={() => setCurrentView("experience")}
-              className="rounded-lg border border-theme glass-2 hover:glass-1 text-theme px-3 py-1.5 transition-all duration-200 font-medium hover:scale-105 hover:shadow-lg hover:shadow-theme/20 text-xs"
+              className="rounded-lg border border-red-500/50 bg-red-500/10 hover:bg-red-500/20 text-white px-3 py-1.5 transition-all duration-200 font-medium text-xs"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Experience
-            </button>
+            </motion.button>
             
-            <button
+            <motion.button
               onClick={() => onOpen("projects")}
-              className="rounded-lg border border-theme glass-2 hover:glass-1 text-theme px-3 py-1.5 transition-all duration-200 font-medium hover:scale-105 hover:shadow-lg hover:shadow-theme/20 text-xs"
+              className="rounded-lg border border-red-500/50 bg-red-500/10 hover:bg-red-500/20 text-white px-3 py-1.5 transition-all duration-200 font-medium text-xs"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Projects
-            </button>
+            </motion.button>
             
-            <button
+            <motion.button
               onClick={() => onOpen("skills")}
-              className="rounded-lg border border-theme glass-2 hover:glass-1 text-theme px-3 py-1.5 transition-all duration-200 font-medium hover:scale-105 hover:shadow-lg hover:shadow-theme/20 text-xs"
+              className="rounded-lg border border-red-500/50 bg-red-500/10 hover:bg-red-500/20 text-white px-3 py-1.5 transition-all duration-200 font-medium text-xs"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Skills
-            </button>
+            </motion.button>
             
-            <button
+            <motion.button
               onClick={() => onOpen("contact")}
-              className="rounded-lg border border-theme glass-2 hover:glass-1 text-theme px-3 py-1.5 transition-all duration-200 font-medium hover:scale-105 hover:shadow-lg hover:shadow-theme/20 text-xs"
+              className="rounded-lg border border-red-500/50 bg-red-500/10 hover:bg-red-500/20 text-white px-3 py-1.5 transition-all duration-200 font-medium text-xs"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Contact
-            </button>
+            </motion.button>
           </div>
         </div>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-4xl mx-auto space-y-8">
-            {/* Welcome Section */}
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-theme">Welcome</h2>
-              <div className="glass-2 rounded-lg p-6 border border-theme bg-black/20 backdrop-blur-sm relative overflow-hidden">
-                <p className="text-theme-2 leading-relaxed mb-4">
-                  I&apos;m Sourish Ghosh, a software developer living in India.
+          <motion.div 
+            className="max-w-4xl mx-auto space-y-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {/* Hero Welcome Card */}
+            <motion.div 
+              variants={itemVariants}
+              className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-8"
+            >
+              
+              <div className="relative z-10">
+                <div className="mb-6">
+                  <h2 className="text-3xl font-bold text-white mb-2">Hey, I&apos;m Sourish!</h2>
+                  <p className="text-lg text-gray-300">{profile.tagline}</p>
+                </div>
+                
+                <p className="text-gray-200 leading-relaxed text-lg mb-4">
+                  Thanks for taking the time to explore my portfolio. I hope you enjoy it as much as I enjoyed developing it! 
                 </p>
-                <p className="text-theme-2 leading-relaxed">
-                  Thanks for taking the time to explore my portfolio. I hope you enjoy it as much I did enjoy developing it. 
-                  If you have any questions or comments, please contact me via my socials or shoot me a mail at{" "}
+                
+                <div className="flex items-center gap-2 p-4 bg-black/30 rounded-lg border border-red-500/20">
+                  <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
                   <a 
                     href="mailto:sghosh.ile.7@gmail.com" 
-                    className="text-red-400 hover:text-red-300 underline transition-colors font-medium"
+                    className="text-red-400 hover:text-red-300 transition-colors font-medium"
                   >
                     sghosh.ile.7@gmail.com
                   </a>
-                </p>
+                </div>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Resume Section */}
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-theme">Looking for my Resume?</h2>
-              <div className="glass-2 rounded-lg p-6 border border-theme bg-black/20 backdrop-blur-sm relative overflow-hidden">
-                <a 
-                  href={resume.url} 
-                  download={resume.filename}
-                  className="inline-flex items-center gap-2 text-red-400 hover:text-red-300 transition-colors font-medium"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            
+
+            {/* Resume Download Card */}
+            <motion.div variants={itemVariants}>
+              <motion.a 
+                href={resume.url} 
+                download={resume.filename}
+                className="block relative overflow-hidden rounded-xl border border-red-500/20 bg-black/40 p-6 group"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-lg border border-red-500/30 bg-red-500/10 flex items-center justify-center">
+                      <svg className="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-white mb-1">Download My Resume</h3>
+                      <p className="text-sm text-gray-300">Get the full picture of my experience</p>
+                    </div>
+                  </div>
+                  <svg className="w-6 h-6 text-red-400 transform group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
-                  Click here to download it
-                </a>
-              </div>
-            </div>
+                </div>
+              </motion.a>
+            </motion.div>
 
             {/* About Me Section */}
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-theme">About me</h2>
-              <div className="glass-2 rounded-lg p-6 border border-theme bg-black/20 backdrop-blur-sm relative overflow-hidden">
-                <p className="text-theme-2 leading-relaxed mb-4">
+            <motion.div variants={itemVariants} className="rounded-xl border border-red-500/20 bg-black/30 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-2 h-8 bg-red-500 rounded"></div>
+                <h2 className="text-2xl font-bold text-white">My Journey</h2>
+              </div>
+              <div className="space-y-4 text-gray-200 leading-relaxed">
+                <p className="text-base">
                   From a young age, I was captivated by computers and technology - particularly games. 
-                  What began as simple curiosity grew into a true passion for programming and development.
+                  What began as simple curiosity grew into a <span className="text-red-400 font-medium">true passion for programming and development</span>.
                 </p>
-                <p className="text-theme-2 leading-relaxed mb-4">
-                  I am currently pursuing my B.Tech in Computer Science (Software Engineering) at SRMIST, Chennai, 
+                <p className="text-base">
+                  I am currently pursuing my <span className="text-red-400 font-medium">B.Tech in Computer Science (Software Engineering)</span> at SRMIST, Chennai, 
                   where I have built a strong groundwork in programming, data structures and web development. 
-                  Throughout my studies, I have developed a keen interest in machine learning and Linux networking, 
+                  Throughout my studies, I have developed a keen interest in <span className="text-red-400 font-medium">machine learning and Linux networking</span>, 
                   which I pursued alongside my core technologies.
                 </p>
-                <p className="text-theme-2 leading-relaxed">
-                  I am currently working in full-stack web development (MERN) to develop my problem-solving skills 
+                <p className="text-base">
+                  I am currently working in <span className="text-red-400 font-medium">full-stack web development (MERN)</span> to develop my problem-solving skills 
                   through DSA while diving into new technologies that require me to think differently.
                 </p>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Hobbies Section */}
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-theme">Hobbies</h2>
-              <div className="glass-2 rounded-lg p-6 border border-theme bg-black/20 backdrop-blur-sm relative overflow-hidden">
-                <p className="text-theme-2 leading-relaxed">
-                  Outside of tech, I&apos;m a big Soulsborne fan when it comes to gaming (yes, I&apos;ve chased those platinum trophies). 
-                  I&apos;m also a proud cat lover, and when I&apos;m not coding or gaming, I enjoy cooking and experimenting in the kitchen. 
-                  On the strategic side, I like playing chess, where I currently hold a 1500 rating on Chess.com.
-                </p>
+            {/* Hobbies & Interests */}
+            <motion.div variants={itemVariants} className="rounded-xl border border-red-500/20 bg-black/30 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-2 h-8 bg-red-500 rounded"></div>
+                <h2 className="text-2xl font-bold text-white">Beyond Code</h2>
               </div>
-            </div>
-          </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/10">
+                  <h4 className="font-semibold text-white mb-1">Gaming</h4>
+                  <p className="text-sm text-gray-300">Soulsborne fan, platinum trophy hunter</p>
+                </div>
+                <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/10">
+                  <h4 className="font-semibold text-white mb-1">Chess</h4>
+                  <p className="text-sm text-gray-300">1500 rating on Chess.com</p>
+                </div>
+                <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/10">
+                  <h4 className="font-semibold text-white mb-1">Cat Lover</h4>
+                  <p className="text-sm text-gray-300">Proud owner of feline friends</p>
+                </div>
+                <div className="p-4 rounded-lg bg-red-500/5 border border-red-500/10">
+                  <h4 className="font-semibold text-white mb-1">Cooking</h4>
+                  <p className="text-sm text-gray-300">Experimenting in the kitchen</p>
+                </div>
+              </div>
+            </motion.div>
+
+          </motion.div>
         </div>
       </div>
     );
@@ -141,35 +212,37 @@ export default function AboutHome({ onOpen }: { onOpen: OpenAppFn }) {
     const experience = getAllExperience();
     
     return (
-      <div className="flex flex-col gap-6 text-theme-2 max-w-7xl h-full overflow-y-auto">
-        <div className="flex items-center justify-between sticky top-0 bg-gradient-to-b from-black/90 to-transparent backdrop-blur-sm z-10 pb-4 px-6 py-4">
-          <h2 className="text-2xl font-bold text-theme">Experience</h2>
+      <div className="h-full flex flex-col bg-black/40 backdrop-blur-sm relative z-50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-black/40 backdrop-blur-md">
+          <h2 className="text-2xl font-bold text-white">Experience</h2>
           <button 
-            className="text-theme hover:text-theme-2 transition-colors"
+            className="text-white hover:text-gray-300 transition-colors"
             onClick={() => setCurrentView("about")}
           >
             ← Back to About
           </button>
         </div>
 
-        <div className="space-y-3">
-          {experience.map((exp, index) => (
-            <ExperienceCard
-              key={index}
-              title={exp.title}
-              company={exp.company}
-              duration={exp.period}
-              description={exp.description}
-              isCurrent={exp.period.includes("Present")}
-            />
-          ))}
+        <div className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-4xl mx-auto space-y-4">
+            {experience.map((exp, index) => (
+              <ExperienceCard
+                key={index}
+                title={exp.title}
+                company={exp.company}
+                duration={exp.period}
+                description={exp.description}
+                isCurrent={exp.period.includes("Present")}
+              />
+            ))}
+          </div>
         </div>
       </div>
     );
   };
 
   return (
-    <div className="flex h-full w-full">
+    <div className="h-full w-full">
       {currentView === "about" && renderAbout()}
       {currentView === "experience" && renderExperience()}
     </div>

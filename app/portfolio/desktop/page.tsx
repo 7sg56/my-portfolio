@@ -357,6 +357,9 @@ export default function DesktopOSPage() {
     const smallWidget = responsive.widget(responsiveConfig, 150, 150);
     const margin = responsiveConfig.widgetMargin;
     
+    // Consistent top spacing for all screen sizes (same as 13" MacBook)
+    const topSpacing = 46;
+    
     return [
       {
         id: "todo-widget",
@@ -364,9 +367,9 @@ export default function DesktopOSPage() {
         icon: "",
         type: "widget",
         widgetType: "todo",
-        // TOP-RIGHT CORNER
+        // TOP-RIGHT CORNER - Consistent spacing
         x: width - todoWidget.width - margin,
-        y: responsiveConfig.heroTop * 0.3 - 20,
+        y: topSpacing,
         widthPx: todoWidget.width,
         heightPx: todoWidget.height,
       },
@@ -388,27 +391,14 @@ export default function DesktopOSPage() {
           icon: "",
           type: "widget",
           widgetType: "date-now",
-          // BOTTOM-RIGHT - Position below todo widget
+          // BOTTOM-RIGHT - Position below todo widget with consistent gap
           x: width - smallWidget.width - margin,
-          y: (responsiveConfig.heroTop * 0.3) + todoWidget.height - 5, // Below todo widget with gap
+          y: topSpacing + todoWidget.height + 10,
           widthPx: smallWidget.width,
           heightPx: smallWidget.height,
         },
     ];
   }, [width, height, responsiveConfig]);
-
-  useEffect(() => {
-    computeLayout(desktopItems);
-    if (typeof window !== "undefined") {
-      const onResize = () => {
-        setWidth(window.innerWidth);
-        setHeight(window.innerHeight);
-        computeLayout(desktopItems);
-      };
-      window.addEventListener("resize", onResize);
-      return () => window.removeEventListener("resize", onResize);
-    }
-  }, [computeLayout, desktopItems]);
 
   // Widget renderer - direct widgets
   const renderWidget = (widgetType: WidgetType) => {
@@ -491,7 +481,7 @@ export default function DesktopOSPage() {
                 lineHeight: '0.9' 
               }}
             >
-              <span className="text-red-500">S</span>OURISH <span className="text-red-500">G</span>HOSH
+              <span className="text-red-500">S</span>ourish <span className="text-red-500">G</span>HOSH
             </h1>
             
             {/* Tagline - Responsive */}
@@ -514,7 +504,7 @@ export default function DesktopOSPage() {
 
       {/* TechStackStrip - Using Responsive System */}
       <div 
-        className="absolute z-[300] origin-center" 
+        className="absolute z-20 origin-center" 
         style={{ 
           bottom: `${responsiveConfig.techStripBottom}px`,
           right: `${responsiveConfig.techStripRight}px`,
@@ -549,7 +539,7 @@ export default function DesktopOSPage() {
         return (
           <motion.div
             key={item.id}
-            className="absolute pointer-events-auto border border-gray-700/50 rounded-xl bg-black/20 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:border-gray-600/70"
+            className="absolute pointer-events-auto border border-gray-700/50 rounded-xl bg-black/20 backdrop-blur-sm"
             style={{
               left: item.x,
               top: item.y,
@@ -567,9 +557,9 @@ export default function DesktopOSPage() {
 
 
       {/* Custom Dock - Using Responsive System */}
-      <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2">
+      <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 max-w-[95vw]">
         <div 
-          className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl flex items-end shadow-[0_20px_60px_rgba(0,0,0,0.4)]"
+          className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl flex items-end shadow-[0_20px_60px_rgba(0,0,0,0.4)] overflow-x-auto scrollbar-hide"
           style={{
             padding: `${responsiveConfig.dockPadding}px`,
             gap: `${responsiveConfig.dockGap}px`
@@ -579,17 +569,19 @@ export default function DesktopOSPage() {
             const isOpen = openWindows[app.appType as WindowAppType];
             const hasIndicator = isOpen;
             const dock = responsive.dock(responsiveConfig);
+            const showLabel = width >= 1024; // Show labels only on lg and up
             return (
               <motion.button
                 key={app.id}
-                className="flex flex-col items-center text-gray-100 hover:scale-110 transition-transform duration-200 relative"
+                className="flex flex-col items-center text-gray-100 hover:scale-110 transition-transform duration-200 relative flex-shrink-0"
                 style={{
-                  width: `${dock.buttonSize}px`,
+                  minWidth: `${dock.buttonSize}px`,
                   height: `${dock.buttonSize}px`
                 }}
                 onClick={() => handleDockAppClick(app)}
                 whileHover={{ y: -5 }}
                 whileTap={{ scale: 0.95 }}
+                title={app.name}
               >
                 <div 
                   className={`glass-2 border border-theme rounded-xl flex items-center justify-center mb-1 hover:glass-1 transition-colors duration-200 shadow-md ${hasIndicator ? 'ring-2 ring-red-500/50' : ''}`}
@@ -609,12 +601,14 @@ export default function DesktopOSPage() {
                 {hasIndicator && (
                   <div className="absolute -bottom-1 w-1 h-1 rounded-full bg-red-500"></div>
                 )}
-                <span 
-                  className="font-medium text-gray-200"
-                  style={{ fontSize: `${dock.fontSize}px` }}
-                >
-                  {app.name}
-                </span>
+                {showLabel && (
+                  <span 
+                    className="font-medium text-gray-200 whitespace-nowrap"
+                    style={{ fontSize: `${dock.fontSize}px` }}
+                  >
+                    {app.name}
+                  </span>
+                )}
               </motion.button>
             );
           })}
