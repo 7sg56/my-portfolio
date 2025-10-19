@@ -230,7 +230,7 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
                   <span className="absolute left-0 top-0 h-full w-1 rounded-l-md"
                     style={{ 
                       background: selected && !isDisabled 
-                        ? "linear-gradient(180deg,rgb(99, 239, 68) 0%,rgb(192, 232, 49) 100%)" 
+                        ? "linear-gradient(180deg,rgb(99, 239, 68) 0%,rgb(181, 220, 38) 100%)" 
                         : isDisabled 
                           ? "linear-gradient(180deg, #ef4444 0%, #dc2626 100%)"
                           : "transparent" 
