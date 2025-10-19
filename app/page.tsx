@@ -63,8 +63,8 @@ export default function Home() {
                         router.push('/portfolio/desktop');
                       } else if (m === 'terminal') {
                         router.push('/portfolio/terminal');
-                      } else if (m === 'sourish') {
-                        router.push('/portfolio/sourish');
+                      } else if (m === '7sg56') {
+                        window.open('https://7sg56.vercel.app', '_blank');
                       }
                     }}
                   />

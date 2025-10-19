@@ -12,11 +12,7 @@ export default function SpaceShooterBG({ opacity = 0.9 }: { opacity?: number }) 
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext("2d", { alpha: true })!;
 
-    // Load player ship sprite (place your image at public/ship.png)
-    const ship = new Image();
-    ship.src = "/ship.png";
-    let shipReady = false;
-    ship.onload = () => { shipReady = true; };
+    // No external image dependency - using fallback triangle
 
     let width = 0, height = 0;
     const resize = () => {
@@ -151,19 +147,9 @@ export default function SpaceShooterBG({ opacity = 0.9 }: { opacity?: number }) 
         }
       }
 
-// Draw player ship sprite (simple, pointing right)
-      if (shipReady) {
-        const w = 36; const h = 36; // draw size
-        ctx.save();
-        ctx.translate(player.x, player.y);
-        ctx.rotate(Math.PI / 2); // rotate 90deg to face right
-        ctx.drawImage(ship, -w / 2, -h / 2, w, h);
-        ctx.restore();
-      } else {
-        // fallback triangle
-        const tilt = Math.max(-0.25, Math.min(0.25, player.vy * 0.08));
-        drawTri(player.x, player.y, 10, Math.PI / 2 + tilt, "#9efcc7");
-      }
+// Draw player ship (triangle, pointing right)
+      const tilt = Math.max(-0.25, Math.min(0.25, player.vy * 0.08));
+      drawTri(player.x, player.y, 10, Math.PI / 2 + tilt, "#9efcc7");
 
       // Draw enemies (pointing left)
       for (const E of enemies) drawTri(E.x, E.y, 8, -Math.PI / 2, "#ff6b6b");

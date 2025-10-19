@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "motion/react";
 
-export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaultSeconds?: number; onSelect: (mode: "desktop" | "terminal" | "sourish") => void }) {
+export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaultSeconds?: number; onSelect: (mode: "desktop" | "terminal" | "7sg56") => void }) {
   const [seconds, setSeconds] = useState(defaultSeconds);
   
   // Touch support (optional; not used for gating behavior)
@@ -12,9 +12,9 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
   
   const items = useMemo(
     () => [
-      { key: "sourish" as const, label: "7sg56", desc: "Curated for Professionals", disabled: true, comingSoon: true },
-      { key: "desktop" as const, label: "Desktop", desc: "For developers and admirers", isDefault: true },
-      { key: "terminal" as const, label: "Terminal", desc: "A Terminal about me" },
+      { key: "7sg56" as const, label: "7sg56", desc: "Curated for Professionals", disabled: false, comingSoon: false },
+      { key: "desktop" as const, label: "Desktop", desc: "For developers and admirers", isDefault: true, disabled: false, comingSoon: false },
+      { key: "terminal" as const, label: "Terminal", desc: "A Terminal about me", disabled: false, comingSoon: false },
     ],
     []
   );
@@ -155,11 +155,11 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: "easeOut" }}
-        className="relative mx-auto w-full max-w-4xl rounded-xl border border-zinc-800/50 bg-zinc-950/40 shadow-2xl backdrop-blur-md"
+        className="relative mx-auto w-full max-w-4xl rounded-xl border border-zinc-800/50 bg-zinc-950/40 shadow-2xl backdrop-blur-md shadow-red-500/5"
       >
         {/* Header bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 sm:px-6 py-4 border-b border-zinc-800/50 bg-zinc-900/30 rounded-t-xl gap-2">
-          <div className="text-xs sm:text-sm font-mono text-zinc-300">GRUB v2.06 — Boot Manager</div>
+          <div className="text-xs sm:text-sm font-mono text-red-300">GRUB v2.06 — Boot Manager</div>
           <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
             <div className="text-xs font-mono text-green-400">
               {paused ? "Auto boot paused" : "Auto boot Desktop OS in "}
@@ -191,7 +191,7 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
 
         {/* Divider */}
         <div className="px-4 sm:px-8">
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-zinc-800 to-transparent" />
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-red-500/20 to-transparent" />
         </div>
 
         {/* Menu */}
@@ -230,7 +230,7 @@ export default function HeroSelector({ defaultSeconds = 10, onSelect }: { defaul
                   <span className="absolute left-0 top-0 h-full w-1 rounded-l-md"
                     style={{ 
                       background: selected && !isDisabled 
-                        ? "linear-gradient(180deg, #22c55e 0%, #16a34a 100%)" 
+                        ? "linear-gradient(180deg,rgb(99, 239, 68) 0%,rgb(192, 232, 49) 100%)" 
                         : isDisabled 
                           ? "linear-gradient(180deg, #ef4444 0%, #dc2626 100%)"
                           : "transparent" 
