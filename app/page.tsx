@@ -64,7 +64,8 @@ export default function Home() {
                       } else if (m === 'terminal') {
                         router.push('/portfolio/terminal');
                       } else if (m === '7sg56') {
-                        window.open('https://7sg56.vercel.app', '_blank');
+                        // TODO: Update this URL when 7sg56.vercel.app is deployed
+                        alert('7sg56 portfolio coming soon!');
                       }
                     }}
                   />
