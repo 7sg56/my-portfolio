@@ -22,13 +22,20 @@ type Song = {
 };
 
 const songs: Song[] = [
-  { title: "Dracula", artist: "Tame Impapa" },
-  { title: "Attention", artist: "Charlie Puth" },
+  { title: "My Eyes", artist: "Travis Scott" },
   { title: "No Pole", artist: "Don Toliver" },
-  { title: "Rockstar", artist: "Post Malone" },
-  { title: "Sao Paulo", artist: "The Weeknd" },
+  { title: "Dracula", artist: "Tame Impapa" },
+  { title: "Humble", artist: "Kendrick Lamar" },
+  { title: "Softcore", artist: "The Neighbourhood" },
+  { title: "Runaway", artist: "Kanye West" },
   { title: "Timeless", artist: "The Weeknd" },
+  { title: "Sicko Mode", artist: "Travis Scott" },
+  { title: "Sao Paulo", artist: "The Weeknd" },
+  { title: "Pink + White", artist: "Frank Ocean"},
   { title: "I Wonder", artist: "Kanye West" },
+  { title: "Not You Too", artist: "Drake"}
+  { title: "Cry for Me", artist: "The Weeknd" },
+  { title: "Carnival", artist: "Kanye West"},
 ];
 
 export default function NowListeningWidget({ span }: { span?: Span }) {
