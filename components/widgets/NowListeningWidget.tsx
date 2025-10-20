@@ -33,7 +33,7 @@ const songs: Song[] = [
   { title: "Sao Paulo", artist: "The Weeknd" },
   { title: "Pink + White", artist: "Frank Ocean"},
   { title: "I Wonder", artist: "Kanye West" },
-  { title: "Not You Too", artist: "Drake"}
+  { title: "Not You Too", artist: "Drake"},
   { title: "Cry for Me", artist: "The Weeknd" },
   { title: "Carnival", artist: "Kanye West"},
 ];
